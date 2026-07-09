@@ -1,0 +1,1161 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中小企扮工生存手冊</title>
+<style>
+  :root {
+    --ground: #eeeff1; --surface: #ffffff; --surface-2: #e5e6e9; --ink: #21252c;
+    --ink-soft: #61676f; --line: #d3d6da; --accent: #8a6d00; --accent-ink: #6e5600;
+    --accent-wash: #f7efcf; --stamp: #b3362e; --stamp-wash: #f7e3e0;
+    --pass: #2e7d4f; --pass-wash: #e0efe6; --gold: #a8842a;
+    --btn-ink: #ffffff;
+    --shadow: 0 1px 2px rgba(33,37,44,.07), 0 8px 24px -14px rgba(33,37,44,.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #131519; --surface: #1b1e24; --surface-2: #23272e; --ink: #e8eaed;
+      --ink-soft: #9aa1ab; --line: #343a43; --accent: #d9b23a; --accent-ink: #e6c866;
+      --accent-wash: #2b2410; --stamp: #e07a70; --stamp-wash: #33201d;
+      --pass: #57b183; --pass-wash: #14301f; --gold: #e0bd55;
+      --btn-ink: #1c1703;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #eeeff1; --surface: #ffffff; --surface-2: #e5e6e9; --ink: #21252c;
+    --ink-soft: #61676f; --line: #d3d6da; --accent: #8a6d00; --accent-ink: #6e5600;
+    --accent-wash: #f7efcf; --stamp: #b3362e; --stamp-wash: #f7e3e0;
+    --pass: #2e7d4f; --pass-wash: #e0efe6; --gold: #a8842a;
+    --btn-ink: #ffffff;
+    --shadow: 0 1px 2px rgba(33,37,44,.07), 0 8px 24px -14px rgba(33,37,44,.18);
+  }
+  :root[data-theme="dark"] {
+    --ground: #131519; --surface: #1b1e24; --surface-2: #23272e; --ink: #e8eaed;
+    --ink-soft: #9aa1ab; --line: #343a43; --accent: #d9b23a; --accent-ink: #e6c866;
+    --accent-wash: #2b2410; --stamp: #e07a70; --stamp-wash: #33201d;
+    --pass: #57b183; --pass-wash: #14301f; --gold: #e0bd55;
+    --btn-ink: #1c1703;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 28px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.75; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+  .draft-banner {
+    background: var(--accent-wash); border-bottom: 1px solid var(--accent);
+    color: var(--accent-ink); font-size: .85rem; font-weight: 600;
+    text-align: center; padding: 9px 16px;
+  }
+
+  /* ===== 進度條(sticky) ===== */
+  .progress-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 20px; }
+  .progress-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .05em; color: var(--ink-soft); white-space: nowrap; }
+  .segments { display: flex; gap: 4px; flex: 1; }
+  .seg { height: 9px; flex: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg.done { background: var(--accent); border-color: var(--accent); }
+  .rank-label { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--accent-ink); white-space: nowrap; font-weight: 700; }
+
+  /* ===== memo 檔案頭 ===== */
+  header { padding-top: 40px; position: relative; }
+  .memo-fields { font-family: ui-monospace, monospace; font-size: .72rem; color: var(--ink-soft); line-height: 1.9; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; background: var(--surface); margin-bottom: 22px; }
+  .memo-fields b { color: var(--ink); font-weight: 600; }
+  .stamp {
+    position: absolute; top: 46px; right: 0; transform: rotate(6deg);
+    border: 3px solid var(--stamp); color: var(--stamp); font-weight: 800;
+    letter-spacing: .25em; padding: 3px 12px; border-radius: 5px; font-size: .8rem; opacity: .9;
+  }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 10px 0 10px; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { color: var(--ink-soft); margin: 0; font-size: 1.02rem; max-width: 60ch; }
+
+  .disclaimer {
+    background: var(--stamp-wash); border: 1.5px dashed var(--stamp); border-radius: 10px;
+    padding: 14px 18px; margin-top: 22px; font-size: .92rem;
+  }
+  .disclaimer b { color: var(--stamp); }
+
+  .lesson { margin-top: 64px; }
+  .lesson-tag {
+    font-family: ui-monospace, monospace; font-size: .7rem; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--accent-ink); background: var(--accent-wash);
+    border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px; display: inline-block;
+  }
+  h2 { font-size: 1.45rem; margin: 12px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 { font-size: 1.05rem; margin: 26px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 8px; }
+
+  .position {
+    background: var(--surface); border-left: 4px solid var(--accent); border-radius: 0 10px 10px 0;
+    box-shadow: var(--shadow); padding: 12px 16px; font-size: .95rem; margin: 0 0 20px; font-style: normal;
+  }
+  .position .pos-label { font-family: ui-monospace, monospace; font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 3px; }
+
+  .danger {
+    background: var(--accent-wash); border: 1px solid var(--accent); border-radius: 3px 14px 3px 14px;
+    padding: 14px 16px; margin: 22px 0 0; font-size: .95rem; transform: rotate(-.4deg);
+    box-shadow: var(--shadow);
+  }
+  .danger .d-label { font-weight: 800; color: var(--stamp); display: block; margin-bottom: 4px; }
+  .danger p { margin: 0; }
+
+  /* ===== 互動 widget ===== */
+  .widget { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 16px 18px; margin: 22px 0; }
+  .widget-tag { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px; }
+  .widget .hint { font-size: .84rem; color: var(--ink-soft); margin-bottom: 12px; }
+
+  .btn {
+    font: inherit; font-weight: 700; font-size: .95rem; cursor: pointer;
+    border-radius: 10px; padding: 10px 24px; border: 1px solid var(--accent);
+    background: var(--accent); color: var(--btn-ink);
+  }
+  .btn:hover { filter: brightness(1.07); }
+  .btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--accent-ink); }
+  .btn.danger-btn { background: var(--stamp); border-color: var(--stamp); color: #fff; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .fb-box { margin-top: 12px; border-radius: 8px; padding: 10px 14px; font-size: .9rem; display: none; }
+  .fb-box.show { display: block; }
+  .fb-box.right { background: var(--pass-wash); border: 1px solid var(--pass); }
+  .fb-box.wrong { background: var(--stamp-wash); border: 1px solid var(--stamp); }
+
+  /* G1 畫面判斷 */
+  .g1-card { text-align: center; background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; padding: 22px 16px; margin-bottom: 14px; }
+  .g1-emoji { font-size: 2.6rem; line-height: 1; }
+  .g1-name { font-weight: 700; margin-top: 8px; }
+  .g1-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .g1-score { font-family: ui-monospace, monospace; font-size: .78rem; color: var(--ink-soft); margin-top: 10px; }
+
+  /* G2 bingo */
+  .bingo-line-box { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; min-height: 3.4em; font-size: .95rem; margin-bottom: 12px; }
+  .bingo-line-box b { color: var(--accent-ink); }
+  .bingo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
+  .bcell { font: inherit; font-size: .74rem; font-weight: 600; line-height: 1.3; padding: 10px 4px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); cursor: pointer; color: inherit; min-height: 54px; }
+  .bcell:hover { border-color: var(--accent); }
+  .bcell.marked { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-ink); font-weight: 800; }
+  .bcell:disabled { cursor: default; }
+  .bingo-msg { font-weight: 700; min-height: 1.6em; font-size: .92rem; }
+  .bingo-msg.win { color: var(--pass); font-size: 1.05rem; }
+
+  /* G3 翻譯卡(同翻卡通用) */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .pcard { font: inherit; color: inherit; text-align: left; cursor: pointer; border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--surface-2); min-height: 110px; }
+  .pcard:hover { border-color: var(--accent); }
+  .pcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .pcard .front-name { font-weight: 700; font-size: .88rem; line-height: 1.45; }
+  .pcard .tap-hint { display: block; font-size: .7rem; color: var(--ink-soft); margin-top: 8px; }
+  .pcard .back { display: none; font-size: .84rem; line-height: 1.5; color: var(--stamp); font-weight: 600; }
+  .pcard.flipped { background: var(--stamp-wash); border-color: var(--stamp); }
+  .pcard.flipped .front { display: none; }
+  .pcard.flipped .back { display: block; }
+
+  /* G4 老闆迫近 */
+  .g4-stage { text-align: center; padding: 18px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); margin-bottom: 12px; }
+  .g4-scene { font-size: 2.4rem; line-height: 1.2; min-height: 1.4em; }
+  .g4-text { font-size: .95rem; color: var(--ink-soft); min-height: 2.6em; margin-top: 6px; }
+  .g4-stage.alert { background: var(--stamp-wash); border-color: var(--stamp); }
+  .g4-stage.alert .g4-text { color: var(--stamp); font-weight: 800; }
+  .g4-bigbtn { width: 100%; font-size: 1.15rem; padding: 16px; }
+  .g4-best { font-family: ui-monospace, monospace; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; text-align: center; }
+
+  /* G5 buffer 計算機 */
+  .g5-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+  .g5-row label { font-size: .88rem; font-weight: 600; min-width: 8.5em; }
+  .g5-row input[type=range] { flex: 1; min-width: 130px; accent-color: var(--accent); }
+  .g5-val { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); min-width: 5ch; font-variant-numeric: tabular-nums; }
+  .g5-out { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; font-size: .92rem; margin-top: 8px; }
+  .g5-out b { color: var(--accent-ink); }
+
+  /* G6 是非分類 */
+  .g6-statement { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-align: center; font-weight: 700; margin-bottom: 12px; min-height: 3.2em; }
+  .g6-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .g6-btns .btn { font-size: .85rem; padding: 9px 16px; }
+
+  /* G7 收工 slider */
+  .g7-time { text-align: center; font-family: ui-monospace, monospace; font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent-ink); }
+  .meter { margin: 10px 0 4px; }
+  .meter .m-label { display: flex; justify-content: space-between; font-size: .78rem; color: var(--ink-soft); margin-bottom: 3px; }
+  .m-track { height: 14px; border-radius: 7px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+  .m-fill { height: 100%; border-radius: 7px 0 0 7px; transition: width .2s ease; }
+  .m-fill.face { background: var(--pass); }
+  .m-fill.life { background: var(--stamp); }
+  .g7-verdict { margin-top: 12px; font-size: .92rem; font-weight: 600; min-height: 2.6em; }
+
+  /* G8 良心自測 + 證書 */
+  .g8-q { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; font-size: .92rem; flex-wrap: wrap; }
+  .g8-q .g8-btns { display: flex; gap: 8px; }
+  .g8-q .btn { font-size: .82rem; padding: 6px 18px; }
+  .g8-q .btn.picked { outline: 2px solid var(--accent-ink); }
+  .cert {
+    display: none; margin-top: 16px; border: 3px double var(--gold); border-radius: 12px;
+    padding: 26px 22px; text-align: center; background: var(--surface); position: relative;
+  }
+  .cert.show { display: block; }
+  .cert .c-title { font-size: 1.3rem; font-weight: 800; letter-spacing: .1em; color: var(--gold); }
+  .cert .c-body { margin: 10px 0; font-size: .95rem; }
+  .cert .c-stamp { display: inline-block; border: 2.5px solid var(--stamp); color: var(--stamp); font-weight: 800; letter-spacing: .2em; padding: 2px 10px; border-radius: 4px; transform: rotate(-5deg); font-size: .78rem; margin-top: 8px; }
+  .cert .c-fine { font-size: .68rem; color: var(--ink-soft); margin-top: 14px; }
+
+  /* ===== 測驗 ===== */
+  .quiz-head { margin-top: 76px; padding-top: 34px; border-top: 2px solid var(--accent); }
+  .quiz-rules { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 14px 18px; font-size: .92rem; margin: 18px 0 28px; }
+  .quiz-rules ul { margin: 0; padding-left: 20px; }
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); margin: 18px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-family: ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+  .qnum { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .qtext { font-weight: 700; margin: 6px 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 10px 13px; cursor: pointer; font-size: .95rem; background: var(--surface); }
+  .opt:hover { border-color: var(--accent); }
+  .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+  .opt .letter { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); flex: none; }
+  .qcard.graded .opt { cursor: default; }
+  .qcard.graded .opt.is-correct { border-color: var(--pass); background: var(--pass-wash); }
+  .qcard.graded .opt.is-wrong { border-color: var(--stamp); background: var(--stamp-wash); }
+  .qbadge { display: none; font-weight: 700; font-size: .82rem; border-radius: 999px; padding: 2px 11px; margin-left: 8px; vertical-align: middle; }
+  .qcard.graded .qbadge { display: inline-block; }
+  .qcard.graded.right .qbadge { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .qcard.graded.wrong .qbadge { background: var(--stamp-wash); color: var(--stamp); border: 1px solid var(--stamp); }
+  .explain { display: none; margin-top: 12px; font-size: .9rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .qcard.graded .explain { display: block; }
+  .explain b { color: var(--ink); }
+  .quiz-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .unanswered-note { display: none; color: var(--stamp); font-weight: 600; font-size: .92rem; margin-top: 12px; }
+  .result { display: none; margin-top: 30px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 28px; text-align: center; border: 2px solid var(--accent); }
+  .score { font-size: 3.2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; color: var(--accent-ink); }
+  .score-sub { color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+  .tier-title { display: inline-block; font-weight: 800; font-size: 1.15rem; border-radius: 999px; padding: 7px 24px; margin-top: 14px; background: var(--accent-wash); color: var(--accent-ink); border: 1px solid var(--accent); }
+  .result-note { font-size: .9rem; color: var(--ink-soft); margin: 14px auto 0; max-width: 48ch; }
+
+  .done-btn { margin-top: 22px; font: inherit; font-size: .9rem; font-weight: 700; border-radius: 999px; padding: 8px 22px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent-ink); background: var(--surface); }
+  .done-btn.done { background: var(--pass-wash); border-color: var(--pass); color: var(--pass); }
+  .done-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .82rem; text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="progress-bar">
+  <div class="progress-inner">
+    <span class="progress-label">修煉進度 <span id="prog-count">0</span>/9</span>
+    <div class="segments" id="segments" aria-hidden="true"></div>
+    <span class="rank-label" id="rank-label">職級:實習生</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="stamp">機密 · 茶水間限定</div>
+    <div class="memo-fields">
+      文件編號:<b>HR-EPIC-001</b><br>
+      發文部門:<b>人力資源部(唔存在)</b><br>
+      機密等級:<b>唔好俾老闆見到</b> · 生效日期:<b>由你 probation 第一日起</b>
+    </div>
+    <h1>中小企扮工生存手冊</h1>
+    <p class="lede">喺中小企打工,你唔係一個職位,你係一個部門。「公司細,所以咩都要做」—— 而呢本手冊,教你喺咩都要做嘅環境下,保住你嘅 sanity。九章修煉 + 九個實戰演習 + 期末生存評核,睇你係「試用期陣亡」定「扮工宗師」。</p>
+    <div class="disclaimer">
+      <b>⚠️ 純屬娛樂聲明:</b>本手冊係職場觀察 satire,人物情節純屬虛構,如有雷同係因為全香港嘅中小企都一樣。本手冊唔構成任何 HR 建議、法律建議、或者辭職理由。認真做嘢先係正路 —— 詳情請直接跳去第 9 章。
+    </div>
+  </header>
+
+  <!-- ============ 第 1 章 ============ -->
+  <section class="lesson" id="ch1">
+    <span class="lesson-tag">第 1 章</span>
+    <h2>扮工基本功 — 觀感管理入門</h2>
+    <div class="position"><span class="pos-label">本章定位</span>扮工唔係唔做嘢,係管理「做緊嘢嘅觀感」。呢個係一門視覺藝術。</div>
+    <ul>
+      <li><b>Mon 要有嘢郁。</b>靜止嘅 mon = 死亡嘅 mon。Excel 係扮工聖物:開個夠複雜嘅 spreadsheet,間唔中 scroll 吓、click 兩下 —— 冇人知你撳 F5 定 F9,總之個樣好忙。世上冇人夠膽質疑一個對住 pivot table 皺眉嘅人。</li>
+      <li><b>行路要快,手要有紙。</b>手持 A4 紙 + 急步行 = 移動免死金牌,去邊都似去開會。空手 + 慢行 = 全公司都覺得「佢好得閒」,三分鐘內有新嘢 land 落你度。</li>
+      <li><b>鍵盤聲學。</b>打字要有節奏,間唔中停低、sigh 一聲、再繼續打 —— 呢個 combo 叫「struggle 緊但好專業」。</li>
+      <li><b>表情管理。</b>對 mon 嘅正確表情係皺眉。皺眉 = 處理緊好複雜嘅嘢;微笑 = 睇緊 YouTube,即刻穿崩。點頭都唔得 —— 冇人會對住 quotation 點頭。</li>
+      <li><b>中小企座位風水學。</b>公司細,你個 mon 係公共景點,全世界行過都望到。返新工第一日就要評估:邊個角度、幾多人流、老闆條 routine 行邊條 route。呢個叫 site survey。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · 安全 vs 即死</div>
+      <div class="hint">以下畫面喺你個 mon 出現,老闆隨時行過 —— 判斷:照開,定係即刻切走?</div>
+      <div class="g1-card">
+        <div class="g1-emoji" id="g1-emoji">🖥️</div>
+        <div class="g1-name" id="g1-name">撳「開始」測試你嘅判斷力</div>
+      </div>
+      <div class="g1-btns" id="g1-btns">
+        <button class="btn" id="g1-start" type="button">開始</button>
+      </div>
+      <div class="fb-box" id="g1-fb"></div>
+      <div class="g1-score" id="g1-score"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>老闆個 mon 嘅反光,可以睇到你個 mon。同樣道理適用於:玻璃間隔、相架、飲水機不鏽鋼面,同埋佢副眼鏡。<b>反光面 = 敵方雷達。</b></p></div>
+
+    <button class="done-btn" data-lesson="0" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 2 章 ============ -->
+  <section class="lesson" id="ch2">
+    <span class="lesson-tag">第 2 章</span>
+    <h2>開會生存術 — 職場劇場學</h2>
+    <div class="position"><span class="pos-label">本章定位</span>中小企開會唔係為咗決策,係一場表演。重點唔係你講咩,係你個樣似唔似有嘢講。</div>
+    <ul>
+      <li><b>Buzzword 護體。</b>必修詞彙:sync、alignment、bandwidth、take it offline、low-hanging fruit、circle back。一句「呢個我哋要 align 埋 stakeholder 先」可以令任何議題延後兩星期,而且冇人可以反對,因為冇人知 stakeholder 係邊個。</li>
+      <li><b>「我 follow up 吓」嘅藝術。</b>開會萬能 key —— 表示你有 ownership,又冇 commit 任何 deadline。但認清本質:呢句係一張期票,唔係一張免死金牌。</li>
+      <li><b>筆記演技。</b>老闆講嘢時大力 nod 兩下,然後喺 notebook 寫嘢 —— 是但畫個圈都得,重點係「佢講到重點我有記」嘅畫面。實測:寫嘢嘅人被點名率下降七成。</li>
+      <li><b>發言時機學。</b>開會頭 10 分鐘問一條「好問題」,之後成場唔出聲都保住存在感。好問題公式:重複上一個人講嘅嘢 +「咁 long run 嚟講呢?」</li>
+      <li><b>中小企 reality check。</b>公司細,開會得 4 個人,你匿唔到。座位策略:坐老闆<b>側面</b>,唔好對面 —— 對面 = 成場被 observe,側面 = 佢要擰轉頭先睇到你,爭取到 1.5 秒反應時間。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · Buzzword Bingo</div>
+      <div class="hint">撳「▶ 老闆發言」聽一句會議對白,喺卡上撳返啱嘅 buzzword。連成一條線(橫/直/斜)就 BINGO!</div>
+      <div class="bingo-line-box" id="bingo-line">(等緊開會……撳下面個掣開始)</div>
+      <div class="bingo-grid" id="bingo-grid"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn" id="bingo-next" type="button">▶ 老闆發言</button>
+        <button class="btn ghost" id="bingo-reset" type="button">重新開會</button>
+      </div>
+      <div class="bingo-msg" id="bingo-msg"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>「我 follow up 吓」講得多,總有一日有人真係叫你 report 個 follow up。<b>期票發行過量會信貸爆煲</b>,呢個係扮工界嘅金融風暴。</p></div>
+
+    <button class="done-btn" data-lesson="1" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 3 章 ============ -->
+  <section class="lesson" id="ch3">
+    <span class="lesson-tag">第 3 章</span>
+    <h2>Email 藝術 — cc 學問同拖字訣</h2>
+    <div class="position"><span class="pos-label">本章定位</span>Email 唔係通訊工具,係法庭證物 + 個人 branding 平台。</div>
+    <ul>
+      <li><b>cc 老闆 = 公證處。</b>完成任何嘢,reply 交代進度並 cc 老闆 —— 冇 cc 老闆嘅工作,喺觀感上等於冇發生過。呢個係中小企量子力學:<b>唔被觀察到嘅嘢,唔存在。</b></li>
+      <li><b>Reply All 係核武。</b>威力大、冇 recall、傷及無辜。撳之前問自己:全公司真係需要知你「Noted」咗?</li>
+      <li><b>拖字訣心法。</b>「Noted, will revert」、「Let me check and get back to you」、「我約緊各方時間」—— 進階心法:拖字訣拖出嚟嘅時間,係要真係攞去做嘢。拖完仲係冇做,請直接跳去第 9 章面壁。</li>
+      <li><b>出 email 時間學。</b>朝早 8:55 send =「我返早咗」;夜晚 11:00 schedule send =「我為公司燃燒緊」(其實你 10 點已經瞓咗)。Schedule send 係扮工科技史上最偉大發明。</li>
+      <li><b>中小企 reality:WhatsApp 先係主戰場。</b>老闆凌晨 1 點喺 group 出 message 係常態。守則:關 read receipt 係基本人權;千祈唔好凌晨 1:02 覆 —— 覆咗一次,以後凌晨都係你嘅 office hour。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · Corporate 語翻譯機</div>
+      <div class="hint">呢啲句子你日日收到 —— 撳落去,睇吓佢哋嘅真正意思。</div>
+      <div class="cards" id="translate-cards"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>cc 錯人,一 click 即全公司直播。<b>撳 send 前 check 收件人,係 email 界嘅 pre-flight checklist</b> —— 炒過一次嘅人先明。</p></div>
+
+    <button class="done-btn" data-lesson="2" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 4 章 ============ -->
+  <section class="lesson" id="ch4">
+    <span class="lesson-tag">第 4 章</span>
+    <h2>老闆迫近應對 — Boss Proximity Protocol</h2>
+    <div class="position"><span class="pos-label">本章定位</span>中小企最大特色:老闆冇房,或者有房但唔坐 —— 佢坐你後面、隔籬,或者無限 patrol。你需要一套防空系統。</div>
+    <ul>
+      <li><b>聲紋預警系統。</b>熟記老闆嘅腳步聲、鎖匙聲、清喉嚨聲、佢張凳嘅「吱」一聲。大門開關聲係一級警報 —— 由聲源到你座位嘅秒數,要背到出口。</li>
+      <li><b>Alt-Tab / Cmd-Tab 肌肉記憶。</b>目標:0.5 秒內順滑切換到 decoy 畫面,手指唔使諗。同消防演習一樣,平時唔操,事發嗰下實甩轆。</li>
+      <li><b>Decoy window 長開原則。</b>背景永遠開定一個 Excel 或者未完成嘅 report。冇 decoy 嘅 Alt-Tab,切出嚟係 desktop —— 全螢幕嘅心虛。</li>
+      <li><b>被捉到嘅損害控制。</b>千祈唔好大力閂 window(此地無銀三百兩),保持鎮定,自然講一句「啱啱 search 緊個資料」。慌張先係最大破綻,唔係個畫面。</li>
+      <li><b>進階:轉守為攻。</b>老闆迫近時,主動擰轉頭問佢問題:「老闆,正想問你 —— 呢個 quotation 個數跟唔跟?」進攻,係最好嘅防守;順便將你等緊佢覆嘅嘢 chase 埋,一石二鳥。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · 老闆迫近反應測試</div>
+      <div class="hint">你 hea 緊。腳步聲隨時出現 —— 一出現就即刻撳掣切 window。太早撳會穿崩,太遲會被生擒。</div>
+      <div class="g4-stage" id="g4-stage">
+        <div class="g4-scene" id="g4-scene">☕</div>
+        <div class="g4-text" id="g4-text">撳「開始返工」進入 hea 緊狀態</div>
+      </div>
+      <button class="btn g4-bigbtn" id="g4-btn" type="button">開始返工</button>
+      <div class="fb-box" id="g4-fb"></div>
+      <div class="g4-best" id="g4-best"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>Alt-Tab 太快、太慌,會切咗去<b>另一個更加唔應該出現嘅 window</b>。逃生路線要預先規劃同定期演練 —— 呢個叫 failsafe 設定,唔係事發先諗。</p></div>
+
+    <button class="done-btn" data-lesson="3" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 5 章 ============ -->
+  <section class="lesson" id="ch5">
+    <span class="lesson-tag">第 5 章</span>
+    <h2>Deadline 拖延管理 — Buffer 工程學</h2>
+    <div class="position"><span class="pos-label">本章定位</span>呢章唔係教你遲交嘢,係教你「報時間」呢門科學。報真時間,係打工仔對自己最大嘅殘忍。</div>
+    <ul>
+      <li><b>核心公式:上報時間 = 實際需時 × 2 + 半日應急。</b>早交,你係英雄;出咗意外,你仲喺 buffer 入面。報真時間嘅人,一世都喺「遲交」狀態。</li>
+      <li><b>報 buffer 要配專業理由。</b>唔好淨係話「兩日」,要話「兩日,因為想預埋 checking 同埋等對方 confirm 嘅時間」。<b>有理由嘅 buffer 叫 project management,冇理由嘅 buffer 叫 hea。</b></li>
+      <li><b>「80% done」玄學。</b>進度永遠報 80% —— 夠高顯得有進展,夠低唔使即刻交貨。冇人可以驗證一個 report 嘅 80% 係咩樣。(注意:呢招連續用三次會失效,因為 80% 三個星期唔郁,連老闆都識計數。)</li>
+      <li><b>分段交貨術。</b>交個 draft 先,講明「想攞你 feedback 先再 polish」—— 一嚟將 deadline 變成你哋之間嘅 ping pong,二嚟老闆有參與感,改嘢會少啲。呢招係少數「扮工技巧」同「真・好做法」完全重疊嘅位。</li>
+      <li><b>中小企 reality:「呢樣好急」。</b>樣樣嘢都話好急,即係冇嘢真係急。應對:「明白,咁而家手頭 A 同 B 都趕緊,你想邊樣行先?」—— 將 prioritize 嘅責任,溫柔咁交返俾老闆。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · Buffer 計算機</div>
+      <div class="hint">拉一拉:件嘢實際要幾耐?你打算報幾多?睇吓風險評級。</div>
+      <div class="g5-row">
+        <label for="g5-actual">實際需時</label>
+        <input type="range" id="g5-actual" min="1" max="40" step="1" value="8">
+        <span class="g5-val" id="g5-actual-val">8 粒鐘</span>
+      </div>
+      <div class="g5-row">
+        <label for="g5-mult">你報嘅倍數</label>
+        <input type="range" id="g5-mult" min="1" max="4" step="0.25" value="2">
+        <span class="g5-val" id="g5-mult-val">×2.0</span>
+      </div>
+      <div class="g5-out" id="g5-out"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>Buffer 報得太誇,老闆會搬出佢嘅傳說時間同你對數:「呢啲嘢我後生嗰陣半日搞掂。」佢後生嗰陣冇 email、冇 WhatsApp、冇你而家做緊嗰七份工,<b>但你唔可以咁答佢。</b></p></div>
+
+    <button class="done-btn" data-lesson="4" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 6 章 ============ -->
+  <section class="lesson" id="ch6">
+    <span class="lesson-tag">第 6 章</span>
+    <h2>茶水間政治 — 情報交易所</h2>
+    <div class="position"><span class="pos-label">本章定位</span>茶水間係中小企嘅彭博終端機 —— 消息流通速度快過公司 email 十倍,而且免費。</div>
+    <ul>
+      <li><b>斟水時機學。</b>老闆啱啱入會議室 = 黃金斟水窗口,可以名正言順離開座位 4 分鐘。老闆坐喺出面 = 斟水限時 90 秒,超時會被目測。</li>
+      <li><b>情報等級表。</b>一級:邊個遞咗信。二級:邊個俾老闆閙。三級:邊個 team 又爆 deadline。四級:咖啡機邊個沖完唔補水(呢個其實係一級,睇公司)。</li>
+      <li><b>Receiver 定律。</b>聽,唔好講。茶水間最強嘅玩家永遠係 receiver 唔係 broadcaster —— 講嘅人遲早瀨嘢,聽嘅人永遠安全,仲要全知。</li>
+      <li><b>零食外交。</b>放假返嚟帶手信、放散水餅 —— 呢啲係戰略投資,人情回報率高過 MPF。中小企冇 HR 幫你建立形象,一盒蛋卷就係你嘅 PR department。</li>
+      <li><b>是非物理學。</b>你講過嘅任何是非,會經第三個人,以原句 + 你嘅語氣 + 加鹽加醋,喺 48 小時內返到主角耳邊。呢個係守恆定律,冇例外。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · 是非風險分類</div>
+      <div class="hint">茶水間有人同你講嘢 / 你想開口 —— 判斷呢句嘢屬於邊個風險區。</div>
+      <div class="g6-statement" id="g6-statement">撳「開始」測試你嘅是非雷達</div>
+      <div class="g6-btns" id="g6-btns">
+        <button class="btn" id="g6-start" type="button">開始</button>
+      </div>
+      <div class="fb-box" id="g6-fb"></div>
+      <div class="g1-score" id="g6-score"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>喺茶水間講是非,主角有 87% 機率就喺你後面,或者啱啱推門入嚟。<b>開口前請做 360 度環境掃描</b> —— 尤其係公司細到得一個茶水間嘅時候。</p></div>
+
+    <button class="done-btn" data-lesson="5" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 7 章 ============ -->
+  <section class="lesson" id="ch7">
+    <span class="lesson-tag">第 7 章</span>
+    <h2>OT 假象 — 遲走唔等於做嘢</h2>
+    <div class="position"><span class="pos-label">本章定位</span>呢章唔係教你日日陪坐 —— 係教你睇穿「遲走 = 勤力」呢個香港職場最大嘅集體幻覺,然後聰明咁應對。</div>
+    <ul>
+      <li><b>殘酷真相:遲走唔等於做嘢。</b>但喺某啲公司,遲走嘅<b>觀感</b>確實等於做嘢。你要做嘅,係管理觀感,唔係真係坐監。</li>
+      <li><b>走人時機學。</b>老闆一走你即彈起 = 太露骨;等 10 分鐘,執嘢,正常離開 = 專業。個 gap 係體面,唔係效率。</li>
+      <li><b>檯面佈景術(老千 move,自己諗吓好唔好用)。</b>熄 mon 但留返件外套喺凳背 + 一本攤開嘅 notebook =「我只係落咗樓下」。經典,但屬於高風險資產 —— 俾人發現一次,以後你真係坐喺度都冇人信。</li>
+      <li><b>見光原則。</b>真係 OT 咗但唔出聲 = 冇 OT 過。第二朝輕描淡寫一句「尋晚搞到八點幾先搞掂個 report」,觀感值抵得上三日加班。做咗嘢要俾人知,呢個唔係呃人,係 reporting。</li>
+      <li><b>真心提醒(呢度開始收貨)。</b>用「陪坐」換觀感係雙輸:你冇咗人生,老闆仲以為你效率低所以要坐咁耐。最高級嘅玩法係反轉個 game —— 高效率、準時走、走之前講明「今日啲嘢搞掂晒」。<b>將準時走由「懶」重新定義做「叻」。</b></li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · 收工時機模擬器</div>
+      <div class="hint">拉吓條時間軸,搵出「觀感分」同「人生損耗」嘅最佳平衡點。</div>
+      <div class="g7-time" id="g7-time">18:00</div>
+      <input type="range" id="g7-slider" min="0" max="16" step="1" value="0" style="width:100%;accent-color:var(--accent);margin-top:6px" aria-label="離開時間">
+      <div class="meter">
+        <div class="m-label"><span>觀感分(老闆眼中)</span><span id="g7-face-val">55</span></div>
+        <div class="m-track"><div class="m-fill face" id="g7-face" style="width:55%"></div></div>
+      </div>
+      <div class="meter">
+        <div class="m-label"><span>人生損耗</span><span id="g7-life-val">10</span></div>
+        <div class="m-track"><div class="m-fill life" id="g7-life" style="width:10%"></div></div>
+      </div>
+      <div class="g7-verdict" id="g7-verdict"></div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>收工時間遲走俾老闆見到,佢唔會覺得你勤力 —— 佢會覺得你「咦,你都仲喺度?咁啱,有單嘢…」。<b>喺中小企,可見嘅空閒等於自願加班。</b></p></div>
+
+    <button class="done-btn" data-lesson="6" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 8 章(新增) ============ -->
+  <section class="lesson" id="ch8">
+    <span class="lesson-tag">第 8 章</span>
+    <h2>與廢共存 — 豬隊友合作求生學</h2>
+    <div class="position"><span class="pos-label">本章定位</span>廢柴清零係冇可能嘅。成熟嘅打工仔唔追求換同事,追求與廢共存 —— 佢繼續廢,你唔使陪葬。</div>
+    <ul>
+      <li><b>廢柴分類學:三大品種,唔好用同一隻藥。</b>
+        <b>品種一「唔識做」(戰五渣型)</b>—— 問極都話「明白晒」,交貨嗰刻你先知佢乜都唔明。應對:<b>教</b> —— 拆細步驟、俾 sample、行少少 check 一次,呢款有得救。
+        <b>品種二「唔想做」(躺平型)</b>—— 能力 OK,但永遠「吓?我唔知要做喎」。佢唔係唔識,佢係賭你冇留底 —— 應對:唔好嬲,用 structure:白紙黑字 + 具體 deadline + cc。
+        <b>品種三「以為自己好掂」(自信爆棚型)</b>—— 最危險,主動搶嘢做然後炸。應對:引導佢喺低風險位「發揮才華」,重要嘢佢拍晒心口都唔好俾佢掂。
+        同一句「搞掂!」三個品種係三句唔同嘅嘢:戰五渣 =「我做咗啲嘢但唔知啱唔啱」;躺平型 =「你白紙黑字寫低嗰啲我做咗,一個字都冇多」;自信型 =「我仲自己加咗啲你冇叫我做嘅嘢,你聽日會知」。</li>
+      <li><b>白紙黑字保險學。</b>口頭應承嘅法律效力 ≈「得閒飲茶」。Meeting 完 <b>30 分鐘內</b> send recap:「頭先傾好:你負責 quotation,星期四交;我負責 slides。有咩隨時搵我 👍」—— 個 👍 好重要,佢令成個 message 由「錄口供」變返「好隊友」。<b>呢個唔係篤灰,係保險</b> —— 買火險唔代表你想間屋火燭。高階版:所有 file 行 email 或 shared folder,杜絕「哎我 AirDrop 咗俾你㗎喎」嘅羅生門。</li>
+      <li><b>任務切割工程學:砌 Lego,唔好搓湯圓。</b>分工要接口(interface)清晰 —— 佢嗰嚿甩咗,你嗰嚿仲企得穩。「大家一齊搞啦」嘅結局永遠係你一個人搓。「你負責 data 嗰 part」係災難寫法;「<b>星期三 6pm 前,將 30 個客嘅報價入晒落呢個 Excel 嘅 B、C、D column</b>」先叫 interface。佢嘅 deadline 一定要早過真 deadline 最少兩日 —— 呢兩日唔係 buffer,係<b>執屍時間</b>。</li>
+      <li><b>Escalate 藝術:講 risk 唔講人品。</b>篤灰同 escalate 嘅分別一句講晒:<b>篤灰講人(「佢好廢」),escalate 講事(「Project X 個 timeline 有 risk,需要支援」)</b>。三講三唔講:講 risk、講 impact、講建議方案;唔講人品、唔講歷史數簿、唔講「我一早就話啦」。最高境界係整個 progress tracker 俾老闆自己發現 —— 你由頭到尾冇講過一句人壞話,<b>紅燈自己會講嘢</b>。Timing 決定性質:救得返嘅時候講叫 risk management,爆咗先講叫卸膊 + 陪葬二合一。</li>
+      <li><b>唔好幫佢做晒:幫一次 = 認養一世。</b>你幫佢做一次,嗰個 task 以後改姓你。<b>教 vs 代嘅測試法:睇吓隻手指喺邊</b> —— 佢隻手喺 keyboard、你喺隔籬口述 = 教緊;你隻手喺 keyboard、佢喺隔籬「哦哦哦」= 你已經接咗貨。合法擋箭牌:「你試咗邊幾步?卡咗喺邊?」—— 一句過濾九成「其實想你幫佢做晒」嘅求助。真係火燒眼眉,幫得,但幫完白紙黑字補一句:「今次特事特辦,下次呢類你直接處理返啦 👍」</li>
+      <li><b>與廢共存嘅人性條款。</b>中小企十零人,茶水間得一個 —— 你同佢割席之後,lunch 同邊個食?<b>中小企根本冇位俾你割席。</b>專業上防足佢(白紙黑字、切割、buffer 一樣都唔少),人際上照講早晨、照讚佢個仔靚仔 —— 呢個唔叫虛偽,叫成年人。溫馨提示:<b>每個人喺某個範疇都係廢柴,包括你</b> —— 你笑佢 Excel 廢,可能佢睇你份 PowerPoint 都已經忍咗好耐。底線(同第 9 章一致):<b>防守做到十足,攻擊一下都唔好出</b> —— 唔恰佢、唔背後抹黑、唔搞小圈子杯葛。呢本書教你扮工,冇教你做衰人。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 實戰演習 · 廢柴品種鑑定所</div>
+      <div class="hint">同事一句 message,判斷佢係邊個品種 —— 用啱藥先醫得返。三題全部鑑定完,派「全品種應對速查卡」。</div>
+      <div class="g6-statement" id="gf-statement">撳「開始鑑定」進入鑑定所</div>
+      <div class="g6-btns" id="gf-btns">
+        <button class="btn" id="gf-start" type="button">開始鑑定</button>
+      </div>
+      <div class="fb-box" id="gf-fb"></div>
+      <div class="g1-score" id="gf-score"></div>
+      <div class="cert" id="gf-card">
+        <div class="c-title">全品種應對速查卡</div>
+        <div class="c-body" style="text-align:left">
+          🐣 <b>唔識做(戰五渣型)</b>→ 教:拆細步驟、俾 sample、行少少 check 一次<br>
+          🛋️ <b>唔想做(躺平型)</b>→ Structure:白紙黑字 + 具體 deadline + cc,唔好嬲<br>
+          🦚 <b>以為自己掂(自信爆棚型)</b>→ 低風險位俾佢發揮,重要嘢唔好俾佢掂<br>
+          通用三寶:recap message 👍 · Lego 式切割 · 佢嘅 deadline 早真 deadline 兩日
+        </div>
+        <div class="c-stamp">鑑定所 · 認證</div>
+        <div class="c-fine">記住:每個人喺某個範疇都係廢柴,包括你。</div>
+      </div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示</span>
+    <p>唔好開「吐苦水小 group」。中小企秘密 group 嘅平均壽命係三個月,最常見死因:有人手快快 add 咗正主入嚟。嗰日你會發現兩個真理 —— <b>screenshot 係冇得 recall 嘅</b>,而全公司最大鑊嗰個,已經唔係佢,係你。</p></div>
+
+    <button class="done-btn" data-lesson="7" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 第 9 章 ============ -->
+  <section class="lesson" id="ch9">
+    <span class="lesson-tag">第 9 章 · 最重要</span>
+    <h2>唔好玩出火 — 本手冊最重要嘅一章</h2>
+    <div class="position"><span class="pos-label">本章定位</span>前面八章係喜劇,呢章係片尾字幕 —— 真話時間。呢章唔搞笑(好啦,搞少啲)。</div>
+    <ul>
+      <li><b>底線一:真嘢照交。</b>扮工係包裝紙,入面一定要有貨。你交唔到貨嗰日,幾完美嘅 Excel 反光角度、幾流暢嘅 Alt-Tab,全部救唔到你。<b>技巧係買時間,唔係代替做嘢。</b></li>
+      <li><b>底線二:唔好累隊友孭鑊。</b>你鬆一鬆,留低個窿,係同事填 —— 你賺嗰啖氣,人哋硬食成個鑊。中小企就係咁細,邊個補鑊、邊個放飛機,全公司三日內知晒,而且記一世。自己嘅鑊自己孭,搞唔掂就早講,<b>呢條線分開「搞笑」同「人渣」。</b></li>
+      <li><b>底線三:扮工係調劑,唔係詐騙。</b>攞返啖氣、保護自己嘅 pace、唔俾個荒謬嘅職場劇場玩死 —— OK,呢個係生存。但呃鐘、呃 OT 錢、報假單 —— 嗰啲唔係扮工,係違紀,搞唔好係違法。本手冊同嗰啲嘢劃清界線。</li>
+      <li><b>底線四:呢啲技能嘅正確用法,係「睇穿」。</b>學識扮工,你先識分邊啲係 show(觀感、劇場、buzzword)、邊啲係真功夫(交到貨、學到嘢、幫到隊友)。然後你就可以喺 show 嘅部分慳力,將啲力放晒落真功夫度。</li>
+      <li><b>收尾。</b>真正嘅生存之道,唔係扮到似做嘢 —— 係做嘢做到唔使扮。<b>願你早日唔再需要呢本手冊。</b></li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 期末儀式 · 良心自測</div>
+      <div class="hint">答啱三條,先有資格攞「認可扮工員」證書。答得誠實啲 —— 呢三條冇 buzzword 可以匿。</div>
+      <div class="g8-q"><span>1. 我而家有冇嘢 delay 咗會累到同事?</span>
+        <span class="g8-btns"><button class="btn ghost" data-g8="0" data-ans="yes" type="button">有</button><button class="btn ghost" data-g8="0" data-ans="no" type="button">冇</button></span></div>
+      <div class="g8-q"><span>2. 我有冇一單嘢係遲早爆,但我扮睇唔到?</span>
+        <span class="g8-btns"><button class="btn ghost" data-g8="1" data-ans="yes" type="button">有</button><button class="btn ghost" data-g8="1" data-ans="no" type="button">冇</button></span></div>
+      <div class="g8-q"><span>3. 我今個星期有冇交過至少一件真貨?</span>
+        <span class="g8-btns"><button class="btn ghost" data-g8="2" data-ans="yes" type="button">有</button><button class="btn ghost" data-g8="2" data-ans="no" type="button">冇</button></span></div>
+      <div class="fb-box" id="g8-fb"></div>
+      <div class="cert" id="cert">
+        <div class="c-title">認可扮工員證書</div>
+        <div class="c-body">茲證明持有人已完成《中小企扮工生存手冊》全部修煉,<br>並通過良心自測 —— 手上有貨、冇累隊友、真嘢照交。</div>
+        <div class="c-stamp">人力資源部(唔存在)· 核准</div>
+        <div class="c-fine">簽發日期:<span id="cert-date"></span> · 本證書喺你放飛機嗰刻自動作廢 · 不設補領</div>
+      </div>
+    </div>
+
+    <div class="danger"><span class="d-label">⚠️ 高危警示(認真版)</span>
+    <p>本手冊所有技巧,喺你交唔到貨嗰一日,會全部變成呈堂證供。</p></div>
+
+    <button class="done-btn" data-lesson="8" type="button">✓ 修煉完呢章</button>
+  </section>
+
+  <!-- ============ 測驗 ============ -->
+  <section class="quiz-head" id="quiz">
+    <span class="lesson-tag">期末評核 · 扮工生存等級</span>
+    <h2>生存評核:10 條情境題</h2>
+    <div class="quiz-rules">
+      <ul>
+        <li>每題 <b>10 分</b>,滿分 <b>100 分</b>。今次冇合格線 —— 出嘅係<b>生存等級稱號</b>。</li>
+        <li>全部答完撳「提交評核」,即刻知你係「試用期陣亡」定「扮工宗師」。</li>
+        <li>評核結果純屬娛樂,唔會影響你嘅真・KPI(希望啦)。</li>
+      </ul>
+    </div>
+    <div class="tablebox">
+      <table>
+        <tr><th>分數</th><th>稱號</th><th>評語</th></tr>
+        <tr><td>0–30</td><td>試用期陣亡</td><td>你連扮工都要人教 —— 建議認真做嘢算啦,對你嚟講可能仲容易啲。</td></tr>
+        <tr><td>40–50</td><td>掙扎求存實習生</td><td>有 survival 意識,但破綻多過 output。老闆對你嘅評價係「佢好似好忙,但唔知忙緊乜」。</td></tr>
+        <tr><td>60–70</td><td>熟練扮工技工</td><td>Alt-Tab 有肌肉記憶,buzzword 出口成章。差在你仲戒唔甩喺茶水間做 broadcaster。</td></tr>
+        <tr><td>80–90</td><td>資深扮工顧問</td><td>你已經有資格開 workshop 教人,收費嗰隻。老闆覺得你不可或缺,雖然佢講唔出你做過乜。</td></tr>
+        <tr><td>100</td><td>扮工宗師(建議出書)</td><td>連呢個測驗你都咁認真做 —— 你根本就係個做嘢嘅人。扮咩工啫,返去交貨啦。</td></tr>
+      </table>
+    </div>
+    <div id="quiz-body"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="submit-btn" type="button">提交評核</button>
+      <button class="btn ghost" id="retry-btn" type="button" style="display:none">再考一次</button>
+    </div>
+    <p class="unanswered-note" id="unanswered-note"></p>
+    <div class="result" id="result">
+      <div class="score" id="score-num"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <div><span class="tier-title" id="tier-title"></span></div>
+      <p class="result-note" id="result-note"></p>
+    </div>
+  </section>
+
+  <footer>內部測試版 1.0 (2026-07-09) · 純屬娛樂,唔構成任何 HR / 法律建議 · 課程內容:training-designer(培訓設計師)</footer>
+</div>
+
+<script>
+"use strict";
+// =============================================
+// 進度 + 職級(localStorage,唔支援就唔記)
+// =============================================
+const LESSONS_KEY = "bg101.lessons", BEST_KEY = "bg101.best", REACT_KEY = "bg101.react";
+function sGet(k, fb) { try { const r = localStorage.getItem(k); return r === null ? fb : JSON.parse(r); } catch (e) { return fb; } }
+function sSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+let lessonsDone = sGet(LESSONS_KEY, [false,false,false,false,false,false,false,false,false]);
+if (!Array.isArray(lessonsDone) || lessonsDone.length !== 9) lessonsDone = [false,false,false,false,false,false,false,false,false];
+
+function rankName(n) {
+  if (n >= 9) return "扮工宗師候選人";
+  if (n >= 7) return "資深老油條";
+  if (n >= 4) return "正式員工";
+  if (n >= 2) return "試用期員工";
+  return "實習生";
+}
+function renderProgress() {
+  document.getElementById("segments").innerHTML = lessonsDone.map(d => `<div class="seg${d ? " done" : ""}"></div>`).join("");
+  const n = lessonsDone.filter(Boolean).length;
+  document.getElementById("prog-count").textContent = n;
+  document.getElementById("rank-label").textContent = "職級:" + rankName(n);
+  document.querySelectorAll(".done-btn").forEach(btn => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    btn.classList.toggle("done", lessonsDone[i]);
+    btn.textContent = lessonsDone[i] ? "✓ 已修煉(撳一下取消)" : "✓ 修煉完呢章";
+  });
+}
+document.querySelectorAll(".done-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    lessonsDone[i] = !lessonsDone[i];
+    sSet(LESSONS_KEY, lessonsDone);
+    renderProgress();
+  });
+});
+
+// =============================================
+// 第 1 章:安全 vs 即死
+// =============================================
+const g1Items = [
+  { emoji: "📊", name: "全屏 pivot table Excel", safe: true,  fb: "✓ 照開。扮工聖物,記住配返個皺眉。" },
+  { emoji: "▶️", name: "YouTube 縮到 mon 角落", safe: false, fb: "✗ 即死。縮極都係 YouTube,反光面睇得一清二楚。" },
+  { emoji: "✈️", name: "機票格價網", safe: false, fb: "✗ 即死。老闆會即場幫你 plan 埋長假 —— 無薪嗰隻。" },
+  { emoji: "📝", name: "半完成嘅 report(Word)", safe: true,  fb: "✓ 照開。完美 decoy,仲自帶進度感。" },
+  { emoji: "📁", name: "公司 shared folder", safe: true,  fb: "✓ 照開。冇人知你搵緊咩,睇落好忙。" },
+  { emoji: "🔍", name: "Facebook zoom 到 200%", safe: false, fb: "✗ 即死。zoom 大咗只係方便老闆隔遠睇。" },
+  { emoji: "🛒", name: "網購 checkout 頁面", safe: false, fb: "✗ 即死。「呢啲係公司要買嘅嘢」—— 冇人信。" },
+  { emoji: "💰", name: "公司上年份 budget Excel", safe: true,  fb: "✓ 觀感上安全…至於你應唔應該開到呢個 file,係另一個問題。" }
+];
+let g1Index = -1, g1Score = 0;
+const g1Fb = document.getElementById("g1-fb");
+function g1Show() {
+  const item = g1Items[g1Index];
+  document.getElementById("g1-emoji").textContent = item.emoji;
+  document.getElementById("g1-name").textContent = item.name;
+  document.getElementById("g1-btns").innerHTML = `
+    <button class="btn" data-g1="safe" type="button">😎 照開</button>
+    <button class="btn danger-btn" data-g1="kill" type="button">🚨 即刻切走</button>`;
+  g1Fb.className = "fb-box";
+  bindG1();
+}
+function bindG1() {
+  document.querySelectorAll("[data-g1]").forEach(b => b.addEventListener("click", () => {
+    const item = g1Items[g1Index];
+    const right = (b.dataset.g1 === "safe") === item.safe;
+    if (right) g1Score++;
+    g1Fb.textContent = (right ? "答啱!" : "答錯!") + " " + item.fb;
+    g1Fb.className = "fb-box show " + (right ? "right" : "wrong");
+    document.getElementById("g1-score").textContent = `進度 ${g1Index + 1}/${g1Items.length} · 啱 ${g1Score}`;
+    if (g1Index < g1Items.length - 1) {
+      document.getElementById("g1-btns").innerHTML = `<button class="btn ghost" id="g1-next" type="button">下一個畫面 →</button>`;
+      document.getElementById("g1-next").addEventListener("click", () => { g1Index++; g1Show(); });
+    } else {
+      const msg = g1Score >= 7 ? "眼利!你嘅 mon 好安全。" : g1Score >= 5 ? "合格,但有幾次已經俾人影咗相。" : "你已經喺老闆嘅觀察名單上面。";
+      document.getElementById("g1-btns").innerHTML = `<button class="btn" id="g1-restart" type="button">再玩一次(${g1Score}/${g1Items.length} · ${msg})</button>`;
+      document.getElementById("g1-restart").addEventListener("click", g1Start);
+    }
+  }));
+}
+function g1Start() {
+  g1Index = 0; g1Score = 0;
+  document.getElementById("g1-score").textContent = "";
+  g1Show();
+}
+document.getElementById("g1-start").addEventListener("click", g1Start);
+
+// =============================================
+// 第 2 章:Buzzword Bingo(4×4)
+// =============================================
+const bingoWords = ["sync","alignment","bandwidth","circle back","take it offline","low-hanging fruit","我 follow up 吓","long run","stakeholder","ownership","deep dive","touch base","win-win","leverage","KPI","ASAP"];
+const bingoLines = [
+  { text: "咁呢個 project 我哋要 <b>sync</b> 一 sync,搵日 <b>touch base</b> 啦。", targets: ["sync","touch base"] },
+  { text: "呢個唔係一時三刻搞掂,<b>long run</b> 嚟講要有個 roadmap。", targets: ["long run"] },
+  { text: "資源有限,大家 <b>bandwidth</b> 得咁多,squeeze 唔到㗎喇。", targets: ["bandwidth"] },
+  { text: "呢個 point 好,不過我哋 <b>take it offline</b> 傾。", targets: ["take it offline"] },
+  { text: "先執啲 <b>low-hanging fruit</b>,攞啲 quick win 先。", targets: ["low-hanging fruit"] },
+  { text: "邊個 own 呢件事?要有 <b>ownership</b> 㗎嘛。", targets: ["ownership"] },
+  { text: "我哋要同 <b>stakeholder</b> align 埋,要有 <b>alignment</b> 先唔會白做。", targets: ["stakeholder","alignment"] },
+  { text: "呢度啲數要 <b>deep dive</b> 睇清楚。", targets: ["deep dive"] },
+  { text: "咁樣先係 <b>win-win</b> 吖嘛。", targets: ["win-win"] },
+  { text: "<b>leverage</b> 返我哋現有嘅 resources 啦。", targets: ["leverage"] },
+  { text: "今季 <b>KPI</b> 就係咁,<b>ASAP</b> 要有個 plan 出嚟。", targets: ["KPI","ASAP"] },
+  { text: "好,呢樣<b>我 follow up 吓</b>,遲啲 <b>circle back</b> 話返俾大家知。", targets: ["我 follow up 吓","circle back"] }
+];
+let bingoLineIdx = -1, bingoWon = false;
+const marked = new Set();
+function renderBingoGrid() {
+  document.getElementById("bingo-grid").innerHTML = bingoWords.map((w, i) =>
+    `<button class="bcell" data-word="${w}" data-i="${i}" type="button">${w}</button>`).join("");
+  document.querySelectorAll(".bcell").forEach(cell => cell.addEventListener("click", () => {
+    if (bingoWon || cell.classList.contains("marked")) return;
+    if (bingoLineIdx < 0) { setBingoMsg("撳「▶ 老闆發言」開會先!"); return; }
+    const currentTargets = bingoLines[bingoLineIdx].targets;
+    if (currentTargets.includes(cell.dataset.word)) {
+      cell.classList.add("marked");
+      marked.add(parseInt(cell.dataset.i, 10));
+      setBingoMsg("✓ 冇聽錯,mark 咗!");
+      checkBingo();
+    } else {
+      setBingoMsg("✗ 佢呢句冇講到「" + cell.dataset.word + "」—— 開會唔好恍神。");
+    }
+  }));
+}
+function setBingoMsg(t, win) {
+  const el = document.getElementById("bingo-msg");
+  el.textContent = t;
+  el.className = "bingo-msg" + (win ? " win" : "");
+}
+function checkBingo() {
+  const linesToCheck = [];
+  for (let r = 0; r < 4; r++) linesToCheck.push([0,1,2,3].map(c => r*4+c));
+  for (let c = 0; c < 4; c++) linesToCheck.push([0,1,2,3].map(r => r*4+c));
+  linesToCheck.push([0,5,10,15], [3,6,9,12]);
+  if (linesToCheck.some(line => line.every(i => marked.has(i)))) {
+    bingoWon = true;
+    setBingoMsg("🎉 BINGO!你已經攞到離場資格 —— 扮去洗手間,唔好返轉頭。", true);
+  }
+}
+document.getElementById("bingo-next").addEventListener("click", () => {
+  if (bingoWon) { setBingoMsg("🎉 已經 BINGO 咗,重新開會先玩得第二鋪。", true); return; }
+  bingoLineIdx = (bingoLineIdx + 1) % bingoLines.length;
+  document.getElementById("bingo-line").innerHTML = "🗣️ " + bingoLines[bingoLineIdx].text;
+  setBingoMsg("");
+});
+document.getElementById("bingo-reset").addEventListener("click", () => {
+  bingoLineIdx = -1; bingoWon = false; marked.clear();
+  document.getElementById("bingo-line").textContent = "(等緊開會……撳「▶ 老闆發言」開始)";
+  setBingoMsg("");
+  renderBingoGrid();
+});
+renderBingoGrid();
+
+// =============================================
+// 第 3 章:Corporate 語翻譯機
+// =============================================
+const phrases = [
+  { front: "“Noted with thanks.”", back: "「我睇咗。唔會做。」" },
+  { front: "“Let me check and get back to you.”", back: "「check 係真嘅,get back 係祝願。」" },
+  { front: "“As per my last email…”", back: "文明版:「你到底識唔識字?」" },
+  { front: "“Just to clarify…”", back: "「你頭先講嗰啲,全部錯晒。」" },
+  { front: "“Happy to discuss!”", back: "「唔好嚟搵我討論。」" },
+  { front: "“Let's park this for now.”", back: "「呢個 idea 已經死咗。禮成。」" },
+  { front: "「我約緊各方時間」", back: "「各方係邊方?我都唔知。」" },
+  { front: "“Noted, will revert by EOD.”", back: "「你單嘢我未搞,唔好煩我住。」" }
+];
+document.getElementById("translate-cards").innerHTML = phrases.map((p, i) => `
+  <button class="pcard" type="button">
+    <span class="front"><span class="front-name">${p.front}</span><span class="tap-hint">👆 撳一下睇真正意思</span></span>
+    <span class="back">${p.back}</span>
+  </button>`).join("");
+document.querySelectorAll("#translate-cards .pcard").forEach(c => c.addEventListener("click", () => c.classList.toggle("flipped")));
+
+// =============================================
+// 第 4 章:老闆迫近反應測試
+// =============================================
+const g4 = { state: "idle", timer: null, failTimer: null, t0: 0 };
+const g4Btn = document.getElementById("g4-btn");
+const g4Stage = document.getElementById("g4-stage");
+const g4Scene = document.getElementById("g4-scene");
+const g4Text = document.getElementById("g4-text");
+const g4Fb = document.getElementById("g4-fb");
+const heaScenes = ["📱 睇緊 IG story","🍜 諗緊 lunch 食乜","🎬 睇緊戲 trailer","🛍️ 格緊價","🎮 睇緊遊戲攻略"];
+function g4Best() {
+  const b = sGet(REACT_KEY, null);
+  document.getElementById("g4-best").textContent = b === null ? "" : `你嘅最快紀錄:${b}ms`;
+}
+function g4Reset(msg) {
+  clearTimeout(g4.timer); clearTimeout(g4.failTimer);
+  g4.state = "idle";
+  g4Stage.classList.remove("alert");
+  g4Scene.textContent = "☕";
+  g4Text.textContent = msg || "撳「開始返工」進入 hea 緊狀態";
+  g4Btn.textContent = "開始返工";
+  g4Btn.classList.remove("danger-btn");
+}
+function g4Result(ms) {
+  let msg;
+  if (ms < 250) msg = `⚡ ${ms}ms —— 反應之神。你唔做電競真係浪費。`;
+  else if (ms < 450) msg = `😎 ${ms}ms —— 職業級。老闆行到埋嚟,只見到一個皺住眉嘅 Excel。`;
+  else if (ms < 700) msg = `😅 ${ms}ms —— 合格。不過老闆眉頭皺咗一皺,佢好似見到啲嘢。`;
+  else msg = `💀 ${ms}ms —— 佢見到少少喇。快啲講:「啱啱 search 緊個資料」。`;
+  g4Fb.textContent = msg;
+  g4Fb.className = "fb-box show " + (ms < 700 ? "right" : "wrong");
+  const b = sGet(REACT_KEY, null);
+  if (b === null || ms < b) sSet(REACT_KEY, ms);
+  g4Best();
+}
+g4Btn.addEventListener("click", () => {
+  if (g4.state === "idle") {
+    g4.state = "waiting";
+    g4Fb.className = "fb-box";
+    g4Scene.textContent = heaScenes[Math.floor(Math.random() * heaScenes.length)].split(" ")[0];
+    g4Text.textContent = heaScenes[Math.floor(Math.random() * heaScenes.length)] + " …(專心 hea,聽到腳步聲即撳)";
+    g4Btn.textContent = "等緊…(而家唔好撳!)";
+    g4.timer = setTimeout(() => {
+      g4.state = "alert";
+      g4.t0 = performance.now();
+      g4Stage.classList.add("alert");
+      g4Scene.textContent = "👞👞";
+      g4Text.textContent = "🚨 腳步聲!!!";
+      g4Btn.textContent = "ALT-TAB!!!";
+      g4Btn.classList.add("danger-btn");
+      g4.failTimer = setTimeout(() => {
+        if (g4.state !== "alert") return;
+        g4.state = "idle";
+        g4Fb.textContent = "👔 太遲。老闆已經喺你後面企咗一陣:「幾得閒喎?咁啱,有單嘢……」";
+        g4Fb.className = "fb-box show wrong";
+        g4Reset("Game over —— 你而家有三單新嘢喺手。再嚟?");
+      }, 1200);
+    }, 1500 + Math.random() * 3500);
+  } else if (g4.state === "waiting") {
+    clearTimeout(g4.timer);
+    g4.state = "idle";
+    g4Fb.textContent = "🤦 你切咗 window,但根本冇人行過嚟 —— 隔籬同事而家覺得你有啲問題。";
+    g4Fb.className = "fb-box show wrong";
+    g4Reset("穿咗一次崩。冷靜返先再嚟。");
+  } else if (g4.state === "alert") {
+    clearTimeout(g4.failTimer);
+    const ms = Math.round(performance.now() - g4.t0);
+    g4.state = "idle";
+    g4Result(ms);
+    g4Reset("再測一次?");
+  }
+});
+g4Best();
+
+// =============================================
+// 第 5 章:Buffer 計算機
+// =============================================
+const g5Reasons = [
+  "想預埋 checking 同 QA 嘅時間",
+  "等對方 confirm 要 lead time",
+  "中間夾住兩個會,實際做嘢時間有限",
+  "想留返少少 buffer 應付突發嘢",
+  "呢樣嘢要同另一個 project 對數先入得"
+];
+function fmtHours(h) {
+  if (h < 8) return h + " 粒鐘";
+  const d = h / 8;
+  return (Number.isInteger(d) ? d : d.toFixed(1)) + " 個工作天";
+}
+function g5Update() {
+  const actual = parseInt(document.getElementById("g5-actual").value, 10);
+  const mult = parseFloat(document.getElementById("g5-mult").value);
+  document.getElementById("g5-actual-val").textContent = fmtHours(actual);
+  document.getElementById("g5-mult-val").textContent = "×" + mult.toFixed(2).replace(/0+$/, "").replace(/\.$/, ".0");
+  const quoted = Math.ceil(actual * mult);
+  const reason = g5Reasons[Math.floor(Math.random() * g5Reasons.length)];
+  let verdict;
+  if (mult < 1.2) verdict = "🩸 <b>自殘式報價。</b>你會由頭到尾處於「遲交」狀態,永遠喺度追自己條數。";
+  else if (mult < 1.75) verdict = "😬 <b>進取,冇乜保險。</b>一有突發嘢就爆 —— 而中小企日日都有突發嘢。";
+  else if (mult <= 2.5) verdict = "✅ <b>教科書式 buffer。</b>早交你係英雄,出事你仲喺 buffer 入面。";
+  else if (mult <= 3) verdict = "🤨 <b>老闆會皺眉。</b>個數開始離地,要配一個更加專業嘅理由。";
+  else verdict = "💥 <b>會被「傳說時間」攻擊。</b>「呢啲嘢我後生嗰陣半日搞掂」—— 你冇得反駁。";
+  document.getElementById("g5-out").innerHTML =
+    `建議講法:「大約 <b>${fmtHours(quoted)}</b>,因為${reason}。」<br>風險評級:${verdict}`;
+}
+document.getElementById("g5-actual").addEventListener("input", g5Update);
+document.getElementById("g5-mult").addEventListener("input", g5Update);
+g5Update();
+
+// =============================================
+// 第 6 章:是非風險分類
+// =============================================
+const g6Items = [
+  { text: "「邊度 lunch 好食?」", zone: "safe", fb: "安全區。全香港最安全嘅話題,仲可以攞到情報(邊度好食)。" },
+  { text: "「聽日交嗰份嘢,你嗰 part 得未?」", zone: "safe", fb: "安全區。正經工作嘢,講幾大聲都得。" },
+  { text: "「老闆今日黑面呀,大家小心。」", zone: "grey", fb: "灰色地帶。係有用情報,但「黑面」呢個判斷經第三個人口中會變咗「你話老闆黑口黑面乞人憎」。" },
+  { text: "「聽講 XX 遞咗信喎。」", zone: "grey", fb: "灰色地帶。呢啲聽就得 —— 由你把口再傳出去,你就由 receiver 變咗 broadcaster。" },
+  { text: "「我覺得 XX 人工高過佢貢獻。」", zone: "suicide", fb: "自殺行為。48 小時內原句 + 你嘅語氣 + 加鹽加醋,返到主角耳邊。守恆定律,冇例外。" },
+  { text: "「老闆娘上次搞嗰單嘢,搞成點呀?」", zone: "suicide", fb: "自殺行為。涉及老細家事必死 —— 就算間茶水間得你一個,都唔好講。" }
+];
+let g6Index = -1, g6Score = 0;
+const g6Fb = document.getElementById("g6-fb");
+function g6Show() {
+  document.getElementById("g6-statement").textContent = g6Items[g6Index].text;
+  document.getElementById("g6-btns").innerHTML = `
+    <button class="btn" data-g6="safe" type="button" style="background:var(--pass);border-color:var(--pass);color:#fff">🟢 安全區</button>
+    <button class="btn ghost" data-g6="grey" type="button">🟡 灰色地帶</button>
+    <button class="btn danger-btn" data-g6="suicide" type="button">🔴 自殺行為</button>`;
+  g6Fb.className = "fb-box";
+  document.querySelectorAll("[data-g6]").forEach(b => b.addEventListener("click", () => {
+    const item = g6Items[g6Index];
+    const right = b.dataset.g6 === item.zone;
+    if (right) g6Score++;
+    g6Fb.textContent = (right ? "✓ 判斷正確。" : "✗ 諗真啲。") + item.fb;
+    g6Fb.className = "fb-box show " + (right ? "right" : "wrong");
+    document.getElementById("g6-score").textContent = `進度 ${g6Index + 1}/${g6Items.length} · 啱 ${g6Score}`;
+    if (g6Index < g6Items.length - 1) {
+      document.getElementById("g6-btns").innerHTML = `<button class="btn ghost" id="g6-next" type="button">下一句 →</button>`;
+      document.getElementById("g6-next").addEventListener("click", () => { g6Index++; g6Show(); });
+    } else {
+      const msg = g6Score >= 5 ? "你嘅是非雷達好精準,適合做 receiver。" : g6Score >= 3 ? "半桶水 —— 建議喺茶水間淨係微笑點頭。" : "你就係嗰 87% 入面企喺主角後面嗰個。";
+      document.getElementById("g6-btns").innerHTML = `<button class="btn" id="g6-restart" type="button">再玩一次(${g6Score}/${g6Items.length} · ${msg})</button>`;
+      document.getElementById("g6-restart").addEventListener("click", g6Start);
+    }
+  }));
+}
+function g6Start() {
+  g6Index = 0; g6Score = 0;
+  document.getElementById("g6-score").textContent = "";
+  g6Show();
+}
+document.getElementById("g6-start").addEventListener("click", g6Start);
+
+// =============================================
+// 第 7 章:收工時機模擬器(18:00–22:00,每格 15 分鐘)
+// =============================================
+function g7Update() {
+  const step = parseInt(document.getElementById("g7-slider").value, 10);
+  const mins = step * 15;
+  const hh = 18 + Math.floor(mins / 60), mm = mins % 60;
+  document.getElementById("g7-time").textContent = `${hh}:${String(mm).padStart(2, "0")}`;
+  // 觀感分:18:00=55,升到 19:30 見頂 88,之後每 15 分鐘只加 0.5(邊際效益接近零)
+  const face = Math.round(step <= 6 ? 55 + step * 5.5 : 88 + (step - 6) * 0.5);
+  // 人生損耗:直線上升,20:00 後加速
+  const life = Math.round(step <= 8 ? 10 + step * 8 : 74 + (step - 8) * 3.2);
+  document.getElementById("g7-face").style.width = Math.min(face, 100) + "%";
+  document.getElementById("g7-life").style.width = Math.min(life, 100) + "%";
+  document.getElementById("g7-face-val").textContent = Math.min(face, 100);
+  document.getElementById("g7-life-val").textContent = Math.min(life, 100);
+  let v;
+  if (step === 0) v = "✅ 準時走 —— 記住走之前講句「今日啲嘢搞掂晒」,觀感即刻 +30,呢個係第 7 章嘅精髓。";
+  else if (step <= 6) v = "😌 體面區。夠晒專業,仲趕得切落街食飯。18:30–19:30 係觀感嘅甜蜜點。";
+  else if (step <= 12) v = "🤔 邊際效益區。觀感升幅已經接近零,你用緊人生嚟買一個幻覺。";
+  else v = "💀 危險區。老闆唔會覺得你勤力 —— 佢會覺得「咦,你都仲喺度?咁啱,有單嘢……」";
+  document.getElementById("g7-verdict").textContent = v;
+}
+document.getElementById("g7-slider").addEventListener("input", g7Update);
+g7Update();
+
+// =============================================
+// 第 8 章:廢柴品種鑑定所
+// =============================================
+const gfItems = [
+  { text: "你 send 咗三大段任務解釋俾佢,十秒之內收到覆:「明白晒明白晒!」三日後交返嚟,同你講嗰啲完全係兩回事。",
+    species: "noob", fb: "戰五渣型(唔識做)。「明白晒」係佢嘅口頭禪,唔係 status update。應對 SOP:拆細步驟 → 俾 sample → 行少少 check 一次。呢款有得救,教一次係投資。" },
+  { text: "個 deadline 尋日過咗,你去問,佢好淡定:「吓?我唔知要做喎,你冇話過 deadline 㗎喎。」(你上星期喺 meeting 講過,但冇留底。)",
+    species: "flat", fb: "躺平型(唔想做)。佢唔係唔識,佢係賭你冇留底 —— 而佢賭贏咗。應對 SOP:白紙黑字 recap + 具體 deadline + cc,同佢講道理等於同隻貓解釋 deadline。" },
+  { text: "Kick-off meeting 你未開口,佢已經拍晒心口:「呢啲我熟到爛!交俾我,我仲會加啲新 idea 落去!」你諗返起佢上次「加新 idea」嘅後果,背脊一涼。",
+    species: "peacock", fb: "自信爆棚型(以為自己好掂)—— 最危險品種,Dunning-Kruger 行走教材。應對 SOP:引導佢喺低風險位「發揮才華」,重要嘢佢拍幾多下心口都唔好俾佢掂。" }
+];
+let gfIndex = -1, gfScore = 0;
+const gfFb = document.getElementById("gf-fb");
+function gfShow() {
+  document.getElementById("gf-statement").textContent = gfItems[gfIndex].text;
+  document.getElementById("gf-btns").innerHTML = `
+    <button class="btn ghost" data-gf="noob" type="button">🐣 唔識做</button>
+    <button class="btn ghost" data-gf="flat" type="button">🛋️ 唔想做</button>
+    <button class="btn ghost" data-gf="peacock" type="button">🦚 以為自己掂</button>`;
+  gfFb.className = "fb-box";
+  document.querySelectorAll("[data-gf]").forEach(b => b.addEventListener("click", () => {
+    const item = gfItems[gfIndex];
+    const right = b.dataset.gf === item.species;
+    if (right) gfScore++;
+    gfFb.textContent = (right ? "✓ 鑑定正確。" : "✗ 你用錯藥喇。") + item.fb;
+    gfFb.className = "fb-box show " + (right ? "right" : "wrong");
+    document.getElementById("gf-score").textContent = `鑑定進度 ${gfIndex + 1}/${gfItems.length} · 啱 ${gfScore}`;
+    if (gfIndex < gfItems.length - 1) {
+      document.getElementById("gf-btns").innerHTML = `<button class="btn ghost" id="gf-next" type="button">下一位同事 →</button>`;
+      document.getElementById("gf-next").addEventListener("click", () => { gfIndex++; gfShow(); });
+    } else {
+      const msg = gfScore === 3 ? "全中!你對廢柴嘅理解已達臨床水平。" : "鑑定完成 —— 速查卡都係嗰句:用啱藥先醫得返。";
+      document.getElementById("gf-btns").innerHTML = `<button class="btn" id="gf-restart" type="button">再鑑定一輪(${gfScore}/${gfItems.length} · ${msg})</button>`;
+      document.getElementById("gf-restart").addEventListener("click", gfStart);
+      document.getElementById("gf-card").classList.add("show");
+    }
+  }));
+}
+function gfStart() {
+  gfIndex = 0; gfScore = 0;
+  document.getElementById("gf-score").textContent = "";
+  gfShow();
+}
+document.getElementById("gf-start").addEventListener("click", gfStart);
+
+// =============================================
+// 第 9 章:良心自測 + 證書
+// =============================================
+const g8Answers = [null, null, null];
+const g8Correct = ["no", "no", "yes"]; // 冇累人 / 冇爆煲隱藏 / 有交真貨
+document.querySelectorAll("[data-g8]").forEach(b => b.addEventListener("click", () => {
+  const q = parseInt(b.dataset.g8, 10);
+  g8Answers[q] = b.dataset.ans;
+  document.querySelectorAll(`[data-g8="${q}"]`).forEach(x => x.classList.remove("picked"));
+  b.classList.add("picked");
+  if (g8Answers.every(a => a !== null)) {
+    const fb = document.getElementById("g8-fb");
+    const pass = g8Answers.every((a, i) => a === g8Correct[i]);
+    if (pass) {
+      fb.className = "fb-box";
+      document.getElementById("cert-date").textContent = new Date().toLocaleDateString("zh-HK");
+      document.getElementById("cert").classList.add("show");
+    } else {
+      document.getElementById("cert").classList.remove("show");
+      fb.textContent = "📋 證書申請被拒。你有嘢未搞掂 / 有鑊未拆 —— 去交返件真貨先,呢度唔會走㗎。";
+      fb.className = "fb-box show wrong";
+    }
+  }
+}));
+
+// =============================================
+// 期末評核(10 題,評級制)
+// =============================================
+const quizQuestions = [
+  { lesson: "第 1 章", question: "星期三下晝三點,你眼瞓到極點,以下邊個係最專業嘅「扮工待機畫面」?",
+    options: ["YouTube 縮到好細匿喺 mon 角落","一個夠複雜嘅 Excel,間唔中 scroll 吓","熄 mon 瞇一瞇","Facebook zoom 到 200%,話自己睇緊 marketing reference"],
+    correct: 1, explain: "Excel 係扮工界嘅萬能保護色,冇人敢質疑一個對住 pivot table 皺眉嘅人。" },
+  { lesson: "第 2 章", question: "開會俾老闆點名問一個你完全冇跟開嘅 project,你應該?",
+    options: ["坦白:「唔好意思,呢 part 我完全唔知」","「呢個要同相關 stakeholder align 埋先,我 follow up 吓再 update 大家」","亂噏一個進度數字","扮收唔到訊號(但你係 in-person 開會)"],
+    correct: 1, explain: "一句包齊 buzzword + 期票 + 零實質內容,係開會生存嘅完全體。但記住:張期票係要還嘅。" },
+  { lesson: "第 3 章", question: "你想令老闆知道你有做嘢,最有效嘅操作係?",
+    options: ["逐個同事私下講你做咗啲乜","完成任務後 reply email 交代進度,cc 老闆","Reply All 通知全公司","打印出嚟放老闆檯面"],
+    correct: 1, explain: "冇 cc 老闆嘅工作,喺觀感上等於冇發生過。中小企量子力學:唔被觀察嘅嘢,唔存在。" },
+  { lesson: "第 8 章", question: "公司接咗單大嘢,老闆指定你同阿力一組。阿力上次交 proposal 遲咗三日,仲串錯客個名。今次 kick-off meeting 佢拍晒心口:「放心!我 handle 晒!」你最佳嘅下一步係?",
+    options: ["信佢。人哋都話 handle 晒,team-mate 之間最緊要信任","散會即刻入老闆房:「我同阿力唔夾,可唔可以換人」","散會 30 分鐘內 send message:「Recap 返:你負責報價,15 號交;我負責 slides 👍」,再將個 project 切到佢嗰 part 爆都炸唔到你","費事煩,佢嗰份自己做埋,最快最穩陣"],
+    correct: 2, explain: "A 係童話,B 係自首(「唔夾」聽落係你有問題),D 係認養(恭喜你以後多咗份工)—— 拍心口唔係 deliverable,白紙黑字先係。" },
+  { lesson: "第 4 章", question: "你睇緊旅行機票格價,聽到老闆腳步聲迫近,正確反應係?",
+    options: ["大力閂 laptop","彈起身用背脊遮住個 mon","順滑 Alt-Tab 去長開嘅 decoy Excel,繼續皺眉","直接同老闆分享張機票幾平"],
+    correct: 2, explain: "慌張先係最大破綻。Decoy Excel 長開,係扮工界嘅 failsafe 設定,事發先諗就太遲。" },
+  { lesson: "第 5 章", question: "老闆問「呢個 report 幾耐搞掂?」你心裡有數要一日,你應該報?",
+    options: ["「一日」","「兩日,想預埋 checking 同等對方 confirm 嘅時間」","「一個月」","「你想幾耐就幾耐」"],
+    correct: 1, explain: "×2 buffer 配一個專業理由:早交你係英雄,出事你仲喺 buffer 入面。A 係同自己作對,C 係玩出火,D 係靈魂已經離開咗身體。" },
+  { lesson: "第 6 章", question: "茶水間聽到勁爆消息:有同事話老闆今季盤數好唔掂。你應該?",
+    options: ["即刻 WhatsApp 通知全 team","補充埋你自己嘅內幕分析,講到似層層","微笑、點頭、飲完杯水、離開 —— 情報收落心入面","話俾老闆聽有人喺背後講佢"],
+    correct: 2, explain: "茶水間最強玩家永遠係 receiver:講嘅人遲早瀨嘢,聽嘅人永遠安全,仲要乜都知。" },
+  { lesson: "第 7 章", question: "6:00 收工,你手頭嘢做晒,但老闆仲坐緊。最佳操作?",
+    options: ["6:00:00 準時彈起衝出門","執拾好,同老闆講聲「今日啲嘢搞掂晒,聽日見」,正常離開","陪坐到老闆走,期間睇咗兩個鐘 YouTube","走,但留件外套喺凳背扮未走"],
+    correct: 1, explain: "講明「搞掂晒」先走,係將準時走由「懶」重新包裝做「效率」,呢個先係最高級嘅觀感管理。C 係用人生交換幻覺,D 係高風險老千 move。" },
+  { lesson: "第 9 章", question: "你今日扮工扮得太成功,有單嘢真係漏咗,聽日 deadline,而個鑊會落喺同事身上。你應該?",
+    options: ["繼續扮,聽日先算","靜靜哋放風話同事冇 remind 你","今晚即刻追,追唔切就今日內同同事講清楚,夾定點補救","聽日朝早請病假"],
+    correct: 2, explain: "第 9 章第一戒律:扮工唔累人。自己嘅鑊自己孭,追唔切就早講 —— 呢條線分開「娛樂」同「人渣」。" },
+  { lesson: "第 9 章", question: "本手冊嘅終極心法係?",
+    options: ["扮到退休,一世安穩","扮工技術夠好,就唔需要有真技術","睇穿職場劇場,喺 show 度慳力,喺真功夫度發力,最後做到唔使扮","將本手冊 forward 俾老闆"],
+    correct: 2, explain: "識扮工嘅最大得着,係識分咩係 show、咩係真嘢。D 嘅話…祝你順利,記得執定嘢。" }
+];
+const tiers = [
+  { max: 30,  title: "🪦 試用期陣亡", note: "你連扮工都要人教 —— 建議認真做嘢算啦,對你嚟講可能仲容易啲。" },
+  { max: 50,  title: "🐣 掙扎求存實習生", note: "有 survival 意識,但破綻多過 output。老闆對你嘅評價係「佢好似好忙,但唔知忙緊乜」—— 恭喜,呢句其實係入門合格。" },
+  { max: 70,  title: "🔧 熟練扮工技工", note: "Alt-Tab 有肌肉記憶,buzzword 出口成章。距離宗師一步之遙 —— 差在你仲係戒唔甩喺茶水間做 broadcaster。" },
+  { max: 90,  title: "🕴️ 資深扮工顧問", note: "你已經有資格開 workshop 教人,收費嗰隻。老闆覺得你不可或缺,雖然佢一時三刻講唔出你具體做過乜。" },
+  { max: 100, title: "👑 扮工宗師(建議出書)", note: "恭喜滿分。不過諗深一層 —— 連呢個測驗你都咁認真做,你根本就係個做嘢嘅人。扮咩工啫,返去交貨啦。" }
+];
+const POINTS = 10;
+const letters = ["A", "B", "C", "D"];
+function renderQuiz() {
+  document.getElementById("quiz-body").innerHTML = quizQuestions.map((q, qi) => `
+    <div class="qcard" id="qcard-${qi}">
+      <div class="qnum">Q${String(qi + 1).padStart(2, "0")} / 10 · ${q.lesson} · 10 分<span class="qbadge" id="qbadge-${qi}"></span></div>
+      <div class="qtext">${q.question}</div>
+      <div class="opts">
+        ${q.options.map((opt, oi) => `
+          <label class="opt" id="opt-${qi}-${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span class="letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+      <div class="explain" id="explain-${qi}"></div>
+    </div>`).join("");
+}
+function gradeQuiz() {
+  const unanswered = [];
+  quizQuestions.forEach((q, qi) => { if (!document.querySelector(`input[name="q${qi}"]:checked`)) unanswered.push(qi + 1); });
+  const note = document.getElementById("unanswered-note");
+  if (unanswered.length > 0) {
+    note.style.display = "block";
+    note.textContent = "仲有未答:第 " + unanswered.join("、") + " 題。喂,連測驗都想 hea?";
+    return;
+  }
+  note.style.display = "none";
+  let correctCount = 0;
+  quizQuestions.forEach((q, qi) => {
+    const chosen = parseInt(document.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+    const card = document.getElementById(`qcard-${qi}`);
+    const isRight = chosen === q.correct;
+    if (isRight) correctCount++;
+    card.classList.add("graded", isRight ? "right" : "wrong");
+    document.getElementById(`qbadge-${qi}`).textContent = isRight ? "✓ 生存" : "✗ 陣亡";
+    document.getElementById(`opt-${qi}-${q.correct}`).classList.add("is-correct");
+    if (!isRight) document.getElementById(`opt-${qi}-${chosen}`).classList.add("is-wrong");
+    document.getElementById(`explain-${qi}`).innerHTML = `<b>正確答案:${letters[q.correct]}</b> — ${q.explain}`;
+    card.querySelectorAll("input").forEach(input => { input.disabled = true; });
+  });
+  const score = correctCount * POINTS;
+  const tier = tiers.find(t => score <= t.max);
+  const best = sGet(BEST_KEY, null);
+  if (best === null || score > best) sSet(BEST_KEY, score);
+  const result = document.getElementById("result");
+  result.style.display = "block";
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-sub").textContent = `滿分 100 · 答啱 ${correctCount} / 10 題`;
+  document.getElementById("tier-title").textContent = tier.title;
+  document.getElementById("result-note").textContent = tier.note;
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "inline-block";
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  result.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
+}
+function resetQuiz() {
+  renderQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("unanswered-note").style.display = "none";
+  document.getElementById("submit-btn").style.display = "inline-block";
+  document.getElementById("retry-btn").style.display = "none";
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("quiz").scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+}
+renderQuiz();
+document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+document.getElementById("retry-btn").addEventListener("click", resetQuiz);
+renderProgress();
+</script>
+
+</body>
+</html>
