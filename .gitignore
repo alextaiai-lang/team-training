@@ -1,0 +1,7 @@
+.DS_Store
+
+# 唔准上公開網嘅教材(ALEX 2026-07-31 決定)
+candles/
+indicators/
+options/
+survival/

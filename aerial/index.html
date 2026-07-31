@@ -1,0 +1,968 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>無人機航拍作業教材 · Lesson Pack 04</title>
+<style>
+  :root {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+      --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+      --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+      --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+      --draft: #d9c25e; --draft-wash: #2e2810;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+    --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+    --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+    --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+    --draft: #d9c25e; --draft-wash: #2e2810;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.75; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  .draft-banner { background: var(--draft-wash); border-bottom: 1px solid var(--draft);
+    color: var(--draft); font-size: .85rem; font-weight: 600; text-align: center; padding: 9px 16px; }
+  .progress-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 20px; }
+  .progress-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .68rem; letter-spacing: .08em; color: var(--ink-soft); white-space: nowrap; }
+  .segments { display: flex; gap: 4px; flex: 1; }
+  .seg { height: 9px; flex: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg.done { background: var(--pass); border-color: var(--pass); }
+  .best-label { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+  header { padding-top: 40px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink); display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 12px 0 10px; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { color: var(--ink-soft); margin: 0; font-size: 1.02rem; max-width: 60ch; }
+  .mission { background: var(--surface); border: 1.5px solid var(--accent); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 20px; margin-top: 24px; font-size: .95rem; }
+  .mission .m-title { font-weight: 800; color: var(--accent-ink); margin-bottom: 6px; }
+  .mission .m-law { background: var(--fail-wash); border: 1px solid var(--fail); border-radius: 8px; padding: 9px 13px; font-weight: 700; margin-top: 10px; }
+  .lesson { margin-top: 64px; }
+  .lesson-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-wash);
+    border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px; display: inline-block; }
+  h2 { font-size: 1.45rem; margin: 12px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  .objective { background: var(--accent-wash); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 13px 16px; font-size: .93rem; margin: 0 0 20px; }
+  .objective .obj-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+  .safety { background: var(--warn-wash); border: 1px solid var(--warn);
+    border-radius: 10px; padding: 14px 16px; margin: 22px 0 0; font-size: .95rem; }
+  .safety .s-label { font-weight: 700; color: var(--warn-ink); display: block; margin-bottom: 4px; }
+  .safety p, .safety ul { margin: 0; }
+  .drill { background: var(--pass-wash); border: 1px solid var(--pass); border-radius: 10px;
+    padding: 13px 16px; margin: 20px 0 0; font-size: .92rem; }
+  .drill .d-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--pass); display: block; margin-bottom: 4px; font-weight: 700; }
+  .drill p, .drill ul { margin-bottom: 6px; }
+  .adjust { display: inline-block; background: var(--surface-2); border: 1px dashed var(--ink-soft);
+    color: var(--ink-soft); border-radius: 6px; padding: 0 7px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+  .todo { display: inline-block; background: var(--warn-wash); border: 1.5px dashed var(--warn);
+    color: var(--warn-ink); border-radius: 7px; padding: 1px 9px; font-size: .85rem; font-weight: 700; }
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); margin: 18px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-family: ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+  .widget { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 18px; margin: 22px 0; }
+  .widget-tag { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px; }
+  .widget .hint { font-size: .84rem; color: var(--ink-soft); margin-bottom: 12px; }
+  .btn { font: inherit; font-weight: 700; font-size: .95rem; cursor: pointer;
+    border-radius: 10px; padding: 10px 24px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--accent-ink); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .fb-box { margin-top: 12px; border-radius: 8px; padding: 10px 14px; font-size: .9rem; display: none; }
+  .fb-box.show { display: block; }
+  .fb-box.right { background: var(--pass-wash); border: 1px solid var(--pass); }
+  .fb-box.wrong { background: var(--fail-wash); border: 1px solid var(--fail); }
+  .fb-box.neutral { background: var(--warn-wash); border: 1px solid var(--warn); }
+  .mini-score { font-family: ui-monospace, monospace; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; }
+  .cl-statement { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-align: center; font-weight: 700; min-height: 3.4em; margin-bottom: 12px; }
+  .cl-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .cl-btns .btn { font-size: .85rem; padding: 9px 14px; }
+  .dt-opts { display: flex; flex-direction: column; gap: 8px; }
+  .dt-opts .btn { text-align: left; font-size: .9rem; font-weight: 600; }
+  /* L2 mailbox */
+  .mail { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 13px 16px; font-size: .9rem; margin-bottom: 12px; font-style: italic; }
+  .check-item { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px;
+    border: 1px solid var(--line); border-radius: 9px; margin-bottom: 8px;
+    cursor: pointer; font-size: .93rem; background: var(--surface); }
+  .check-item:hover { border-color: var(--accent); }
+  .check-item:has(input:checked) { background: var(--accent-wash); border-color: var(--accent); }
+  .check-item:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .check-item input { margin-top: 5px; accent-color: var(--accent); flex: none; }
+  /* L3 hazard hunt */
+  .hz-stage { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); margin-bottom: 10px; overflow: hidden; }
+  .hz-stage svg { width: 100%; height: auto; display: block; cursor: crosshair; }
+  .hz-found { font-family: ui-monospace, monospace; font-size: .8rem; color: var(--accent-ink); font-weight: 700; margin-bottom: 8px; }
+  /* sequence game */
+  .seq-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .seq-btn { font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; color: inherit;
+    border: 1px solid var(--line); border-radius: 9px; padding: 8px 13px; background: var(--surface-2); text-align: left; }
+  .seq-btn:hover { border-color: var(--accent); }
+  .seq-btn:disabled { opacity: .35; cursor: default; }
+  .seq-btn.trap { border-style: dashed; }
+  .seq-done-list { margin: 0 0 4px; padding-left: 24px; font-size: .9rem; }
+  .seq-done-list li { color: var(--pass); font-weight: 600; margin-bottom: 4px; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-3px)} }
+  .shake { animation: shake .4s ease; }
+  /* L8 321 checker */
+  .sl-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sl-row label { font-size: .88rem; font-weight: 600; min-width: 11em; }
+  .sl-row select { font: inherit; font-size: .9rem; color: inherit; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+  .lamp { text-align: center; font-weight: 800; font-size: 1rem; border-radius: 10px; padding: 12px; margin-top: 10px; }
+  .lamp.green { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .lamp.red { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .lamp small { display: block; font-weight: 600; font-size: .78rem; margin-top: 2px; }
+  /* quiz */
+  .quiz-head { margin-top: 76px; padding-top: 34px; border-top: 2px solid var(--accent); }
+  .quiz-rules { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 14px 18px; font-size: .92rem; margin: 18px 0 28px; }
+  .quiz-rules ul { margin: 0; padding-left: 20px; }
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+  .qnum { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .qtext { font-weight: 700; margin: 6px 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 10px 13px; cursor: pointer; font-size: .95rem; background: var(--surface); }
+  .opt:hover { border-color: var(--accent); }
+  .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+  .opt .letter { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); flex: none; }
+  .qcard.graded .opt { cursor: default; }
+  .qcard.graded .opt.is-correct { border-color: var(--pass); background: var(--pass-wash); }
+  .qcard.graded .opt.is-wrong { border-color: var(--fail); background: var(--fail-wash); }
+  .qbadge { display: none; font-weight: 700; font-size: .82rem; border-radius: 999px; padding: 2px 11px; margin-left: 8px; vertical-align: middle; }
+  .qcard.graded .qbadge { display: inline-block; }
+  .qcard.graded.right .qbadge { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .qcard.graded.wrong .qbadge { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .explain { display: none; margin-top: 12px; font-size: .9rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .qcard.graded .explain { display: block; }
+  .explain b { color: var(--ink); }
+  .quiz-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .unanswered-note { display: none; color: var(--fail); font-weight: 600; font-size: .92rem; margin-top: 12px; }
+  .result { display: none; margin-top: 30px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 28px; text-align: center; border: 2px solid var(--line); }
+  .result.pass { border-color: var(--pass); }
+  .result.fail { border-color: var(--fail); }
+  .score { font-size: 3.2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .result.pass .score { color: var(--pass); }
+  .result.fail .score { color: var(--fail); }
+  .score-sub { color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+  .verdict { display: inline-block; font-weight: 800; font-size: 1.05rem; border-radius: 999px; padding: 6px 22px; margin-top: 14px; }
+  .result.pass .verdict { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .result.fail .verdict { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .result-note { font-size: .86rem; color: var(--ink-soft); margin: 14px auto 0; max-width: 46ch; }
+  .done-btn { margin-top: 22px; font: inherit; font-size: .9rem; font-weight: 700; border-radius: 999px; padding: 8px 22px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent-ink); background: var(--surface); }
+  .done-btn.done { background: var(--pass-wash); border-color: var(--pass); color: var(--pass); }
+  .done-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .82rem; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">🚨 草稿 v1 · 飛行安全內容 · 待團隊負責人審核 —— 審批前不得派發俾隊員</div>
+
+<div class="progress-bar">
+  <div class="progress-inner">
+    <span class="progress-label">課程進度 <span id="prog-count">0</span>/8</span>
+    <div class="segments" id="segments" aria-hidden="true"></div>
+    <span class="best-label" id="best-label">測驗最高分 —</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Alex 無人機隊 · 內部培訓 · Lesson Pack 04</div>
+    <h1>航拍作業篇</h1>
+    <p class="lede">Pack 01 教你認識隻機,Pack 02 教你飛得起,Pack 03 教你出事點算 —— <b>呢個 pack 教你「做嘢」</b>:有客戶、有 deadline、有錢銀關係嘅真任務。八課跟住任務流程行:接單 → 評估 → 勘察 → 規劃 → 執行 → 收工 → 交付。</p>
+    <div class="mission">
+      <div class="m-title">📌 成個 pack 嘅總綱,一句</div>
+      <p style="margin-bottom:8px"><b>「攞唔到個鏡頭」永遠好過「出事」。</b>出咗事,冇人會記得你差啲攞到個鏡頭;個個都會記得你炒咗機。</p>
+      <div class="m-law">🚨 對象:已完成 Pack 01–03 並通過實操 sign-off(簽名確認)嘅隊員。法規紅線帶入任務:VLOS(目視飛行)、日光操作、<b>暴雨警告(黃 / 紅 / 黑)、熱帶氣旋警告、強烈季候風信號</b>生效時唔飛 —— 呢啲係法規,客戶畀幾多錢都改唔到。</div>
+    </div>
+  </header>
+
+  <!-- 術語一覽 -->
+  <section class="lesson">
+    <span class="lesson-tag">術語一覽 · 唔使背,唔記得返嚟查</span>
+    <h2>呢個 pack 新出現嘅專業術語</h2>
+    <p>只收新詞 —— RTH、failsafe、VLOS、PIC、spotter、hover check、go-around、EMI、plan B 呢啲舊詞,請翻返 Pack 01–03 嘅術語表。</p>
+    <div class="tablebox">
+      <table>
+        <tr><th>術語</th><th>淺白解釋</th></tr>
+        <tr><td>Brief(任務簡介)</td><td>講「今次要做咩」嘅一份嘢 / 一場會;任務日開工前隊內都會做一個現場 brief</td></tr>
+        <tr><td>Reference(參考片)</td><td>客戶搵嚟話「我想要類似咁」嘅片或相 —— 一條 reference 好過客戶十句形容</td></tr>
+        <tr><td>Deliverable(交付物)</td><td>最後真係要交畀客戶嘅嘢:幾多條、幾長、相定片、橫定直</td></tr>
+        <tr><td>Site survey(場地勘察)</td><td>任務前親身去現場睇一次,搵出地圖睇唔到嘅危險同機會</td></tr>
+        <tr><td>LZ(Landing Zone)</td><td>起降區 —— 起飛降落嘅指定位置,要平、冇雜物、同人流有距離</td></tr>
+        <tr><td>Escape route(逃生空間)</td><td>預先諗定隻機出事「跌落去都唔傷人」嘅方向同空間</td></tr>
+        <tr><td>Shot list(分鏡表)</td><td>今日要拍嘅每個鏡頭一行:內容、位置、高度、難度、風險</td></tr>
+        <tr><td>Push-in / Pull-out(推鏡 / 拉鏡)</td><td>推 = 向主體飛埋去;拉 = 向後飛開 —— 拉鏡係機尾向前行,盲飛</td></tr>
+        <tr><td>Orbit(環繞)</td><td>圍住主體轉圈,鏡頭一路對住佢;個主體叫 POI(興趣點)</td></tr>
+        <tr><td>Tracking shot(跟拍)</td><td>跟住移動緊嘅主體(人、車、船)飛</td></tr>
+        <tr><td>Reveal(揭示鏡頭)</td><td>升高或者由遮擋物後面移出,慢慢「揭開」場景 —— 好多靚片嘅開場</td></tr>
+        <tr><td>ND filter(減光鏡)</td><td>相機嘅「太陽眼鏡」—— 日光下想畫面有自然 motion blur(動態模糊)就要用</td></tr>
+        <tr><td>Resolution(解像度)</td><td>畫面有幾多細節(例如 4K);數字大 = 細緻 = 檔案大</td></tr>
+        <tr><td>Frame rate / fps(幀率)</td><td>一秒影幾多格 —— fps 高先做到慢動作</td></tr>
+        <tr><td>Exposure(曝光)</td><td>畫面光暗,由 ISO(感光度)+ aperture(光圈)+ shutter(快門)夾出嚟</td></tr>
+        <tr><td>RAW</td><td>影相嘅「原汁原味」檔案格式,後期執相空間大好多</td></tr>
+        <tr><td>3-2-1 backup(備份原則)</td><td>三份 copy、兩種媒介、一份異地 —— 課 8 淺講</td></tr>
+        <tr><td>NDA(保密協議)</td><td>「唔准講出去」合約 —— 就算冇簽,客戶素材都當保密處理</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== L1 ===== -->
+  <section class="lesson" id="lesson-1">
+    <span class="lesson-tag">Lesson 01</span>
+    <h2>任務同練習嘅分別 — 壓力下點守紀律</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出任務同練習嘅三大分別;遇到「客戶催你」識用標準句式守住安全決定;明白總綱:「攞唔到個鏡頭」永遠好過「出事」。</div>
+
+    <p><b>練習好似排練,任務好似演唱會 live</b> —— 歌一樣、樂器一樣,但 live 有觀眾、有時間表、唱錯冇得嚟過。三大分別:①<b>有客戶</b>(有人畀錢、有期望、喺你隔籬睇住你飛);②<b>有 deadline</b>(日落唔等人、場地租到六點);③<b>環境唔係你揀</b>(場地同時間好多時係客戶定)。</p>
+    <h3>壓力點樣令好機師做錯事</h3>
+    <p>民航界有個詞叫 <b>get-there-itis(去到病)</b> —— 機師因為「一定要準時到」而落錯決定,係好多空難嘅根源。航拍版就係「攞鏡頭病」:「差少少就攞到喇……電量低咗少少啫……再飛近少少啫……」每個「少少」單獨睇好似冇事,加埋就係 Pack 03 教過嘅 incident(事故)。<b>壓力唔會令你技術變差,壓力會令你跳步驟</b> —— 跳 checklist、跳口令、跳起飛前 60 秒三問。</p>
+    <h3>守紀律嘅方法</h3>
+    <ul>
+      <li>Checklist 同口令唔係新手輔助,係<b>壓力下嘅自動導航</b> —— 大腦亂嗰陣,程序幫你諗。</li>
+      <li>團隊口令一個字都唔改,<b>而且係一問一答</b>:清場企位 → 嗌「<b>Taking off!</b>」→ <b>聽到「CLEAR」</b> → 先 arm → 起飛;降落喺<b>離地 10–20 米</b>嗌「<b>Landing!</b>」→ <b>聽到「CLEAR」</b> → 先繼續落。有客戶喺場一樣照嗌 —— 呢啲嗌聲仲會令客戶覺得你哋專業。</li>
+      <li>預先定好今日嘅<b>放棄條件</b>(電量到 X、風到 Y、人流到 Z 就收)<span class="adjust">🔧 具體數字由負責人定</span> —— 事前定好,現場先唔會同自己講數。</li>
+    </ul>
+    <h3>守住決定嘅三段式句式</h3>
+    <ol>
+      <li><b>同理:</b>「我明呢個鏡頭好緊要。」</li>
+      <li><b>講原因(安全,唔係技術):</b>「而家電量 / 風況去到我哋嘅安全線,再飛係有真風險。」</li>
+      <li><b>畀替代方案:</b>「我哋可以聽日同一時段補拍 / 用另一個角度攞到差唔多效果。」</li>
+    </ol>
+    <p>記住:講「做唔到」唔專業,講「<b>做唔到,不過可以咁樣</b>」先係專業。</p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 日落前 20 分鐘</div>
+      <div class="hint">情境:日落前 20 分鐘,客戶話仲爭一個鏡頭,你電量啱啱到團隊返航線 30%(同 Pack 01/02/03 一致)。你點揀?每個揀法都有後果。</div>
+      <div class="dt-opts" id="p1-opts">
+        <button class="btn ghost" data-p1="0" type="button">🏃 飛快啲,搶咗個鏡頭先</button>
+        <button class="btn ghost" data-p1="1" type="button">📉 將返航線自己降低 5%,上次都試過冇事</button>
+        <button class="btn ghost" data-p1="2" type="button">🤝 收機 —— 用三段式同客戶講原因同補拍方案</button>
+      </div>
+      <div class="fb-box" id="p1-fb"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 施壓情境由負責人按真實接過嘅單調整</span></span>
+      <p>兩人一組角色扮演:一人扮客戶連續施壓三次(趕時間、加鏡頭、叫你飛近啲),一人扮 PIC 用三段式回應。<b>完成標準:</b>三次都守住決定、句式齊三段,由第三位隊員評分。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>任何人都冇權推翻安全決定 —— 包括客戶。</b>PIC 有 final say(最終話事權)。VLOS、日光操作、<b>暴雨警告(黃 / 紅 / 黑)、熱帶氣旋警告、強烈季候風信號</b>生效時唔飛係法規,唔係隊規。出咗事,冇人會記得你差啲攞到個鏡頭。</p></div>
+    <button class="done-btn" data-lesson="0" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L2 ===== -->
+  <section class="lesson" id="lesson-2">
+    <span class="lesson-tag">Lesson 02</span>
+    <h2>接單同任務評估 — 接單嗰刻已經係安全決定</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>攞到查詢識問齊「評估五問」先答應;識用地圖 + eSUA 做初步場地同空域檢查;講得出邊啲因素令任務變難。</div>
+
+    <p><b>點解評估係安全問題,唔係生意問題:</b>接咗單先發現飛唔到,你就會企喺現場面對俾咗錢嘅客戶,同一個「唔飛就蝕」嘅壓力 —— 即係課 1 嘅壓力鍋。<b>評估做得好,任務日就冇驚喜;評估求其,任務日就係補鑊。</b></p>
+    <h3>評估五問</h3>
+    <ol>
+      <li><b>客戶想要咩?</b>唔好收「幫我影靚啲」呢種柯打 —— 要 reference(參考片),再夾實 deliverable(交付物):幾多條、幾長、相定片、橫定直、幾時交。Reference 係翻譯機:客戶講「有 feel」,你要譯做「日落逆光 + 慢 orbit」。</li>
+      <li><b>場地喺邊、有咩限制?</b>地圖先行:衛星圖睇障礙物同起降位,再查空域。地圖過到關,先安排實地 site survey(課 3)。</li>
+      <li><b>空域同法規過唔過到?</b>依據係 Cap. 448G(《小型無人機令》),主管機構 CAD(民航處),平台 eSUA。已核實硬數字(Pack 01):<b>A2 標準操作高度上限 300 呎、必須 VLOS、日光操作、<b>暴雨警告(黃 / 紅 / 黑)、熱帶氣旋警告、強烈季候風信號生效時唔飛</b></b>。空域限制同要唔要額外申請 —— <b>唔好靠記憶,以 CAD 官網同 eSUA 實時資料為準</b>。商業操作有冇額外要求(保險、操作員等級):<b>團隊持有第三者責任年保</b>,保單由負責人持有。<b>每單商業任務開工前要確認三樣</b>:①保單仍然有效;②保額覆蓋今次操作類別(法定最低保額見 Pack 01 第 6 課);③任務地點喺保障範圍內。<b>未確認保險之前唔准開工。</b></li>
+      <li><b>場地許可攞咗未?</b>私人地方要業主 / 管理處同意;邊個負責攞、幾時攞到,白紙黑字問清楚。<b>攞許可嘅時間好多時長過你想像。</b></li>
+      <li><b>時間窗夾唔夾?</b>客戶要日落 golden hour(黃金時段),你要倒推幾點 setup、幾點 brief;天氣唔得有冇 backup day(後備日)。冇 backup day 嘅單 = 壓力加倍。</li>
+    </ol>
+    <h3>邊啲嘢影響難度(報價唔教,但你要識標記)</h3>
+    <p>場地複雜(多障礙 / 多人流 / 訊號差)、要等審批、特殊鏡頭(跟拍 / 低飛 / 室內)、冇 backup day 嘅死線、夜景要求(<b>直接觸法規紅線 —— 日光操作!</b>)。見到呢啲,喺評估紀錄標返出嚟畀負責人。</p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 模擬接單信箱</div>
+      <div class="hint">收到以下查詢 email —— 剔選「仲爭咩資料先可以開始評估」,剔啱晒先過關(小心有啲嘢係唔使問嘅)。</div>
+      <div class="mail">「你好!想搵你哋幫我影啲航拍,下星期得唔得?費用點計?快手搞掂就得,唔使太複雜。—— 陳生」</div>
+      <div id="mail-list"></div>
+      <button class="btn" id="mail-check" type="button">檢查我嘅清單</button>
+      <div class="fb-box" id="mail-fb"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 時限同評分由負責人調整</span></span>
+      <p>負責人提供一單模擬查詢(由負責人提供,內容接近真實業務),30 分鐘內交「評估五問」一頁紙,包括地圖截圖同空域檢查結果。<b>完成標準:</b>五問齊、空域檢查有 eSUA 截圖或明確結論、標記到至少兩個難度因素。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>空域唔清楚 = 唔接住先。</b>客戶要求本身犯規(夜拍、超高、飛人群上空)—— 評估階段就要講明做唔到,唔好「接咗先算」。評估產出要留紀錄,日後對數同事故調查都靠佢。</p></div>
+    <button class="done-btn" data-lesson="1" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L3 ===== -->
+  <section class="lesson" id="lesson-3">
+    <span class="lesson-tag">Lesson 03</span>
+    <h2>場地勘察 Site Survey — 地圖睇唔到嘅嘢</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出 site survey(場地勘察)六大檢查範疇;識用 checklist 行一次現場,產出一頁紙紀錄;識揀 LZ(起降區)同預留 escape route(逃生空間)。</div>
+
+    <p><b>點解一定要去現場:</b>地圖係舊嘅,現場係新嘅。地圖睇唔到:琴日先搭起嘅棚架、細過一粒 pixel 嘅電線、下晝先出現嘅人流、訊號黑點。Site survey 好似<b>搬屋前去度尺</b> —— 冇人會靠平面圖就買晒啲傢俬。</p>
+    <h3>六大檢查範疇</h3>
+    <ol>
+      <li><b>障礙物</b> —— 電線同拉索係航拍頭號殺手,天空背景下幾乎睇唔到。逐樣搵:電線、棚架、天線、旗杆、樹(樹會擺動)。搵到就影相 + 地圖標位。</li>
+      <li><b>人流時段</b> —— 呢個場幾點多人?目的係<b>揀一個人流最少嘅拍攝時段</b>,唔係諗住「到時避開」。</li>
+      <li><b>LZ 起降區</b> —— 要平、冇沙石雜物(升起會吹到周圍都係)、同人流有距離、PIC 企嘅位睇得穿成條航線(VLOS!)。最好有後備 LZ 一個。</li>
+      <li><b>Escape route 逃生空間</b> —— 問自己:「如果隻機而家出事,佢跌落邊度唔會傷人?」每段航線都要有答案(海面、空地得;人群、馬路、玻璃幕牆唔得)。同 Pack 03 應急思維直接駁通:出事嗰刻先諗就太遲。</li>
+      <li><b>訊號環境</b> —— 高壓電塔、天台發射站、大型金屬 = EMI(電磁干擾)風險。有懷疑就寫低,任務日預留 ATTI(姿態模式)心理準備(Pack 03)。</li>
+      <li><b>日照方向</b> —— 一係鏡頭(golden hour 嘅金色光係客戶至愛),一係<b>安全:望住太陽方向飛 = 眩光 = VLOS 斷</b>。用太陽位置 app 查返拍攝時段太陽喺邊。</li>
+    </ol>
+    <p><b>產出物:</b>一頁紙,六範疇每個有結論 + 相 + 標記,最後三格:建議拍攝時段、LZ 主 / 備、成隊人要知嘅危險。<b>Survey 搵到嘅危險唔係心裡有數就算 —— 要寫低、要喺任務日 brief 講出嚟。</b><span class="adjust">🔧 checklist 細節數字由負責人調整</span></p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 搵危險(Spot the Hazard)</div>
+      <div class="hint">下面係一個模擬任務場地(示意圖;負責人日後可以換做團隊真場地相 負責人日後可以換做團隊真場地相 —— 換之前要確認相入面冇個人資料)。撳出 <b>5 個</b>隱藏危險位。</div>
+      <div class="hz-found" id="hz-found">搵到 0/5</div>
+      <div class="hz-stage">
+        <svg id="hz-svg" viewBox="0 0 640 320" role="img" aria-label="模擬場地示意圖,入面收埋咗五個危險位">
+          <rect x="0" y="0" width="640" height="320" fill="var(--surface-2)"/>
+          <circle cx="560" cy="52" r="26" fill="var(--warn)" opacity=".85"/>
+          <rect x="0" y="250" width="640" height="70" fill="var(--surface)"/>
+          <line x1="0" y1="250" x2="640" y2="250" stroke="var(--line)" stroke-width="2"/>
+          <rect x="30" y="120" width="90" height="130" fill="var(--ink-soft)" opacity=".55"/>
+          <rect x="140" y="160" width="70" height="90" fill="var(--ink-soft)" opacity=".4"/>
+          <rect x="470" y="140" width="12" height="110" fill="var(--warn)"/>
+          <rect x="430" y="134" width="95" height="8" rx="2" fill="var(--warn)"/>
+          <rect x="250" y="200" width="70" height="50" rx="4" fill="var(--accent)" opacity=".5"/>
+          <text x="285" y="230" text-anchor="middle" font-size="11" fill="#fff">貨櫃</text>
+          <line x1="120" y1="150" x2="360" y2="170" stroke="var(--ink)" stroke-width="1.2" opacity=".6"/>
+          <line x1="360" y1="170" x2="620" y2="185" stroke="var(--ink)" stroke-width="1.2" opacity=".6"/>
+          <rect x="118" y="148" width="5" height="102" fill="var(--ink-soft)"/>
+          <rect x="358" y="168" width="5" height="82" fill="var(--ink-soft)"/>
+          <text x="55" y="290" font-size="20">🐕🚶🚶</text>
+          <text x="52" y="308" font-size="10" fill="var(--ink-soft)">狗公園入口</text>
+          <text x="540" y="300" font-size="20">🛬</text>
+          <text x="522" y="314" font-size="10" fill="var(--ink-soft)">你想擺 LZ 嘅位</text>
+          <!-- 可撳熱區(透明) -->
+          <rect class="hz-hot" data-hz="0" x="110" y="130" width="260" height="50" fill="transparent"/>
+          <rect class="hz-hot" data-hz="0" x="350" y="150" width="280" height="45" fill="transparent"/>
+          <rect class="hz-hot" data-hz="1" x="420" y="120" width="115" height="135" fill="transparent"/>
+          <rect class="hz-hot" data-hz="2" x="20" y="265" width="150" height="50" fill="transparent"/>
+          <rect class="hz-hot" data-hz="3" x="240" y="190" width="90" height="65" fill="transparent"/>
+          <rect class="hz-hot" data-hz="4" x="520" y="15" width="90" height="75" fill="transparent"/>
+        </svg>
+      </div>
+      <div class="fb-box" id="hz-fb"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 場地同評分由負責人定</span></span>
+      <p>去負責人指定場地(唔使飛,淨係行),用 checklist 做完整勘察,交一頁紙。<b>完成標準:</b>六範疇齊、有相有標記、LZ 主備都有、至少搵到三個地圖上睇唔到嘅發現。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>電線假設「一定有」,搵到先至可以話冇。</b>航線冇 escape route = 條航線要改,唔係「小心啲飛」。日照方向係安全項目,唔淨係美學 —— 眩光斷 VLOS 係真風險。</p></div>
+    <button class="done-btn" data-lesson="2" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L4 ===== -->
+  <section class="lesson" id="lesson-4">
+    <span class="lesson-tag">Lesson 04</span>
+    <h2>航線同鏡頭規劃 — 鏡頭語言 + 風險評估</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出五種基本航拍鏡頭嘅效果同各自風險;識砌一張 shot list(分鏡表),每個鏡頭有風險註記;識用慳電原則排拍攝順序。</div>
+
+    <h3>鏡頭語言:五個基本盤</h3>
+    <div class="tablebox">
+      <table>
+        <tr><th>鏡頭</th><th>效果</th><th>風險評估</th></tr>
+        <tr><td>Push-in 推鏡</td><td>向主體飛埋去,「聚焦、迫近」感</td><td>你正向障礙物飛緊 —— 預先定「停止線」,幾近就唔再近 <span class="adjust">🔧</span></td></tr>
+        <tr><td>Pull-out 拉鏡</td><td>由主體向後飛開,由細節揭開大環境</td><td><b>機尾向前行 = 盲飛</b> —— 必須有 spotter 睇後路,或者先向後飛一次探路</td></tr>
+        <tr><td>Orbit 環繞</td><td>圍住 POI(興趣點)轉圈</td><td>轉到半圈變 nose-in(機頭向自己 —— Pack 02 第 5 課,左右倒轉)最易亂;成個圈 360° 都要淨空</td></tr>
+        <tr><td>Tracking 跟拍</td><td>跟住移動主體(人 / 車 / 船)</td><td>注意力全落主體,唔記得睇前路 —— 航線事先行一次,spotter 睇路</td></tr>
+        <tr><td>Reveal 揭示</td><td>升高 / 越過遮擋物「揭開」場景</td><td>記住 300 呎上限(Pack 01)+ 高空風大過地面;越障要預足淨空</td></tr>
+      </table>
+    </div>
+    <p>一個實用組合:<b>Reveal 開場 → orbit 交代環境 → push-in 收結</b> —— 好多樓盤片、活動片都係咁砌。</p>
+    <h3>Shot list 分鏡表</h3>
+    <p>好似購物清單:冇 list 就亂買,冇 shot list 就亂飛、嘥電、漏鏡頭。每行五格:<b>鏡頭號 | 內容 | 位置 / 高度 | 難度 | 風險註記 + escape route</b>。「呢鏡冇風險」都要寫,證明你諗過。任務前交負責人過目(<b>以下任何一項中,shot list 就一定要交負責人審</b>:①首次去該場地;②新客戶;③shot list 入面有風險註記;④需要 AOP 或者特別許可。熟客、熟場、小單 —— PIC 自己決定。<b>⚠️ 但「熟唔熟」係你自己判嘅 —— 拿唔準就當唔熟,交審。</b>)。</p>
+    <h3>慳電原則:排拍攝順序</h3>
+    <ol>
+      <li><b>Must-have(必要)先,nice-to-have(有更好)後</b> —— 電出意外淨返一嚿,起碼必要鏡頭到手</li>
+      <li><b>同位置同高度嘅鏡頭一齊拍</b> —— 慳往返同重新爬升嘅電</li>
+      <li><b>難鏡頭排喺頭嗰一兩嚿電</b> —— 人最精神、電最足、日光最穩定嗰陣做最難嘅嘢</li>
+      <li><b>每嚿電留 buffer(餘量)先返航</b> <span class="adjust">🔧 百分比由負責人定,參考 Pack 03 低電課</span></li>
+    </ol>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · Shot List 排序</div>
+      <div class="hint">六張鏡頭卡(M = must-have 必要,N = nice-to-have)—— 按慳電四規則,由第一個拍嘅開始逐張撳。撳錯會話你知邊條規則出咗事。</div>
+      <ol class="seq-done-list" id="shot-done"></ol>
+      <div class="seq-pool" id="shot-pool"></div>
+      <div class="fb-box" id="shot-fb"></div>
+      <button class="btn ghost" id="shot-reset" type="button" style="margin-top:6px">重新排過</button>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 實飛鏡頭數同場地由負責人定</span></span>
+      <p>根據課 3 場地砌一張 6–8 鏡 shot list(排序連理由),再喺練習場實飛其中三個鏡頭(空景)。<b>完成標準:</b>五格齊、每鏡有風險註記同 escape route、排序符合四規則;實飛口令齊、無超出範圍。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>每個鏡頭 plan 埋 escape route。</b>拉鏡冇 spotter 唔准做 —— 機尾冇眼。規劃嗰陣覺得「呢個鏡頭好牽強」,任務日佢只會更牽強 —— 喺紙上刪咗佢,好過喺天上搏。</p></div>
+    <button class="done-btn" data-lesson="3" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L5 ===== -->
+  <section class="lesson" id="lesson-5">
+    <span class="lesson-tag">Lesson 05</span>
+    <h2>任務日執行 — 分工、Brief、圍觀者、客戶</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出任務日三個角色各自做咩、點解唔可以撈埋;識主持五分鐘現場 brief;識處理圍觀者同「呢個鏡頭做唔到」點講。</div>
+
+    <h3>三個角色</h3>
+    <div class="tablebox">
+      <table>
+        <tr><th>角色</th><th>職責</th><th>鐵律</th></tr>
+        <tr><td>PIC</td><td>飛。負全責,有 final say</td><td>飛緊嗰陣唔同任何人傾偈 —— 包括客戶</td></tr>
+        <tr><td>Spotter</td><td>睇空域、障礙、圍觀者,同 PIC 講短句報告</td><td>眼喺天上同四周,唔係喺 screen</td></tr>
+        <tr><td>Client liaison(客戶聯絡)</td><td>企喺客戶隔籬,答問題、擋查詢、傳達要求</td><td>客戶所有嘢經佢,唔准直接埋 PIC 身</td></tr>
+      </table>
+    </div>
+    <p>點解要分?因為<b>人腦一次只做到一樣嘢做得好</b>。PIC 一路飛一路答問題,就係 Pack 02 講嘅 orientation(方向感)蝦碌高危狀態。人手唔夠三個點算:<b>硬底線:最低 2 人 —— PIC(飛)+ spotter(睇)。</b>不足三人就由 <b>spotter 兼客戶聯絡</b>,但佢見到危險可以<b>隨時轉返全職監看</b>(客戶等得,部機等唔得)。<b>⚠️ PIC 永遠唔准兼任何其他角色</b> —— 一路飛一路答問題,就係 Pack 02 講嘅 orientation 高危狀態。 <span class="adjust">🔧</span>,但底線係:<b>PIC 飛緊嗰陣,一定有另一個人負責同客戶講嘢。</b></p>
+    <h3>現場 brief:五分鐘六格</h3>
+    <ol>
+      <li>今日拍咩(shot list 過一次)</li>
+      <li>飛邊度、幾高、LZ 喺邊</li>
+      <li>危險位(課 3 survey 嘅發現,現場再核實)</li>
+      <li>緊急程序:出事邊個做咩、escape route 喺邊(Pack 03 預案思維)</li>
+      <li>口令提一提:「Taking off!」→ 等「CLEAR」→ 先 arm;「Landing!」喺離地 10–20 米 → 等「CLEAR」→ 先落</li>
+      <li>分工確認:邊個 PIC、邊個 spotter、邊個湊客戶</li>
+    </ol>
+    <h3>圍觀者管理 + 客戶期望</h3>
+    <ul>
+      <li><b>預防:</b>LZ 圍好 / 擺明顯標記,spotter 企喺人流方向。有人埋嚟:spotter 或 liaison 去處理,PIC 唔分心。</li>
+      <li><b>有人衝入 LZ 或航線下方:</b>即刻 hold(懸停)或 go-around(重新入場,Pack 02),人清咗先繼續。<b>唔准邊飛邊嗌交。</b>態度:圍觀者唔係敵人,係未來嘅客戶 —— 有禮但企硬。</li>
+      <li><b>「可唔可以飛低啲 / 近啲?」</b>→「呢個距離係安全要求。我哋可以用 zoom / 後期裁,效果好接近。」</li>
+      <li><b>「隔籬條街好靚,順便影埋?」</b>→ 唔喺 shot list、未 survey、未查空域 = 唔飛。「今日資料唔夠唔可以即興飛,不過可以幫你安排補拍。」講完做唔到,記得<b>話返做到啲咩</b>。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 邊個接波?</div>
+      <div class="hint">任務日突發情況彈出 —— 判斷應該由邊個角色行動。</div>
+      <div class="cl-statement" id="role-st">撳「開始」進入任務日</div>
+      <div class="cl-btns" id="role-btns"><button class="btn" id="role-start" type="button">開始</button></div>
+      <div class="fb-box" id="role-fb"></div>
+      <div class="mini-score" id="role-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境由負責人設計</span></span>
+      <p>全隊模擬任務日:一人 PIC、一人 spotter、一人扮客戶(有「搞事清單」:中途改要求、行埋 PIC 度、途人闖入)。<b>完成標準:</b>brief 六格齊;三次搞事全部由正確角色接手;PIC 全程冇直接同客戶對話;口令零漏。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>PIC 飛緊 = 唔對話。</b>有嘢要話俾 PIC 知,經 spotter 用短句。客戶要求 vs 安全,安全贏,冇得傾 —— 呢句喺 brief 預先同客戶講咗,現場就唔使拗。即興加鏡頭 = 未評估嘅飛行 = 唔做。</p></div>
+    <button class="done-btn" data-lesson="4" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L6 ===== -->
+  <section class="lesson" id="lesson-6">
+    <span class="lesson-tag">Lesson 06</span>
+    <h2>相機基本設定概念 — 識個道理,設定按機型</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出解像度同幀率嘅取捨邏輯,識由 deliverable(交付物)倒推設定方向;解釋到 ND filter(減光鏡)係咩、幾時用;分得清曝光三個元素。</div>
+    <p><b>呢課只教概念</b> —— 團隊各人機型唔同,所有實際數字同選單位置 <span class="adjust">🔧 由負責人按機型出速查表</span>:<b>實際數字同選單位置逐機型唔同</b> —— 開工前問 PIC / 負責人,或者查返該機型說明書。<b>呢課只教你識睇個數字係咩意思,唔係要你背數字。</b></p>
+    <ul>
+      <li><b>解像度 vs 幀率:一條數兩樣嘢爭。</b>好多時要二揀一:要最靚畫質(高解像度)定要慢動作(高 fps)?答案唔喺相機度,喺 deliverable 度 —— 客戶要大螢幕播 → 解像度優先;reference 有慢鏡 → 嗰啲鏡頭要高 fps;唔知?課 2 應該問咗。</li>
+      <li><b>ND filter:相機嘅太陽眼鏡。</b>影片想畫面「順滑有電影感」,快門要慢(概念叫 180° rule:快門大約係幀率兩倍嘅倒數,例如 30fps 用 1/60 —— 概念參考,唔使背)。但大太陽下慢快門會全白過曝 —— 所以要「戴太陽眼鏡」減光。<b>日光影片任務,ND filter 係基本裝備,出門前 check 有冇帶。</b></li>
+      <li><b>曝光三寶:</b>ISO(感光度 —— 扭大會光啲但多雜訊,原則儘量低)、aperture(光圈 —— 好多航拍機係固定,得個知字)、shutter(快門 —— 影片影響 motion blur,影相影響郁嘅嘢清唔清)。</li>
+      <li><b>影相 vs 影片:</b>影相可以 RAW,後期執光暗空間大;影片後期補救空間細好多,<b>現場要對</b> —— 所以影片任務先咁緊張 ND 同曝光。同一單任務兩樣都要?Shot list 標明邊啲相邊啲片,唔好飛到半路先諗。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 客戶要咩 → 你點校</div>
+      <div class="hint">客戶要求彈出 —— 揀設定方向。</div>
+      <div class="cl-statement" id="cam-st">撳「開始」接客</div>
+      <div class="cl-btns" id="cam-btns"><button class="btn" id="cam-start" type="button">開始</button></div>
+      <div class="fb-box" id="cam-fb"></div>
+      <div class="mini-score" id="cam-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 時限同機型由負責人定</span></span>
+      <p>負責人畀三個模擬 deliverable(大螢幕形象片 / IG 慢鏡 / 平面相),逐個寫出設定方向 + 一句理由;之後喺<b>地面</b>用自己機型跟速查表校一次。<b>完成標準:</b>三個 case 方向啱 + 理由講得出;地面 3 分鐘內校齊。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>校相機唔准飛緊校。</b>起飛前校好,或者落地先校 —— 飛緊撳 screen = VLOS 斷。眼嘅優先次序:天上隻機 &gt; 四周環境 &gt; screen。唔記得帶 ND?照計劃用安全設定拍,唔好現場邊飛邊試。</p></div>
+    <button class="done-btn" data-lesson="5" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L7 ===== -->
+  <section class="lesson" id="lesson-7">
+    <span class="lesson-tag">Lesson 07</span>
+    <h2>收工程序 — 素材 Check 咗先走!</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>落地後跟正確次序收工:素材 → 裝備 → 紀錄 → 客戶;明白「現場 check 素材」點解係鐵律;識填任務版 flight log(飛行紀錄)。</div>
+    <p><b>收工鐵律:柯打完成唔係落地嗰刻,係素材安全嗰刻。</b>最貴嘅唔係隻機,係卡入面嘅嘢 —— 機可以再買,今日嘅日落買唔返。「唔 check 走人」等於白飛:返到屋企先發現條片 corrupt(檔案損壞),就要成隊人擇日再嚟。</p>
+    <h3>收工四步(次序唔准掉轉)</h3>
+    <ol>
+      <li><b>素材 check(未 check 唔准拆場):</b>must-have 鏡頭逐條 playback(播返)確認;copy 一份去第二個儲存(手提 SSD / 電腦 / 後備卡)先算「安全」(<b>隊上配手提 SSD,收場前一定要 copy</b>:①SSD 插電腦 / 平板;②copy 成張卡過去;③隨機抽 2–3 條 playback 確認真係 copy 到;④<b>卡保留唔 format</b> —— 卡 + SSD 就係兩份;⑤<b>兩份分開人拿、分開袋</b>,一個人失單都唔會全冇。<b>⚠️ copy 要時間,收場流程要預埋。</b>);SD 卡由呢一刻起當寶保管。</li>
+      <li><b>裝備清點:</b>用 checklist 逐格剔 —— 機、電池(<b>數數目!</b>)、槳、SD 卡、ND filters、遙控、叉電器。漏低一嚿電喺草地 = 蝕錢 + LiPo 安全隱患。電池熱住唔好即叉;長期唔用放 storage 電(Pack 01 第 3 課)<span class="adjust">🔧</span>。</li>
+      <li><b>Flight log:</b>練習版加任務欄 —— 客戶、地點、架次、每嚿電用量、有冇 near-miss(險失事件)或異常(Pack 03 上報文化,任務日一樣適用)。呢份 log 唔係官僚嘢:下次報價、下次評估、出事調查全部靠佢。</li>
+      <li><b>向客戶現場交代,三句走人:</b>「今日拍咗咩(對返 shot list)、幾時交到(確認 deliverable 日期)、下一步係咩」。有鏡頭走咗雞,<b>而家講</b>,唔好交片先俾客戶發現。</li>
+    </ol>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 收工次序</div>
+      <div class="hint">收工動作打亂晒 —— 按正確次序逐粒撳。有一粒係陷阱,任何時候撳佢都會出事。</div>
+      <ol class="seq-done-list" id="wrap-done"></ol>
+      <div class="seq-pool" id="wrap-pool"></div>
+      <div class="fb-box" id="wrap-fb"></div>
+      <button class="btn ghost" id="wrap-reset" type="button" style="margin-top:6px">重新嚟過</button>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 時限由負責人定</span></span>
+      <p>模擬任務完結場景,獨立完成收工四步,觀察員計時 + 對 checklist,中間安排兩個干擾(客戶催走、有人問嘢)。<b>完成標準:</b>四步次序正確、素材確認兩份、裝備零漏、log 填齊、干擾冇打斷次序。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>未確認素材有兩份之前,SD 卡唔准 format(格式化)、唔准重用。</b>電池熱住唔叉、鼓咗即刻隔離 —— 趕頭趕命都唔可以跳。執嘢嗰陣最易鬆懈,圍觀者呢個時候埋嚟都係由 liaison 接手。</p></div>
+    <button class="done-btn" data-lesson="6" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L8 ===== -->
+  <section class="lesson" id="lesson-8">
+    <span class="lesson-tag">Lesson 08</span>
+    <h2>交付基礎 — 命名、備份、保密</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>用統一命名規則整理素材;講得出 3-2-1 備份原則同幾時先可以刪嘢;交付前行一次 review checklist,包括私隱同保密檢查。</div>
+    <ul>
+      <li><b>命名:三個月後嘅你要搵得返。</b>建議格式:<code>日期_客戶_地點_卡號</code>(例:<code>20260710_ABC公司_觀塘_C01</code>)(<b>團隊統一格式:<code>日期_任務編號_客戶_卡號</code></b> —— 例:<code>20260710_J042_ABC_C01</code>。<b>任務編號由負責人接單嗰陣編</b>,寫喺 brief 上面,收工命名時照抄。咁樣素材、接單記錄、報價單三樣對得返,三個月後想搵返邊單都搵到。)。資料夾一單任務一個,入面分「RAW 素材 / 交付版 / 文件」。原則:<b>任何人唔使問你都搵到嘢</b> —— 團隊資產,唔係個人記憶。</li>
+      <li><b>3-2-1 備份原則。</b>好似屋企鎖匙:自己一條、屋企人一條、一條放老家 —— 一個地方出事都仲入到屋。<b>3</b> 份 copy(原卡 + 兩份)、<b>2</b> 種媒介(電腦 + 外置硬碟,或硬碟 + 雲端)、<b>1</b> 份異地。團隊實際裝備:<b>團隊實際配置:3 份 = 原卡 + 工作 SSD + 屋企硬碟;2 種媒介 = 現場 SSD + 屋企硬碟;1 份異地 = 屋企。唔上雲端</b>(客戶素材唔出第三方,私隱風險最低)。<b>⚠️ 實體異地最易失守嘅位:唔記得搬。</b>所以「搬咗屋企硬碟」要當收工四步嘅一部分,未搬 = 未收工。。<b>幾時可以刪 source / format 卡?</b>跟保留政策(<b>團隊保留期:交付後 1 年。</b>一年之內唔准刪 —— 客戶隔幾個月回頭要多一個鏡頭係常態。<b>卡就唔同</b>:3-2-1 齊晒 + 逐條 playback 確認播得完,就可以 format 返用(卡係工具,唔係倉)。<b>⚠️ 保留期長 = 私隱資料喺你手上耐</b>,所以硬碟要上鎖 / 加密,唔好隨手擺。);底線:3-2-1 齊咗、客戶簽收咗,先可以講刪。</li>
+      <li><b>交付前 review checklist:</b>①每條檔案開得到播得完;②對返 deliverable 逐項剔;③私隱檢查 —— 畫面有冇清晰人面、車牌、屋內環境(處理方式:<b>團隊做法:照交,但交付時要書面寫明</b> —— 「本批素材可能含可識別個人資料(人面、車牌、屋內環境),客戶發佈前須自行處理」。呢句要寫喺交付訊息 / email 入面,唔係口頭講。<b>拿唔準嘅個案(例如明顯影到屋企入面、醫院、學校)先問負責人</b>,唔好自己決定交定唔交。);④有冇拍多咗(影到隔籬地盤 / 私人地方嘅片段唔好交、唔好留);⑤交付方法同簽收(<b>交付方式逐單由客戶揀,但流程係固定嘅</b>:①<b>接單評估嗰陣就要問實</b>客戶要邊種交付(雲端連結 / 實體硬碟 / 客戶自己嘅系統)同埋邊個人收;②答案<b>寫入 brief</b>,唔靠記;③交付時連埋交付清單(逐項對返 deliverable)同私隱聲明;④<b>要客戶文字回覆「收到、檔案正常」先算簽收</b>,螢幕檔存住。<b>冇問實交付方式 = brief 未完整 = 唔好開工。</b>)。</li>
+      <li><b>客戶資料保密。</b>素材係客戶財產 —— 未經書面同意,唔准放上自己 IG / portfolio /畀朋友睇,「條片好靚咋嘛」唔係理由。簽咗 NDA 更加唔使講;冇簽都當有咁處理。團隊宣傳想用?經負責人向客戶攞書面同意(<b>一律唔准</b>。任務素材係客戶財產,放個人 IG / portfolio / 畀朋友睇 —— 全部唔准,<b>「條片好靚咋嘛」唔係理由</b>。團隊想攞嚟宣傳,<b>由負責人向客戶攞書面同意</b>,唔係隊員自己去問客戶。)。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 3-2-1 自查器</div>
+      <div class="hint">輸入你打算點備份今次任務嘅素材,睇吓符唔符合 3-2-1。</div>
+      <div class="sl-row"><label for="bk-copies">總共有幾多份?</label>
+        <select id="bk-copies"><option value="1">1 份(淨係原卡)</option><option value="2">2 份</option><option value="3" selected>3 份</option><option value="4">4 份</option></select></div>
+      <div class="sl-row"><label for="bk-media">用幾多種唔同媒介?</label>
+        <select id="bk-media"><option value="1">1 種(全部喺 SD 卡)</option><option value="2" selected>2 種(硬碟 + 雲端)</option><option value="3">3 種</option></select></div>
+      <div class="sl-row"><label for="bk-offsite">有冇一份放喺另一個地點?</label>
+        <select id="bk-offsite"><option value="yes" selected>有(雲端 / 第二地點)</option><option value="no">冇,全部喺同一度</option></select></div>
+      <button class="btn" id="bk-check" type="button">檢查</button>
+      <div class="lamp" id="bk-lamp" style="display:none"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 細節由負責人定</span></span>
+      <p>用一批模擬素材(由負責人提供一批模擬素材):命名整理 → 做出 3-2-1 結構 → 行 review checklist → 寫一段交付訊息俾「客戶」。<b>完成標準:</b>命名 100% 跟格式、3-2-1 三條件講得出邊份係邊份、checklist 逐項有剔、交付訊息有齊內容 / 數量 / 下一步。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點(資料安全)</span>
+    <p><b>3-2-1 未齊,唔准 format 卡</b> —— 同課 7 鐵律接力。交付連結 / 硬碟畀錯人 = 保密事故,send 之前 double-check 收件人。私隱檢查唔係後期組嘅事 —— 邊個交付邊個負責行 checklist。</p></div>
+    <button class="done-btn" data-lesson="7" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section class="quiz-head" id="quiz">
+    <span class="lesson-tag">總測驗 · Final Quiz</span>
+    <h2>測驗:10 題選擇題</h2>
+    <div class="quiz-rules">
+      <ul>
+        <li>每題 <b>10 分</b>,滿分 <b>100 分</b>,<b>100 分合格(OPENBOOK 開卷)</b> —— 任務嘢冇「合格邊緣」,錯一題就代表有一瓣未掂。</li>
+        <li>交卷後顯示每題對錯、解釋同對應課數。</li>
+        <li>測驗結果用嚟改進教材同跟進學習,<b>唔會用嚟處分任何隊員</b>。</li>
+      </ul>
+    </div>
+    <div id="quiz-body"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="submit-btn" type="button">交卷計分</button>
+      <button class="btn ghost" id="retry-btn" type="button" style="display:none">再做一次</button>
+    </div>
+    <p class="unanswered-note" id="unanswered-note"></p>
+    <div class="result" id="result">
+      <div class="score" id="score-num"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <div><span class="verdict" id="verdict"></span></div>
+      <p class="result-note" id="result-note"></p>
+    </div>
+  </section>
+
+  <footer>草稿 v1 · 飛行安全內容,待團隊負責人審核 · 課程內容:training-designer(培訓設計師)· 法規只引用 Pack 01 已核實數字,其餘以 CAD 官網為準</footer>
+</div>
+
+<script>
+"use strict";
+// ============ 進度追蹤 ============
+const LESSONS_KEY = "drone401.lessons", BEST_KEY = "drone401.best";
+function sGet(k, fb) { try { const r = localStorage.getItem(k); return r === null ? fb : JSON.parse(r); } catch (e) { return fb; } }
+function sSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lessonsDone = sGet(LESSONS_KEY, [false,false,false,false,false,false,false,false]);
+if (!Array.isArray(lessonsDone) || lessonsDone.length !== 8) lessonsDone = [false,false,false,false,false,false,false,false];
+function renderProgress() {
+  document.getElementById("segments").innerHTML = lessonsDone.map(d => `<div class="seg${d ? " done" : ""}"></div>`).join("");
+  document.getElementById("prog-count").textContent = lessonsDone.filter(Boolean).length;
+  document.querySelectorAll(".done-btn").forEach(btn => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    btn.classList.toggle("done", lessonsDone[i]);
+    btn.textContent = lessonsDone[i] ? "✓ 已完成(撳一下取消)" : "✓ 完成呢課";
+  });
+  const best = sGet(BEST_KEY, null);
+  document.getElementById("best-label").textContent = best === null ? "測驗最高分 —" : `測驗最高分 ${best}/100`;
+}
+document.querySelectorAll(".done-btn").forEach(btn => btn.addEventListener("click", () => {
+  const i = parseInt(btn.dataset.lesson, 10);
+  lessonsDone[i] = !lessonsDone[i];
+  sSet(LESSONS_KEY, lessonsDone);
+  renderProgress();
+}));
+
+// ============ L1:日落前 20 分鐘(分支後果) ============
+const p1Outcomes = [
+  { cls: "wrong", text: "💥 你飛快咗、手緊咗 —— 電量喺頂風下急跌,critical failsafe 自動降落喺唔理想位置。個鏡頭冇埋,仲要寫 incident report。每個「少少」加埋,就係咁。" },
+  { cls: "wrong", text: "📉 呢個就係 get-there-itis(去到病)嘅開端 —— 臨場同自己「講數」。放棄條件係事前定嘅,先至有用;上次冇事,唔代表次次冇事。" },
+  { cls: "right", text: "✅ 正確。收機,然後:「我明呢個鏡頭好緊要(同理)。而家電量到咗安全線,再飛有真風險(原因)。我哋聽日同一時段補拍,或者用而家有嘅素材剪個接近效果(替代)。」客戶下次仲會搵你 —— 因為你係嗰個唔會累佢上新聞嘅團隊。" }
+];
+document.querySelectorAll("[data-p1]").forEach(b => b.addEventListener("click", () => {
+  const o = p1Outcomes[parseInt(b.dataset.p1, 10)];
+  const fb = document.getElementById("p1-fb");
+  fb.textContent = o.text;
+  fb.className = "fb-box show " + o.cls;
+}));
+
+// ============ L2:模擬接單信箱 ============
+const mailItems = [
+  { text: "想要咩效果 —— 請佢畀 reference(參考片)", need: true, why: "「影靚啲」冇得評估,reference 先譯到客戶想要咩。" },
+  { text: "Deliverable(交付物):幾多條、幾長、相定片、幾時交", need: true, why: "唔夾實 deliverable,收工實拗數。" },
+  { text: "場地確實地址(攞嚟查空域 + 睇地圖)", need: true, why: "冇地址查唔到空域 —— 呢個係安全問題。" },
+  { text: "日期時間窗 + 有冇 backup day(後備日)", need: true, why: "冇 backup day 嘅單壓力加倍,一定要事先知。" },
+  { text: "場地許可邊個負責攞", need: true, why: "許可 lead time 好多時長過想像,拖到任務日就係壓力鍋。" },
+  { text: "客戶間公司有幾多人", need: false, why: "同任務評估無關 —— 唔使問。" },
+  { text: "客戶自己有冇玩過航拍", need: false, why: "無關評估 —— 唔使問。" },
+  { text: "確實預算金額", need: false, why: "報價係負責人嘅事 —— 你評估階段標記難度就得。" }
+];
+document.getElementById("mail-list").innerHTML = mailItems.map((m, i) => `
+  <label class="check-item"><input type="checkbox" data-mail="${i}"><span>${m.text}</span></label>`).join("");
+document.getElementById("mail-check").addEventListener("click", () => {
+  const fb = document.getElementById("mail-fb");
+  const errs = [];
+  mailItems.forEach((m, i) => {
+    const checked = document.querySelector(`[data-mail="${i}"]`).checked;
+    if (m.need && !checked) errs.push("漏咗:「" + m.text + "」—— " + m.why);
+    if (!m.need && checked) errs.push("唔使問:「" + m.text + "」—— " + m.why);
+  });
+  if (errs.length === 0) {
+    fb.textContent = "✅ 全中!五樣必問齊晒,三個煙幕彈冇中招 —— 呢封 email 而家先有得評估。";
+    fb.className = "fb-box show right";
+  } else {
+    fb.innerHTML = errs.map(e => "• " + e).join("<br>");
+    fb.className = "fb-box show wrong";
+  }
+});
+
+// ============ L3:搵危險 ============
+const hzInfo = [
+  "⚡ 電線!兩支杆之間嗰條幼線 —— 航拍頭號殺手,天空背景下人眼幾乎睇唔到。影相、標位、改航線。",
+  "🏗 天秤 / 吊臂 —— 高障礙物,仲要佢係會郁嘅。記低高度,航線同 RTH 高度都要避開佢。",
+  "🐕 狗公園入口 —— 人流通道!呢度就係「揀人流最少時段」嘅原因;LZ 唔可以近呢邊。",
+  "📦 金屬貨櫃 —— EMI(電磁干擾)風險,compass 喺佢隔籬會受影響,起飛點要離遠啲。",
+  "☀️ 太陽方向 —— 向呢邊飛 = 眩光 = VLOS(目視)斷。日照方向係安全項目,唔淨係美學。"
+];
+const hzFoundSet = new Set();
+document.querySelectorAll(".hz-hot").forEach(hot => hot.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const i = parseInt(hot.dataset.hz, 10);
+  const fb = document.getElementById("hz-fb");
+  if (!hzFoundSet.has(i)) {
+    hzFoundSet.add(i);
+    fb.textContent = hzInfo[i];
+    fb.className = "fb-box show right";
+    document.getElementById("hz-found").textContent = hzFoundSet.size === 5
+      ? "搵到 5/5 🎉 —— 現實入面,每一個都要影相 + 寫入 survey 紀錄 + 喺任務日 brief 講出嚟"
+      : `搵到 ${hzFoundSet.size}/5`;
+  } else {
+    fb.textContent = "呢個你搵咗喇 —— 仲有其他。";
+    fb.className = "fb-box show neutral";
+  }
+}));
+document.getElementById("hz-svg").addEventListener("click", () => {
+  const fb = document.getElementById("hz-fb");
+  fb.textContent = "呢度暫時冇嘢 —— 但 survey 多疑係美德,繼續搵。(提示:電線、高嘢、人流、金屬、太陽)";
+  fb.className = "fb-box show neutral";
+});
+
+// ============ 通用「按次序撳」引擎(L4 / L7 共用) ============
+function makeSequence(cfg) {
+  let next = 0;
+  const fb = document.getElementById(cfg.fbId);
+  function render() {
+    next = 0;
+    document.getElementById(cfg.doneId).innerHTML = "";
+    fb.className = "fb-box";
+    document.getElementById(cfg.poolId).innerHTML = cfg.display.map(i => {
+      const item = cfg.items[i];
+      return `<button class="seq-btn${item.trap ? " trap" : ""}" data-sq="${i}" type="button">${item.label}</button>`;
+    }).join("");
+    document.querySelectorAll(`#${cfg.poolId} [data-sq]`).forEach(b => b.addEventListener("click", () => {
+      const i = parseInt(b.dataset.sq, 10);
+      const item = cfg.items[i];
+      if (item.trap) {
+        b.classList.add("shake");
+        setTimeout(() => b.classList.remove("shake"), 450);
+        fb.textContent = item.trapMsg;
+        fb.className = "fb-box show wrong";
+        return;
+      }
+      if (item.order === next) {
+        b.disabled = true;
+        const li = document.createElement("li");
+        li.textContent = item.label;
+        document.getElementById(cfg.doneId).appendChild(li);
+        next++;
+        if (next === cfg.total) {
+          fb.textContent = cfg.winMsg;
+          fb.className = "fb-box show right";
+        } else { fb.className = "fb-box"; }
+      } else {
+        b.classList.add("shake");
+        setTimeout(() => b.classList.remove("shake"), 450);
+        fb.textContent = item.wrongMsg(next);
+        fb.className = "fb-box show wrong";
+      }
+    }));
+  }
+  document.getElementById(cfg.resetId).addEventListener("click", render);
+  render();
+}
+
+// L4:shot list 排序(正確次序 = must-have 先 + 難嘢排頭 + 同位置一齊 + nice 押後)
+makeSequence({
+  poolId: "shot-pool", doneId: "shot-done", fbId: "shot-fb", resetId: "shot-reset", total: 6,
+  display: [3, 0, 4, 2, 5, 1],
+  items: [
+    { order: 0, label: "M·難|碼頭低空跟拍船(位置 A)", wrongMsg: n => "規則 1+3:must-have 先、難鏡頭排喺頭嗰嚿電 —— 人最精神、電最足嗰陣做最難嘅嘢。" },
+    { order: 1, label: "M|碼頭 orbit 環繞(位置 A)", wrongMsg: n => n === 0 ? "接近喇 —— 但難嗰個 must-have 應該行先(規則 3)。" : "規則 2:同位置嘅鏡頭一齊拍,慳往返嘅電 —— 碼頭(位置 A)嗰兩個應該孖住做。" },
+    { order: 2, label: "M|全景 reveal 開場鏡(位置 B)", wrongMsg: n => n < 2 ? "位置 A 嘅 must-have 未拍完 —— 同位置一齊拍(規則 2)。" : "must-have 排先(規則 1)。" },
+    { order: 3, label: "N|天台 push-in 推鏡(位置 B)", wrongMsg: n => n < 3 ? "佢係 nice-to-have —— 三個 M 未到手之前唔輪到佢(規則 1)。" : "位置 B 啱,但 must-have 先行。" },
+    { order: 4, label: "N|街景 pull-out 拉鏡(位置 C,要 spotter)", wrongMsg: n => n < 3 ? "nice-to-have 押後 —— 電出意外你保唔住必要鏡頭(規則 1)。" : "位置 B 嗰個 nice 順路先做(規則 2)。" },
+    { order: 5, label: "N|日落定點長拍(位置 C)", wrongMsg: n => n < 3 ? "nice-to-have 押後(規則 1)。" : "同位置 C 嘅拉鏡一齊做,但拉鏡要 spotter 準備 —— 佢先。" }
+  ],
+  winMsg: "✅ 排啱晒!覆盤:難嘅 must-have 用第一嚿電 → 同位置孖住拍 → nice-to-have 押後 → 每嚿電留 buffer(呢樣喺 shot list 寫低)。"
+});
+
+// L7:收工次序(連 format 陷阱)
+makeSequence({
+  poolId: "wrap-pool", doneId: "wrap-done", fbId: "wrap-fb", resetId: "wrap-reset", total: 6,
+  display: [2, 5, 0, 6, 3, 1, 4],
+  items: [
+    { order: 0, label: "Must-have 鏡頭逐條 playback 確認", wrongMsg: n => "第一步永遠係素材 —— 柯打完成唔係落地嗰刻,係素材安全嗰刻。" },
+    { order: 1, label: "Copy 一份去第二個儲存(SSD / 電腦)", wrongMsg: n => n === 0 ? "先 playback 確認有嘢,先值得 copy。" : "素材未有兩份之前,唔准做其他嘢。" },
+    { order: 2, label: "裝備清點:機、電池數目、槳、卡、遙控", wrongMsg: n => n < 2 ? "素材行先 —— 機可以再買,今日嘅日落買唔返。" : "係喇,清點時記住數電池數目。" },
+    { order: 3, label: "填任務版 flight log(連異常 / near-miss)", wrongMsg: n => n < 3 ? "未到 —— 收工四步:素材 → 裝備 → 紀錄 → 客戶。" : "" },
+    { order: 4, label: "同客戶三句交代:拍咗咩 / 幾時交 / 下一步", wrongMsg: n => n < 4 ? "同客戶交代係最後一步 —— 你要先知自己拍咗啲咩、log 咗啲咩。" : "" },
+    { order: 5, label: "拆場走人", wrongMsg: n => "未得 —— 素材未確認有兩份、裝備未點齊之前,唔准拆場。" },
+    { trap: true, label: "順手 format 咗張卡,下次任務用", trapMsg: "🚨 陷阱!3-2-1 備份未齊、客戶未簽收之前,SD 卡唔准 format、唔准重用 —— 呢條係鐵律,擺喺邊個位置都係錯。" }
+  ],
+  winMsg: "✅ 收工四步全對:素材 → 裝備 → 紀錄 → 客戶 → 先至走人。而嗰張「format 卡」…你冇撳過佢吖嘛?"
+});
+
+// ============ 通用分類遊戲引擎(L5 / L6 共用) ============
+function makeClassify(cfg) {
+  let idx = -1, score = 0;
+  const st = document.getElementById(cfg.stId), fb = document.getElementById(cfg.fbId);
+  function show() {
+    st.textContent = cfg.items[idx].text;
+    document.getElementById(cfg.btnsId).innerHTML = cfg.cats.map((c, ci) =>
+      `<button class="btn ${ci % 2 ? "ghost" : ""}" data-cl="${ci}" type="button">${c}</button>`).join("");
+    fb.className = "fb-box";
+    document.querySelectorAll(`#${cfg.btnsId} [data-cl]`).forEach(b => b.addEventListener("click", () => {
+      const item = cfg.items[idx];
+      const right = parseInt(b.dataset.cl, 10) === item.cat;
+      if (right) score++;
+      fb.textContent = (right ? "✓ 啱。" : "✗ 諗多一次。") + item.fb;
+      fb.className = "fb-box show " + (right ? "right" : "wrong");
+      document.getElementById(cfg.scId).textContent = `進度 ${idx + 1}/${cfg.items.length} · 啱 ${score}`;
+      if (idx < cfg.items.length - 1) {
+        document.getElementById(cfg.btnsId).innerHTML = `<button class="btn ghost" data-next type="button">下一個 →</button>`;
+        document.querySelector(`#${cfg.btnsId} [data-next]`).addEventListener("click", () => { idx++; show(); });
+      } else {
+        document.getElementById(cfg.btnsId).innerHTML = `<button class="btn" data-restart type="button">再嚟一輪(${score}/${cfg.items.length} · ${cfg.endMsg(score)})</button>`;
+        document.querySelector(`#${cfg.btnsId} [data-restart]`).addEventListener("click", start);
+      }
+    }));
+  }
+  function start() { idx = 0; score = 0; document.getElementById(cfg.scId).textContent = ""; show(); }
+  document.getElementById(cfg.startId).addEventListener("click", start);
+}
+
+// L5:邊個接波?
+makeClassify({
+  stId: "role-st", btnsId: "role-btns", fbId: "role-fb", scId: "role-sc", startId: "role-start",
+  cats: ["🕹 PIC", "👀 Spotter", "🤝 Client liaison", "👥 全隊(brief 時)"],
+  items: [
+    { text: "客戶行埋嚟拍 PIC 膊頭:「仲有幾耐呀?」", cat: 2, fb: "Liaison 即刻接手同客戶傾 —— PIC 飛緊唔同任何人對話,眼一離機 VLOS 就斷。" },
+    { text: "有踩單車途人向 LZ(起降區)方向嚟緊。", cat: 1, fb: "Spotter 嘅工作 —— 佢眼喺四周,見到人流威脅即刻用短句報俾 PIC 知。" },
+    { text: "隻機空中出現異常震動聲。", cat: 0, fb: "PIC 即刻決定 —— hover 定即刻落地。呢啲係飛行決定,final say 喺 PIC。" },
+    { text: "客戶想加一個唔喺 shot list 嘅鏡頭。", cat: 2, fb: "Liaison 收低、傳達 —— 即興加鏡頭係未評估嘅飛行,要過「空域 / 障礙 / escape route」三問先傾。" },
+    { text: "「今日嘅危險位同緊急程序」呢部分邊個環節講?", cat: 3, fb: "現場 brief 六格之一 —— 開工前全隊(包括客戶代表)企埋一齊講。" },
+    { text: "空中有飛鳥群接近航線。", cat: 1, fb: "Spotter 短句報告(「三點鐘方向雀群」)—— PIC 決定避開定 hold。" }
+  ],
+  endMsg: s => s >= 5 ? "分工清晰 —— 人腦一次只做到一樣嘢做得好。" : "重溫課 5 三個角色嘅鐵律。"
+});
+
+// L6:客戶要咩 → 你點校
+makeClassify({
+  stId: "cam-st", btnsId: "cam-btns", fbId: "cam-fb", scId: "cam-sc", startId: "cam-start",
+  cats: ["🎞 高 fps 優先", "🖥 高解像度優先", "🕶 要 ND filter", "📷 影相 + RAW", "🚫 要求本身有問題"],
+  items: [
+    { text: "Reference 片入面有慢動作跑步片段。", cat: 0, fb: "慢動作要高 fps(幀率)—— 呢啲鏡頭喺 shot list 標明用高 fps 模式。" },
+    { text: "客戶要商場大螢幕播嘅形象片,要最靚畫質。", cat: 1, fb: "大螢幕 = 解像度優先 —— 畫質同慢動作好多時二揀一,答案喺 deliverable 度。" },
+    { text: "大太陽下影片,客戶要「電影感、順滑」嘅畫面。", cat: 2, fb: "電影感 = 慢快門(180° rule 概念),大太陽下要 ND filter(減光鏡)先做到 —— 出門前 check 有冇帶。" },
+    { text: "客戶要平面海報用嘅高質相片。", cat: 3, fb: "影相用 RAW —— 後期執光暗空間大好多,現場曝光有偏差都救得返。" },
+    { text: "客戶想要維港夜景航拍片。", cat: 4, fb: "夜航屬進階操作,標準操作係日光 —— 呢個要求評估階段就要講明做唔到(或者由負責人研究申請途徑),唔係設定問題。" },
+    { text: "IG 直度 reel,想有浪花慢鏡。", cat: 0, fb: "慢鏡 = 高 fps;直度出片就喺 shot list 註明構圖預直裁。" }
+  ],
+  endMsg: s => s >= 5 ? "識由 deliverable 倒推設定 —— 呢個就係課 2 問 reference 嘅原因。" : "重溫課 6:答案唔喺相機度,喺 deliverable 度。"
+});
+
+// ============ L8:3-2-1 自查器 ============
+document.getElementById("bk-check").addEventListener("click", () => {
+  const copies = parseInt(document.getElementById("bk-copies").value, 10);
+  const media = parseInt(document.getElementById("bk-media").value, 10);
+  const offsite = document.getElementById("bk-offsite").value === "yes";
+  const probs = [];
+  if (copies < 3) probs.push(`份數唔夠:得 ${copies} 份,要 3 份(原卡 + 兩份 copy)`);
+  if (media < 2) probs.push(`媒介唔夠:得 ${media} 種,要 2 種唔同媒介(一個媒介壞晒就全滅)`);
+  if (!offsite) probs.push("冇異地:三份擺晒同一度,火燭 / 爆水管一鑊熟");
+  const lamp = document.getElementById("bk-lamp");
+  lamp.style.display = "block";
+  if (probs.length === 0) {
+    lamp.className = "lamp green";
+    lamp.innerHTML = "✅ 符合 3-2-1<small>而家先有資格考慮 format 卡 —— 記住仲要等客戶簽收</small>";
+  } else {
+    lamp.className = "lamp red";
+    lamp.innerHTML = "❌ 未符合 3-2-1<small>" + probs.join(";") + "</small>";
+  }
+});
+
+// ============ 總測驗(開卷,100 分合格) ============
+const quizQuestions = [
+  { lesson: "課 1", question: "日落前 20 分鐘,客戶話「仲爭一個 orbit 鏡頭,快手啦!」你嘅電量啱啱去到團隊定嘅返航線。你應該:",
+    options: ["飛快啲,爭取喺電量再跌之前搶咗個鏡頭","將返航線自己降低 5%,反正上次都試過冇事","照跟返航線收機,用三段式同客戶講原因同補拍方案","叫 spotter 幫手睇住,自己搏一舖"],
+    correct: 2, explain: "「攞唔到個鏡頭」永遠好過「出事」。返航線係事前定好嘅放棄條件 —— 臨場自己「講數」就係 get-there-itis(去到病)嘅開始。答完客戶要有替代方案。(課 1)" },
+  { lesson: "課 2", question: "你收到一單查詢,場地喺一個你唔熟嘅地區,客戶話「呢度成日有人飛,實冇問題」。落實接單之前,你應該:",
+    options: ["客戶熟場地,信佢就得","自己查 eSUA 同 CAD 資料確認空域限制,唔清楚就問負責人,查妥先應承","接咗先,任務日發現唔得咪算囉","上網搵吓有冇人喺嗰度影過航拍片,有就即係得"],
+    correct: 1, explain: "空域以 CAD 官網同 eSUA 為準,唔係以「有人飛過」為準 —— 人哋可能申請咗、又可能一直犯緊規。接咗先發現飛唔到就係壓力鍋。(課 2)" },
+  { lesson: "課 3", question: "你做 site survey(場地勘察),發現最靚嘅拍攝角度中間橫住一排電線,地圖同衛星圖都睇唔到佢。正確做法係:",
+    options: ["心裡有數,任務日小心啲飛","影相、地圖標位、寫入 survey 紀錄,改航線或改角度,並喺任務日 brief 講出嚟","電線咁幼,離遠啲影就得,唔使特別記錄","取消成單任務"],
+    correct: 1, explain: "Survey 搵到嘅危險要寫低、要傳達俾成隊 —— 「自己心裡有數」等於冇做過 survey。「小心啲」唔係措施,改航線先係;一個發現唔使去到取消任務。(課 3)" },
+  { lesson: "課 4", question: "Shot list 入面有一個 pull-out 拉鏡(由主體向後飛開)。呢個鏡頭嘅關鍵安全安排係:",
+    options: ["飛快啲,縮短向後飛嘅時間","開盡 gimbal(雲台)向下影,順便睇埋後面","必須有 spotter 睇住機尾方向,或者事先向後行一次條航線確認淨空","拉鏡冇特別風險,照飛"],
+    correct: 2, explain: "拉鏡 = 機尾向前行 = 盲飛,後方障礙你完全睇唔到。相機影嘅係前面,飛快啲只會撞得快啲。(課 4)" },
+  { lesson: "課 4", question: "今日 shot list 有八個鏡頭,三個係客戶指定嘅 must-have(必要),其中一個難度高;其餘係 nice-to-have。按慳電原則,你應該:",
+    options: ["由易到難排,熱吓身先","Must-have 排先,難嗰個排喺頭一兩嚿電,同位置嘅鏡頭一齊拍","順住場地位置由近到遠影,唔使諗咁多","Nice-to-have 排先,萬一後面冇電,起碼客戶見到你有 bonus"],
+    correct: 1, explain: "慳電四規則:must-have 先、難嘢排精神好電又足嗰陣、同位置一齊拍、每嚿電留 buffer。「熱身」聽落合理,但用咗最靚嘅電同光去拍最唔緊要嘅嘢。(課 4)" },
+  { lesson: "課 5", question: "你係 PIC,飛緊 orbit 途中,客戶行埋嚟拍你膊頭:「影唔影到我間舖個招牌呀?」正確處理係:",
+    options: ["一路飛一路答佢,客戶至上","即刻望住客戶解釋,隻機而家 hover 緊唔會有事","Client liaison 即刻接手同客戶傾,你眼唔離機;冇 liaison 就先 hold 隻機喺安全位,處理完先繼續","嗌佢咪搞住晒,一陣先講"],
+    correct: 2, explain: "PIC 飛緊唔同任何人對話 —— 分心係炒機溫床。「hover 唔會有事」係假安全感:眼一離機,VLOS 已經斷。鬧客戶會得罪人,交俾 liaison 有禮咁處理。(課 5)" },
+  { lesson: "課 5", question: "你準備降落,已經嗌咗「Landing!」,突然有個小朋友跑入 LZ(起降區)。你應該:",
+    options: ["照落,嗌咗口令就有優先權","即刻 go-around(重新入場)或者 hold 喺安全高度,等 spotter / liaison 清人,LZ 冇人先重新入場","快手降落喺小朋友隔籬,反正你技術好","直接降落喺遠啲嘅隨便一個位"],
+    correct: 1, explain: "口令係溝通,唔係優先權。落唔好就重來(Pack 02)。臨時亂揀個位落 = 降落喺未評估嘅地面。人同機爭位,永遠人行先。(課 5)" },
+  { lesson: "課 6", question: "客戶條 reference 片係大白天嘅順滑電影感畫面。今日大太陽,你影片想畫面有自然 motion blur(動態模糊)。你需要:",
+    options: ["較高 ISO(感光度)","用 ND filter(減光鏡)減光,令快門可以保持喺較慢嘅水平","較快嘅快門,凍結所有動作","換高 fps 模式影慢動作"],
+    correct: 1, explain: "電影感嚟自慢快門,但大太陽下慢快門會過曝 —— 所以要幫相機「戴太陽眼鏡」。高 ISO 係加光兼加雜訊,啱啱相反;快快門會令畫面「跳格」。(課 6)" },
+  { lesson: "課 7", question: "任務完成落地,客戶好趕:「得啦得啦,你哋執嘢啦,我簽咗個場六點要還。」素材未 check、未 copy。你應該:",
+    options: ["客戶趕咪快手執嘢走,返去先 check","照收工四步行:key shots playback(播返)+ copy 一份先拆場,同客戶講清楚呢十幾分鐘係保障佢啲片","求其開一條片睇到有嘢就算,詳細返去先睇","將張卡交埋畀客戶,等佢自己 check"],
+    correct: 1, explain: "「唔 check 走人 = 白飛」。返到去先發現 corrupt(損壞),就要成隊人擇日再嚟。同客戶嗰句好緊要:check 素材唔係你慢,係保障佢嘅交付物。(課 7)" },
+  { lesson: "課 8", question: "條交付片好靚,你想擺少少落自己 IG 做 portfolio。客戶冇講過可唔可以。你應該:",
+    options: ["出咗先,客戶見到覺得靚仲開心","剪走有 logo 嘅部分咪得囉","素材係客戶財產:經負責人向客戶攞書面同意,攞到先可以用","等三個月,件事凍咗先出"],
+    correct: 2, explain: "素材係客戶財產,「條片好靚」唔係理由。冇簽 NDA(保密協議)都當有咁處理;剪走 logo 唔改變「未經同意使用」呢個事實,時間過咗都一樣。(課 8)" }
+];
+const POINTS_PER_QUESTION = 10;
+const PASS_MARK = 100;  // 開卷,全對先合格(團隊慣例)
+const letters = ["A", "B", "C", "D"];
+function renderQuiz() {
+  document.getElementById("quiz-body").innerHTML = quizQuestions.map((q, qi) => `
+    <div class="qcard" id="qcard-${qi}">
+      <div class="qnum">Question ${String(qi + 1).padStart(2, "0")} / 10 · ${q.lesson} · 10 分<span class="qbadge" id="qbadge-${qi}"></span></div>
+      <div class="qtext">${q.question}</div>
+      <div class="opts">
+        ${q.options.map((opt, oi) => `
+          <label class="opt" id="opt-${qi}-${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span class="letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+      <div class="explain" id="explain-${qi}"></div>
+    </div>`).join("");
+}
+function gradeQuiz() {
+  const unanswered = [];
+  quizQuestions.forEach((q, qi) => { if (!document.querySelector(`input[name="q${qi}"]:checked`)) unanswered.push(qi + 1); });
+  const note = document.getElementById("unanswered-note");
+  if (unanswered.length > 0) {
+    note.style.display = "block";
+    note.textContent = "仲有未答嘅題目:第 " + unanswered.join("、") + " 題。全部答完先可以交卷。";
+    return;
+  }
+  note.style.display = "none";
+  let correctCount = 0;
+  quizQuestions.forEach((q, qi) => {
+    const chosen = parseInt(document.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+    const card = document.getElementById(`qcard-${qi}`);
+    const isRight = chosen === q.correct;
+    if (isRight) correctCount++;
+    card.classList.add("graded", isRight ? "right" : "wrong");
+    document.getElementById(`qbadge-${qi}`).textContent = isRight ? "✓ 答啱" : "✗ 答錯";
+    document.getElementById(`opt-${qi}-${q.correct}`).classList.add("is-correct");
+    if (!isRight) document.getElementById(`opt-${qi}-${chosen}`).classList.add("is-wrong");
+    document.getElementById(`explain-${qi}`).innerHTML = `<b>正確答案:${letters[q.correct]}</b> — ${q.explain}`;
+    card.querySelectorAll("input").forEach(input => { input.disabled = true; });
+  });
+  const score = correctCount * POINTS_PER_QUESTION;
+  const passed = score >= PASS_MARK;
+  const best = sGet(BEST_KEY, null);
+  if (best === null || score > best) sSet(BEST_KEY, score);
+  renderProgress();
+  const result = document.getElementById("result");
+  result.classList.remove("pass", "fail");
+  result.classList.add(passed ? "pass" : "fail");
+  result.style.display = "block";
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-sub").textContent = `滿分 100 · 答啱 ${correctCount} / 10 題 · 合格線 ${PASS_MARK} 分(開卷)`;
+  document.getElementById("verdict").textContent = passed ? "合格 PASS" : "不合格 FAIL";
+  document.getElementById("result-note").textContent = passed
+    ? "合格!下一步:同負責人夾一單模擬任務,由評估行到交付成條流程走一次。"
+    : "未去到 100 分 —— 任務嘢冇「合格邊緣」。開卷:返上去對應課數搵答案,再做一次,直到全對。";
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "inline-block";
+  result.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+}
+function resetQuiz() {
+  renderQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("unanswered-note").style.display = "none";
+  document.getElementById("submit-btn").style.display = "inline-block";
+  document.getElementById("retry-btn").style.display = "none";
+  document.getElementById("quiz").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+}
+renderQuiz();
+document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+document.getElementById("retry-btn").addEventListener("click", resetQuiz);
+renderProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>無人機天氣進階教材 · Lesson Pack 07</title>
+<style>
+  :root {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+      --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+      --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+      --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+      --draft: #d9c25e; --draft-wash: #2e2810;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+    --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+    --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+    --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+    --draft: #d9c25e; --draft-wash: #2e2810;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.75; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  .draft-banner { background: var(--draft-wash); border-bottom: 1px solid var(--draft);
+    color: var(--draft); font-size: .85rem; font-weight: 600; text-align: center; padding: 9px 16px; }
+  .progress-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 20px; }
+  .progress-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .68rem; letter-spacing: .08em; color: var(--ink-soft); white-space: nowrap; }
+  .segments { display: flex; gap: 4px; flex: 1; }
+  .seg { height: 9px; flex: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg.done { background: var(--pass); border-color: var(--pass); }
+  .best-label { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+  header { padding-top: 40px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink); display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 12px 0 10px; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { color: var(--ink-soft); margin: 0; font-size: 1.02rem; max-width: 60ch; }
+  .mission { background: var(--surface); border: 1.5px solid var(--accent); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 20px; margin-top: 24px; font-size: .95rem; }
+  .mission .m-title { font-weight: 800; color: var(--accent-ink); margin-bottom: 6px; }
+  .mission .m-law { background: var(--fail-wash); border: 1px solid var(--fail); border-radius: 8px; padding: 9px 13px; font-weight: 700; margin-top: 10px; }
+  .lesson { margin-top: 64px; }
+  .lesson-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-wash);
+    border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px; display: inline-block; }
+  h2 { font-size: 1.45rem; margin: 12px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  .objective { background: var(--accent-wash); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 13px 16px; font-size: .93rem; margin: 0 0 20px; }
+  .objective .obj-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+  .safety { background: var(--warn-wash); border: 1px solid var(--warn);
+    border-radius: 10px; padding: 14px 16px; margin: 22px 0 0; font-size: .95rem; }
+  .safety .s-label { font-weight: 700; color: var(--warn-ink); display: block; margin-bottom: 4px; }
+  .safety p, .safety ul { margin: 0; }
+  .drill { background: var(--pass-wash); border: 1px solid var(--pass); border-radius: 10px;
+    padding: 13px 16px; margin: 20px 0 0; font-size: .92rem; }
+  .drill .d-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--pass); display: block; margin-bottom: 4px; font-weight: 700; }
+  .drill p, .drill ul { margin-bottom: 6px; }
+  .adjust { display: inline-block; background: var(--surface-2); border: 1px dashed var(--ink-soft);
+    color: var(--ink-soft); border-radius: 6px; padding: 0 7px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+  .todo { display: inline-block; background: var(--warn-wash); border: 1.5px dashed var(--warn);
+    color: var(--warn-ink); border-radius: 7px; padding: 1px 9px; font-size: .85rem; font-weight: 700; }
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); margin: 18px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-family: ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+  .widget { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 18px; margin: 22px 0; }
+  .widget-tag { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px; }
+  .widget .hint { font-size: .84rem; color: var(--ink-soft); margin-bottom: 12px; }
+  .btn { font: inherit; font-weight: 700; font-size: .95rem; cursor: pointer;
+    border-radius: 10px; padding: 10px 24px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--accent-ink); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .fb-box { margin-top: 12px; border-radius: 8px; padding: 10px 14px; font-size: .9rem; display: none; }
+  .fb-box.show { display: block; }
+  .fb-box.right { background: var(--pass-wash); border: 1px solid var(--pass); }
+  .fb-box.wrong { background: var(--fail-wash); border: 1px solid var(--fail); }
+  .fb-box.neutral { background: var(--warn-wash); border: 1px solid var(--warn); }
+  .mini-score { font-family: ui-monospace, monospace; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; }
+  .cl-statement { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-align: center; font-weight: 700; min-height: 3.4em; margin-bottom: 12px; }
+  .cl-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .cl-btns .btn { font-size: .85rem; padding: 9px 14px; }
+  .dt-q { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-weight: 700; margin-bottom: 12px; min-height: 3em; }
+  .dt-opts { display: flex; flex-direction: column; gap: 8px; }
+  .dt-opts .btn { text-align: left; font-size: .9rem; font-weight: 600; }
+  .hz-stage { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); margin-bottom: 10px; overflow: hidden; }
+  .hz-stage svg { width: 100%; height: auto; display: block; }
+  .wind-spot { cursor: pointer; }
+  .wind-spot circle { fill: var(--accent); opacity: .8; }
+  .wind-spot text { fill: #fff; font-weight: 700; }
+  .wind-spot:hover circle { opacity: 1; }
+  .season-btns { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .quiz-head { margin-top: 76px; padding-top: 34px; border-top: 2px solid var(--accent); }
+  .quiz-rules { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 14px 18px; font-size: .92rem; margin: 18px 0 28px; }
+  .quiz-rules ul { margin: 0; padding-left: 20px; }
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+  .qnum { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .qtext { font-weight: 700; margin: 6px 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 10px 13px; cursor: pointer; font-size: .95rem; background: var(--surface); }
+  .opt:hover { border-color: var(--accent); }
+  .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+  .opt .letter { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); flex: none; }
+  .qcard.graded .opt { cursor: default; }
+  .qcard.graded .opt.is-correct { border-color: var(--pass); background: var(--pass-wash); }
+  .qcard.graded .opt.is-wrong { border-color: var(--fail); background: var(--fail-wash); }
+  .qbadge { display: none; font-weight: 700; font-size: .82rem; border-radius: 999px; padding: 2px 11px; margin-left: 8px; vertical-align: middle; }
+  .qcard.graded .qbadge { display: inline-block; }
+  .qcard.graded.right .qbadge { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .qcard.graded.wrong .qbadge { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .explain { display: none; margin-top: 12px; font-size: .9rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .qcard.graded .explain { display: block; }
+  .explain b { color: var(--ink); }
+  .quiz-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .unanswered-note { display: none; color: var(--fail); font-weight: 600; font-size: .92rem; margin-top: 12px; }
+  .result { display: none; margin-top: 30px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 28px; text-align: center; border: 2px solid var(--line); }
+  .result.pass { border-color: var(--pass); }
+  .result.fail { border-color: var(--fail); }
+  .score { font-size: 3.2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .result.pass .score { color: var(--pass); }
+  .result.fail .score { color: var(--fail); }
+  .score-sub { color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+  .verdict { display: inline-block; font-weight: 800; font-size: 1.05rem; border-radius: 999px; padding: 6px 22px; margin-top: 14px; }
+  .result.pass .verdict { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .result.fail .verdict { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .result-note { font-size: .86rem; color: var(--ink-soft); margin: 14px auto 0; max-width: 46ch; }
+  .done-btn { margin-top: 22px; font: inherit; font-size: .9rem; font-weight: 700; border-radius: 999px; padding: 8px 22px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent-ink); background: var(--surface); }
+  .done-btn.done { background: var(--pass-wash); border-color: var(--pass); color: var(--pass); }
+  .done-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .82rem; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">🚨 草稿 v1 · 飛行安全內容 · 待團隊負責人審核 —— 審批前不得派發俾隊員</div>
+
+<div class="progress-bar">
+  <div class="progress-inner">
+    <span class="progress-label">課程進度 <span id="prog-count">0</span>/6</span>
+    <div class="segments" id="segments" aria-hidden="true"></div>
+    <span class="best-label" id="best-label">測驗最高分 —</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Alex 無人機隊 · 內部培訓 · Lesson Pack 07</div>
+    <h1>天氣進階與香港飛行環境篇</h1>
+    <p class="lede">Pack 01 第 7 課話咗你知「天氣係飛行嘅一部分」;<b>呢個 pack 教你點樣真係識睇</b> —— 由睇唔到嘅風,到香港四季各自嘅陷阱,到天文台雷達圖,最後全部餵入一套團隊 Go / No-go 決策系統。(對象:完成 Pack 01–02 就讀得。)</p>
+    <div class="mission">
+      <div class="m-title">📌 成個 pack 嘅總綱,一句</div>
+      <p style="margin-bottom:8px"><b>天氣唔會突襲人,只會突襲唔做功課嘅人。</b>你唔使做天文台專家 —— 你只需要識三樣嘢:幾時唔好淨信個 forecast、幾時唔好淨信自己對眼、同埋幾時開口講「今日唔飛」。</p>
+      <div class="m-law">🚨 法定紅線(Pack 01 已核實,一個字冇改):<b>暴雨警告(黃 / 紅 / 黑)、雷暴警告、熱帶氣旋警告、強烈季候風信號</b>生效 = 法定唔飛;VLOS(目視飛行)、日光操作、A2 標準操作 300 呎上限 —— 客戶畀幾多錢都改唔到。</div>
+    </div>
+  </header>
+
+  <!-- 術語一覽 -->
+  <section class="lesson">
+    <span class="lesson-tag">術語一覽 · 唔使背,唔記得返嚟查</span>
+    <h2>呢個 pack 新出現嘅專業術語</h2>
+    <p>只收新詞 —— gusts、golden hour、EMI、multipath、ATTI、VLOS、personal minimums、RTH、failsafe 呢啲舊詞,請翻返之前 pack 嘅術語表。</p>
+    <div class="tablebox">
+      <table>
+        <tr><th>術語</th><th>淺白解釋</th></tr>
+        <tr><td>Wind gradient(梯度風)</td><td>越近地面,風俾地面摩擦拖得越慢;越高越接近全速 —— 好似河底啲水俾石頭拖慢,河面流得快</td></tr>
+        <tr><td>Wind shear(風切變)</td><td>好短距離內風速 / 風向突變 —— 例如隻機升過大廈屋頂,由「有遮擋」跌入「全食風」嗰一下</td></tr>
+        <tr><td>Turbulence(亂流)</td><td>唔規則嘅氣流 —— 唔係一股風推你,係一堆細風搖你,好似車行爛路</td></tr>
+        <tr><td>風洞效應(funnelling)</td><td>風俾兩楝樓 / 山坳迫窄咗焗住加速 —— 水喉頭揸扁咗水射得遠,同一個道理</td></tr>
+        <tr><td>Rotor(背風渦流)</td><td>風翻過樓 / 山脊之後喺背風面打筋斗咁捲 —— 背風面唔係避風位,係亂風位</td></tr>
+        <tr><td>Cumulonimbus / CB(積雨雲)</td><td>雷暴本體:砌得好高、雲底發黑嘅塔形雲 —— 帶埋狂風、行雷、大範圍亂流</td></tr>
+        <tr><td>Gust front(陣風鋒)</td><td>雷暴推落嚟嘅凍空氣沿地面衝出去嗰道「風牆」—— 悶熱突然轉涼風,就係佢,即係場雨同啲雷已經好近</td></tr>
+        <tr><td>Advection fog(平流霧)</td><td>暖濕空氣流過凍海面凝結成霧 —— 香港春天嘅海霧;好似凍飲個杯「出汗」</td></tr>
+        <tr><td>Haze(霞 / 煙霞)</td><td>空氣微粒令遠嘢朦 —— 霧係水、霞係塵,兩樣都食你嘅能見度</td></tr>
+        <tr><td>Sea breeze(海陸風)</td><td>日頭陸地曬熱,海風吹入嚟 —— 海邊下晝嘅風大過朝早係日日發生嘅循環,唔係天氣變差</td></tr>
+        <tr><td>Swell(長浪)</td><td>遠處風暴推過嚟嘅長週期浪 —— 風暴仲喺幾百公里外,啲浪已經到你個岸</td></tr>
+        <tr><td>東北季候風(NE monsoon)</td><td>秋冬由北面吹落嚟嘅盛行風 —— 一「補充」可以連吹幾日大風</td></tr>
+        <tr><td>熱島效應(urban heat island)</td><td>市區石屎吸熱焗暖過郊區,低空多一份唔穩定 —— 識個概念就夠</td></tr>
+        <tr><td>Updraft / downdraft(上升 / 下沉氣流)</td><td>山迎風面風爬坡 = 上升流;背風面跌落嚟 = 下沉流 —— 隻機無故升跌,同你支桿無關</td></tr>
+        <tr><td>山谷風(valley wind)</td><td>日頭風沿坡上、夜晚沿坡落 —— 山區日日自帶嘅風循環</td></tr>
+        <tr><td>Weather radar(雷達圖)</td><td>天文台影低邊度落緊雨:顏色越深越紅 = 雨勢越大;識睇移動方向就估到雨帶埋緊嚟定走緊</td></tr>
+        <tr><td>Visibility(能見度)</td><td>你睇得幾遠 —— 睇唔清隻機姿態,VLOS 已經斷,幾多米都冇意思</td></tr>
+        <tr><td>Beaufort scale(蒲福風級)</td><td>國際通用風力分級 —— 唔使儀器,睇樹、旗、水面就估到</td></tr>
+        <tr><td>Go / No-go</td><td>飛定唔飛嘅正式決定 —— 唔係感覺,係行完一套 check 之後嘅輸出</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== L1 ===== -->
+  <section class="lesson" id="lesson-1">
+    <span class="lesson-tag">Lesson 01</span>
+    <h2>風嘅立體學 — 你膊頭嗰度嘅風,唔係隻機食緊嗰啖風</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>解釋到點解地面平靜、隻機上到高位就俾風推;分得清平均風同 gusts(陣風)邊個先係炒機主犯;講得出 wind shear、風洞、rotor 喺邊度伏擊;唔使儀器用樹 / 旗 / 水面估現場風級。</div>
+    <ul>
+      <li><b>梯度風:</b>風流過地面俾樹、樓、地形摩擦住,越近地面越慢;越升高越接近全速。Analogy:一條河,河底貼住石頭嗰層水流得最慢 —— 空氣都係一條河,<b>我哋全部人生活喺河底</b>。起飛前你感覺到嘅「微風」只係河底;上升途中見隻機開始頂風飄、機身側住保持位置 —— 呢啲係「上面大風」嘅第一手證據,唔使等到失控先知。</li>
+      <li><b>陣風 vs 平均風:炒機嘅多數係 gust。</b>平均風係一直推你嗰股力,飛控頂得順;gust 係突然撲埋嚟嗰一下 —— 冇預警、一下就推你離航線。睇報告規矩:①兩個數都要睇;②<b>平均同 gust 差距大 = 空氣唔穩定</b>,比「穩定地大風」更難飛;③隊規上限用邊個數做準、實數幾多:<b>團隊作業線:平均風 ≤ 8 m/s、gust ≤ 12 m/s</b>(新手練習仍然係 5 m/s,見 Pack 02)。<b>兩個數都要睇</b> —— 平均夠低但 gust 超線,一樣係 no-go。<b>⚠️ 機型抗風上限可能高過呢條線,但隊規線永遠先中。</b> <span class="adjust">🔧</span></li>
+      <li><b>Wind shear 伏擊位:</b>隻機升過障礙物頂嗰一下(樓頂、山脊、樹線)、由遮蔽位飛出開揚位、雷暴附近。應對:<b>過渡位慢慢過、預隻手喺桿上、唔好喺過渡位做精細動作</b>。</li>
+      <li><b>風洞 + rotor:</b>樓罅、坳位嘅風可以勁過開揚位好多(水喉頭揸扁咗);風翻過大廈 / 山脊之後,背風面係打緊筋斗嘅亂流 —— <b>「搵楝樓擋住個風」係地面人類嘅諗法;對隻機嚟講,背風面係爛路,唔係避風塘。</b></li>
+      <li><b>現場讀風:</b>對眼就係儀器 —— 樹葉沙沙響 ≈ 2 級;旗展開 ≈ 3 級;吹起地下紙碎 ≈ 4 級;成棵細樹搖 + 水面碎浪 ≈ 5 級;大樹枝郁 + 擔遮困難 ≈ 6 級(參考風級,唔係隊規)。三個技巧:①<b>搵高處參照物</b>(天台旗、大廈頂嘅樹 —— 佢哋先接近隻機食嘅風);②睇水面(白頭浪 = 風已經唔細);③<b>持續讀唔係讀一次</b> —— 「樹搖緊,風緊咗」係一句標準 spotter 報告(Pack 06)。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 風場透視鏡</div>
+      <div class="hint">同一日、同一個「地面微風」—— 撳吓場景入面五個位置,睇吓隻機喺嗰度實際食緊咩風。</div>
+      <div class="hz-stage">
+        <svg viewBox="0 0 640 300" role="img" aria-label="風場橫切面:有海、樓、山,五個可撳位置">
+          <rect x="0" y="0" width="640" height="300" fill="var(--surface-2)"/>
+          <text x="30" y="36" font-size="13" fill="var(--ink-soft)">風 →→→</text>
+          <rect x="0" y="262" width="640" height="38" fill="var(--surface)"/>
+          <path d="M 0 268 Q 40 262 80 268 T 160 268" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <text x="40" y="292" font-size="11" fill="var(--ink-soft)">海</text>
+          <rect x="240" y="120" width="60" height="142" fill="var(--ink-soft)" opacity=".55"/>
+          <rect x="330" y="150" width="55" height="112" fill="var(--ink-soft)" opacity=".45"/>
+          <text x="288" y="292" font-size="11" fill="var(--ink-soft)">市區</text>
+          <path d="M 440 262 L 540 150 L 640 262 Z" fill="var(--ink-soft)" opacity=".35"/>
+          <text x="530" y="292" font-size="11" fill="var(--ink-soft)">山</text>
+          <g class="wind-spot" data-ws="0" role="button" tabindex="0"><circle cx="150" cy="245" r="15"/><text x="150" y="250" text-anchor="middle" font-size="12">1</text></g>
+          <g class="wind-spot" data-ws="1" role="button" tabindex="0"><circle cx="150" cy="60" r="15"/><text x="150" y="65" text-anchor="middle" font-size="12">2</text></g>
+          <g class="wind-spot" data-ws="2" role="button" tabindex="0"><circle cx="315" cy="200" r="15"/><text x="315" y="205" text-anchor="middle" font-size="12">3</text></g>
+          <g class="wind-spot" data-ws="3" role="button" tabindex="0"><circle cx="410" cy="180" r="15"/><text x="410" y="185" text-anchor="middle" font-size="12">4</text></g>
+          <g class="wind-spot" data-ws="4" role="button" tabindex="0"><circle cx="595" cy="200" r="15"/><text x="595" y="205" text-anchor="middle" font-size="12">5</text></g>
+        </svg>
+      </div>
+      <div class="fb-box" id="ws-fb"></div>
+      <div class="mini-score" id="ws-sc">撳過 0/5 個位置</div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 對數自動站同誤差標準由負責人確認</span></span>
+      <p>「讀風日記」:連續 5 日每日一次,用 Beaufort 表估現場風級(寫低憑咩估),翻查天文台最近自動站實測對答案,記埋平均同 gust。<b>完成標準:</b>五日全齊、有寫「憑咩估」、差距 ±1 級內、講得出自己場地用邊個自動站對數最合理。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>地面靜 ≠ 天上靜</b> —— 每次起飛都當上面嘅風大過你腳邊。睇報告,<b>gust 嗰個數先係主角</b>。樓罅 = 急流位;背風面 = 亂流位。隊規風速上限係現場 no-go 硬線,唔係「參考吓」。</p></div>
+    <button class="done-btn" data-lesson="0" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L2 ===== -->
+  <section class="lesson" id="lesson-2">
+    <span class="lesson-tag">Lesson 02</span>
+    <h2>香港季節飛行月曆 — 每一季都有佢嘅陷阱位</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出四季主威脅同「睇落冇事其實有伏」嘅陷阱位;認得積雨雲徵兆,知道 gust front(陣風鋒)殺到要即刻做咩;解釋點解「颱風唔係得掛波嗰日先有事」。</div>
+    <div class="tablebox">
+      <table>
+        <tr><th>季節</th><th>主威脅</th><th>陷阱位一句講</th></tr>
+        <tr><td>春 2–4 月</td><td>霧(平流霧)、濕</td><td>「而家睇到」唔等於十分鐘後睇到 —— 霧係一浸一浸咁湧;回南天係電子裝備苦主(接 Pack 05 防潮)</td></tr>
+        <tr><td>夏 5–9 月</td><td>雷暴、高溫</td><td><b>朝早越曬,下晝越危險</b> —— 朝早嘅太陽係下晝雷暴嘅燃料;任務盡量霸朝早檔</td></tr>
+        <tr><td>颱風季 5–11 月</td><td>外圍雨帶、長浪</td><td><b>冇掛波 ≠ 冇嘢</b> —— 颱風幾百公里外,雨帶同長浪已經到;打完風個場有塌樹斷枝半天吊</td></tr>
+        <tr><td>秋 10–11 月</td><td>季候風大風日</td><td>天色靚 ≠ 風細 —— 秋天嘅 no-go 多數係風速問題,<b>用數字判斷唔好用天色</b></td></tr>
+        <tr><td>冬 12–2 月</td><td>持續大風、低溫</td><td>凍天同一格電飛短咗,margin 要加大;山上海邊當「另一個氣候區」規劃(低溫電池隊規:<b>低過 15°C 嘅日子四條</b>:①電池保溫(放衫袋 / 保溫袋,到起飛前先插上機);②<b>返航線由 30% 提高到 40%</b>;③起飛後先低空 hover 30 秒等電池熱起嚟;④電量跌得快過平日 = 即刻收機)</td></tr>
+      </table>
+    </div>
+    <h3>積雨雲(CB)現場徵兆 —— 見到任何一樣,個天已經同你攤牌</h3>
+    <ol>
+      <li>有雲<b>砌得好高好快</b>,成座塔咁(同扁平白雲完全兩回事)</li>
+      <li>雲底<b>發黑</b>、越嚟越低</li>
+      <li>本來悶焗,<b>突然一陣涼風殺到</b> —— 呢個就係 gust front:雷暴嘅先頭部隊,佢到 = 場雨同啲雷已經好近</li>
+      <li><b>遠處雷聲</b> —— 聽到雷就已經喺危險範圍,雷可以劈落離雨區好遠嘅地方(「聽到雷聲即收」寫唔寫入隊規:<b>已經寫死入隊規:聽到雷聲 = 即刻收機。冇得商量、冇得「睇下先」。</b>雷可以劈落離雨區十幾公里嘅地方 —— 聽到雷,即係你已經喺危險範圍入面)</li>
+      <li>雷達圖見到紅色回波移緊埋嚟</li>
+    </ol>
+    <p><b>規矩:徵兆出現 = 收機,唔係「望多兩眼」。</b>「Landing!」(離地 10–20 米嗌,收到「CLEAR」先落)然後執嘢走 —— 同雷暴鬥快係必輸嘅賭局。</p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 呢單嘢照唔照計劃?</div>
+      <div class="hint">任務卡逐張彈出(季節 + 場地 + 天空描述)—— 判:照計劃 / 調整 / 改期。</div>
+      <div class="cl-statement" id="se-st">撳「開始」接任務卡</div>
+      <div class="cl-btns" id="se-btns"><button class="btn" id="se-start" type="button">開始</button></div>
+      <div class="fb-box" id="se-fb"></div>
+      <div class="mini-score" id="se-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境由負責人按真實接過嘅單改編</span></span>
+      <p>「季節規劃員」:四個假想任務(日期 + 場地類型),逐個講該季主威脅、陷阱位、編排對策。<b>完成標準:</b>四個全中 + 有具體對策;雷暴徵兆五樣講得出至少四樣。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>夏天下晝嘅天,一路要有人睇住</b> —— spotter 空域監察加埋「雲勢」呢項。Gust front 一到 / 聽到雷聲 = 即刻收機。颱風季海邊任務:本地冇信號都要 check 附近有冇熱帶氣旋。凍天電量 margin 加大 —— 熱天嘅經驗凍天唔啱用。</p></div>
+    <button class="done-btn" data-lesson="1" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L3 ===== -->
+  <section class="lesson" id="lesson-3">
+    <span class="lesson-tag">Lesson 03</span>
+    <h2>睇懂天氣資訊 — 天文台唔會呃你,但你要識問啱問題</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>分得清法定唔飛信號同團隊警示線;解釋點解「forecast 話晴現場落雨」;出發前識睇五件套;講得出「三關 check」每關睇咩。</div>
+    <ul>
+      <li><b>法定線 vs 團隊線:</b><b>暴雨警告(黃 / 紅 / 黑,任何一個)</b> / 雷暴警告 / 熱帶氣旋警告 / <b>強烈季候風信號</b> = 法定唔飛。<b>⚠️ 2026-07-29 核實(CAD 官網原文):「當暴雨警告、熱帶氣旋警告或強烈季候風信號生效時,不應放飛小型無人機。」—— 官方冇分暴雨警告顏色,即係黃雨一樣唔飛。</b>而且就算冇任何信號生效,<b>落緊雨本身就唔飛</b>(部機唔防水 + 能見度差),唔使等信號授權。一句總結:法定線係「絕對唔得」,團隊線係「負責人話唔得就唔得」。</li>
+      <li><b>點解 forecast 話晴現場落雨:</b>①預報係成個香港嘅,你個場係一個點 —— 香港天氣局地性強,「大埔落緊狗屎,西貢曬燶人」;②「驟雨」係講概率唔係講你嗰度實落;③天氣係郁緊嘅。結論:<b>forecast 係第一關,唔係唯一一關</b>。</li>
+      <li><b>出發前五件套</b>(用天文台 HKO app / 網站,權威來源):①風 + gusts 兩個數(搵最近場地嘅自動站,唔好用機場個數飛山頂);②降雨概率 / 驟雨字眼;③<b>雷達圖三步</b> —— 顏色越紅雨勢越大、睇移動方向(埋緊嚟定走緊)、睇速度估時間;④警告信號;⑤實況。識睇雷達,你就由「俾雨突襲」變咗「預咗佢嚟」。</li>
+      <li><b>三關 check:</b>①<b>前一日</b> —— 捉大局,改期嘅決定喺呢關做最平;②<b>出發前</b> —— 捉「同琴日估嘅有冇走樣」,慳返全隊車程;③<b>現場 + 全程</b> —— 現場永遠大過報告。「琴日 check 咗話得」唔係現場唔 check 嘅理由。</li>
+      <li><b>天氣入 brief:</b>危險位嗰格要包括:今日風 / gust 數字、雷達趨勢一句、今日嘅收機條件(例:「雷達嗰浸嘢殺到西貢就收」)—— 全隊一齊知,先至全隊一齊守。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 雷達圖判官</div>
+      <div class="hint">情境逐個彈出 —— 判:繼續 / 收機 / 腰斬唔出發。</div>
+      <div class="cl-statement" id="rd-st">撳「開始」</div>
+      <div class="cl-btns" id="rd-btns"><button class="btn" id="rd-start" type="button">開始</button></div>
+      <div class="fb-box" id="rd-fb"></div>
+      <div class="mini-score" id="rd-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 練習日同時限由負責人定</span></span>
+      <p>「天氣簡報員」:任務日朝早用天文台真實資料準備一分鐘天氣 brief(五件套 + 收機條件),連做三次。<b>完成標準:</b>五件套齊、雷達趨勢講得出「方向 + 大約時間」、有具體收機條件;三次入面至少一次判斷「唔理想」而判斷正確。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>法定紅線冇任何情況可以傾</b> —— 唔係保守,係守法。落緊雨 = 唔飛,係物理唔係規矩。<b>三關任何一關 fail,唔會俾後面嗰關翻案</b>。「嚟到啦,飛埋先啦」= get-there-itis(去到病)嘅天氣版。</p></div>
+    <button class="done-btn" data-lesson="2" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L4 ===== -->
+  <section class="lesson" id="lesson-4">
+    <span class="lesson-tag">Lesson 04</span>
+    <h2>香港環境三大場景 — 同一隻機,三種戰場</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>每個場景講得出三個以上專屬風險 + 對應做法;解釋海陸風、長浪、GPS 峽谷、山區氣流;解釋點解山區要「加倍保守」。</div>
+    <div class="tablebox">
+      <table>
+        <tr><th></th><th>海邊 / 離島</th><th>市區 / 樓宇群</th><th>山區 / 郊野</th></tr>
+        <tr><td>風嘅玩法</td><td>全食、下晝加碼(海陸風)</td><td>樓罅加速、背風打筋斗</td><td>爬坡跌坡、山谷循環</td></tr>
+        <tr><td>睇唔到嘅敵人</td><td>鹽霧(Pack 05:當日抹)、長浪</td><td>GPS 峽谷(Pack 03:隨時 ATTI)、EMI、熱島</td><td>訊號遮擋、雲霧「行」埋嚟</td></tr>
+        <tr><td>出事嘅代價</td><td>落海 = 冇得執</td><td>人多 = 傷人風險</td><td>救援難 = 後果放大</td></tr>
+        <tr><td>一句心法</td><td>當日抹機,浪前企遠</td><td>樓罅當急流,背風非避風</td><td>條線劃嚴啲,山唔同你講數</td></tr>
+      </table>
+    </div>
+    <ul>
+      <li><b>海邊:</b>海陸風令下晝風大過朝早係常態(海邊單編朝早檔);長浪 —— 遠處風暴嘅浪先到,天色靚都可以突然一浸大浪上岸,起降位遠離浪拍到嘅範圍(岸邊 / 船上限制:<b>唔設死數,用原則:起降位要遠離浪拍到嘅範圍。</b>⚠️ 實際做法:<b>擺機之前企喺度睇 5 分鐘浪</b> —— 長浪週期長,最大嗰浸可能幾分鐘先嚟一次,你頭 30 秒見到嘅唔係最大。睇到最大嗰浸去到邊,再喺後面擺機 <span class="adjust">🔧</span>);離島冇得「返車攞嘢」,裝備清單加倍核對。</li>
+      <li><b>市區:</b>樓罅風洞當急流位處理;背風面唔做精細動作;GPS 峽谷 —— 起飛前睇衛星數,心理準備隨時 ATTI(姿態模式)—— <b>呢個就係 Pack 02 練基本功嘅原因</b>;熱島效應令夏天下晝低空多一份唔穩定(識概念就夠);天氣邊緣日 + 人流多 = 兩個風險相乘。</li>
+      <li><b>山區:</b>迎風坡 updraft、背風坡 downdraft + rotor —— <b>背風坡低飛係大忌</b>;山谷風令朝早下晝風完全唔同;雲霧沿山「行」埋嚟 = 收機唔好等佢到;飛過山脊背面 = 訊號同 VLOS 一齊斷。<b>點解加倍保守:風險 = 機率 × 後果</b> —— 同一單故障,市區公園係「執機寫報告」,山區可以係「搵唔返 + 行三個鐘落山 + 求救冇訊號」。後果嚴重度升咗,條線就要嚴啲(分場景線定一條線:<b>一條線行到尾:平均 8 / gust 12 m/s,所有場景一樣。</b>⚠️ 但要記住:<b>同一條線唔代表同一個風險</b> —— 山區出事嘅後果嚴重好多。所以喺山區,PIC 應該<b>主動</b>收窄範圍、留多啲 margin,呢個唔係另一條規矩,係你判斷力嘅一部分 <span class="adjust">🔧</span>)。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 三大戰場判官</div>
+      <div class="hint">做法逐個彈出 —— 判:啱,定係會出事?</div>
+      <div class="cl-statement" id="tc-st">撳「開始」入戰場</div>
+      <div class="cl-btns" id="tc-btns"><button class="btn" id="tc-start" type="button">開始</button></div>
+      <div class="fb-box" id="tc-fb"></div>
+      <div class="mini-score" id="tc-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 場地相同追問清單由負責人準備</span></span>
+      <p>「場景風險掃描」:三張場地相(海邊 / 市區 / 山區,由負責人準備 —— 用相之前要確認相入面冇個人資料),每張列最少 5 個專屬風險 + 對策;隊友做「魔鬼代言人」追問。<b>完成標準:</b>每場景 5 中 4 啱主題、對策具體(「小心啲」唔算)、俾人追問時答到至少一個補充。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>三個場景,三條唔同嘅保守度 —— 山區最嚴。</b>「上次喺公園咁飛冇事」唔係山上咁飛嘅理由。背風面永遠唔係避風塘 —— 樓同山都一樣。市區樓宇群任務,唔好派未考 Pack 02 手動基本功嘅人做 PIC。</p></div>
+    <button class="done-btn" data-lesson="3" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L5 ===== -->
+  <section class="lesson" id="lesson-5">
+    <span class="lesson-tag">Lesson 05</span>
+    <h2>光線與能見度 — 「仲勉強見到」= 已經睇唔到</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>解釋眩光點解係安全問題;分得清霧同霞;用「睇唔睇得出隻機姿態」做能見度標準;講得出夕陽單嘅 hard landing time(最遲落地時間)點定。</div>
+    <ul>
+      <li><b>VLOS 唔係「見到」,係「睇得清」:</b>正確標準係<b>睇得出隻機嘅姿態同動向</b> —— 機頭指緊邊、移緊向邊。一粒黑點係控唔到嘅。呢課講嘅嘢(眩光、霧、霞、暮色)全部係同一件事:<b>佢哋唔會令隻機跌,佢哋令你盲 —— 而你盲咗,隻機就冇咗個 PIC。</b></li>
+      <li><b>眩光:</b>隻機飛入太陽方向嗰個扇形,你會由「睇住佢」變「睇住個光球」= VLOS 斷咗,雖然你唔覺。<b>水面加倍</b>(太陽 + 反光)。應對:太陽位置 app 計定(Pack 04)、企位揀背光、航線避開太陽扇形、太陽眼鏡同帽係裝備。<b>Golden hour 嘅另一面:</b>光靚,但太陽低 = 眩光扇形啱啱喺你視線高度,最伏。</li>
+      <li><b>霧 vs 霞:</b>霧係水珠,嚟得快、一浸一浸(春天平流霧);霞係粒子,今日個底就係咁。行為唔同但結果一樣:能見度跌 = VLOS 半徑縮 = 航線要跟住縮。能見度團隊線:<b>唔用固定公里數,用 VLOS 實測</b> —— 起飛前喺地面做一次:部機飛到今日打算飛嘅最遠嗰點,<b>你睇唔睇得出佢個姿態</b>(機頭望邊、有冇傾側)?<b>睇得出 → 可以;只見到一粒點 → 縮短航線;連粒點都唔清 → no-go。</b> <span class="adjust">🔧</span>。臨時判斷標準:<b>開始要「估」隻機面向邊 = 佢已經飛得太遠 / 個天已經太朦。</b>朝霧:「等陣就散」通常係真,但幾時散冇人擔保 —— 唔准「朦朦哋照飛」。</li>
+      <li><b>黃昏:光衰減快過你以為。</b>日光操作係法定(Pack 01),日落時間唔係參考係 deadline。香港緯度低,日落之後餘光散得快;你對眼會適應緊個暗,令你以為「仲睇得清」—— 其實姿態細節已經逐樣冇:先係姿態,再係方向,最後得返一粒點。<b>你嘅眼呃你,個鐘唔會 —— 用鐘做標準。</b>夕陽單規矩:查實日落時間 → 倒推 hard landing time(buffer 分鐘數:<b>30 分鐘</b> —— 即係「日落前 30 分鐘<b>必須已經落咗地</b>」,唔係嗰陣先開始降。例:日落 19:00 → 18:30 部機要喺地面。30 分鐘夠你 go-around 一次,而且收場執嘢嗰陣仲有光 <span class="adjust">🔧</span>)→ 寫入 brief → 時間一到「Landing!」,個鏡頭幾靚都一樣。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 你仲睇唔睇到?</div>
+      <div class="hint">情況逐個彈出 —— 判:VLOS 仲喺度,定已經斷咗(唔理你「覺得」點)?</div>
+      <div class="cl-statement" id="vl-st">撳「開始」測眼</div>
+      <div class="cl-btns" id="vl-btns"><button class="btn" id="vl-start" type="button">開始</button></div>
+      <div class="fb-box" id="vl-fb"></div>
+      <div class="mini-score" id="vl-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 觀察日同參照物自定,唔涉飛行</span></span>
+      <p>「黃昏觀察」:日落前 30 分鐘至日落後 30 分鐘,每 10 分鐘記錄遠處固定參照物仲睇唔睇得清細節,畫「能見度 vs 時間」曲線;第二部分揀有薄霧 / 霞嘅朝早做一次。<b>完成標準:</b>兩份紀錄齊、講得出「日落後光衰減唔係線性,後半段跌得快」、用自己數據講出幾時開始睇唔清姿態。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>「仲勉強見到」就係「已經睇唔到」</b> —— VLOS 標準係睇清姿態,唔係見到粒點。夕陽單冇 hard landing time = 冇規劃。霧緊逼嗰陣唔好「飛埋呢轉」—— 佢嚟嘅速度唔會同你商量。</p></div>
+    <button class="done-btn" data-lesson="4" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L6 ===== -->
+  <section class="lesson" id="lesson-6">
+    <span class="lesson-tag">Lesson 06 · Capstone</span>
+    <h2>Go / No-go 決策系統 — 全隊一張決策表</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>分得清法定紅線同團隊線(分別係邊個有權改);行得出天氣三關;「天氣邊緣日」識用降級選項菜單;每次 go / no-go 決定識記一行字。</div>
+    <ul>
+      <li><b>由 personal minimums 到團隊表:</b>個人劃線有兩個問題 —— 人人條線唔同;現場攰、趕、俾客催嗰陣,自己條線會俾自己搬。升級方案:<b>將條線由「個人心入面」搬到「全隊一張表」</b> —— 事前寫低、人人一樣、現場冇得同自己講數。</li>
+      <li><b>兩類線:</b>法定紅線(法律定,冇人改得);團隊線(負責人定,<b>只有負責人改得,而且係坐喺枱度改,唔係現場改</b>)。「團隊線」唔係「彈性線」—— 「今日情況特殊」就係條線存在嘅原因。團隊線全部實數:<b>平均風 ≤ 8 m/s、gust ≤ 12 m/s</b>(新手練習 5 m/s);能見度線同場景加嚴見下面各課。<b>呢啲數字只有負責人改得,而且要坐低改,唔准現場改。</b> <span class="adjust">🔧</span></li>
+      <li><b>三關變正式關卡:</b>①前一日(負責人 / PIC):照計劃 / 有條件出發 / 改期;②出發前(PIC):出發 / 腰斬;③現場 + 全程(全隊):Go / 降級 Go / No-go —— <b>飛緊任何時候都可以變 No-go</b>。鐵規矩:任何一關 fail,後面嗰關冇權翻案;現場關係全隊嘅(spotter 報風、任何人可嗌 Stop);觸咗線唔使拍板,直接執行。</li>
+      <li><b>天氣邊緣日唔係 binary,有成條降級菜單:</b>①剪走 nice-to-have 鏡頭;②縮空間(降高度、縮範圍、唔入樓罅背風位);③縮時間;④加 margin(電量線提早、hard landing time 提早);⑤加人(多個 spotter 專睇天);⑥換時段;⑦改期(backup day 就係為咗今日先存在)。揀邊樣?<b>「兩個都啱,揀保守」+ 舉證責任倒轉</b>(Pack 06)—— 想照原計劃飛嗰個先要證明安全。客戶催:三段式 + 一把口,降級菜單就係你嘅替代方案彈藥庫。</li>
+      <li><b>記錄:no-go 係數據,唔係浪費。</b>每次決定記一行:日期 / 場地 / 關鍵數字 / 決定 / 一句理由 / 事後回望啱唔啱(載體:記入<b>同一個 Google Sheets 嘅第四張表「Go / No-go 記錄」</b> —— 同保養 log(Pack 05)、Debrief 記錄(Pack 06)喺同一個檔,手機現場即填)。半年後你哋會有自己隊嘅天氣經驗庫 —— 呢啲嘢天文台唔會有。<b>No-go 決定永遠唔會俾人怪</b> —— 怪一次,以後人人「頂硬上」。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 你係 PIC:天氣版三關</div>
+      <div class="hint">一單真實感任務,由前一日行到現場 —— 睇吓你三關行唔行得穩。</div>
+      <div class="dt-q" id="gn-q">撳「開始」接單</div>
+      <div class="dt-opts" id="gn-opts"><button class="btn" id="gn-start" type="button">開始</button></div>
+      <div class="fb-box" id="gn-fb"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境數字由負責人用團隊線實數設計</span></span>
+      <p>「三關演習」:三個情境(清晰 go / 清晰 no-go / 邊緣日),逐關行、講產出 + 理由;邊緣日要俾出至少三個降級選項;每個情境寫一行紀錄;加插客戶催單元素。<b>完成標準:</b>法定紅線零妥協、三關冇跳關、邊緣日有菜單先有決定、決定句有「因為」、紀錄格式齊、對客戶零內部拗數。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>法定紅線零討論;團隊線現場零放寬</b> —— 條線嘅價值就在於佢喺你最想搬佢嗰陣搬唔到。邊緣日先諗降級菜單,再諗改期,永遠唔好諗「頂硬上」。改期嘅成本係一日,唔改期嘅成本冇上限。</p></div>
+    <button class="done-btn" data-lesson="5" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section class="quiz-head" id="quiz">
+    <span class="lesson-tag">總測驗 · Final Quiz</span>
+    <h2>測驗:10 題選擇題</h2>
+    <div class="quiz-rules">
+      <ul>
+        <li>每題 <b>10 分</b>,滿分 <b>100 分</b>,<b>100 分合格(OPENBOOK 開卷)</b> —— 你唔熟嗰一課,正正就係你會揀錯嗰一日。</li>
+        <li>交卷後顯示每題對錯、解釋同對應課數。</li>
+        <li>測驗結果用嚟改進教材同跟進學習,<b>唔會用嚟處分任何隊員</b>。</li>
+      </ul>
+    </div>
+    <div id="quiz-body"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="submit-btn" type="button">交卷計分</button>
+      <button class="btn ghost" id="retry-btn" type="button" style="display:none">再做一次</button>
+    </div>
+    <p class="unanswered-note" id="unanswered-note"></p>
+    <div class="result" id="result">
+      <div class="score" id="score-num"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <div><span class="verdict" id="verdict"></span></div>
+      <p class="result-note" id="result-note"></p>
+    </div>
+  </section>
+
+  <footer>草稿 v1 · 飛行安全內容,待團隊負責人審核 · 課程內容:training-designer(培訓設計師)· 法定紅線只引用 Pack 01 已核實內容;黃雨 / 強烈季候風信號法定地位未核實已標明;隊規數字全部留白由負責人定</footer>
+</div>
+
+<script>
+"use strict";
+// ============ 進度追蹤 ============
+const LESSONS_KEY = "drone701.lessons", BEST_KEY = "drone701.best";
+function sGet(k, fb) { try { const r = localStorage.getItem(k); return r === null ? fb : JSON.parse(r); } catch (e) { return fb; } }
+function sSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lessonsDone = sGet(LESSONS_KEY, [false,false,false,false,false,false]);
+if (!Array.isArray(lessonsDone) || lessonsDone.length !== 6) lessonsDone = [false,false,false,false,false,false];
+function renderProgress() {
+  document.getElementById("segments").innerHTML = lessonsDone.map(d => `<div class="seg${d ? " done" : ""}"></div>`).join("");
+  document.getElementById("prog-count").textContent = lessonsDone.filter(Boolean).length;
+  document.querySelectorAll(".done-btn").forEach(btn => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    btn.classList.toggle("done", lessonsDone[i]);
+    btn.textContent = lessonsDone[i] ? "✓ 已完成(撳一下取消)" : "✓ 完成呢課";
+  });
+  const best = sGet(BEST_KEY, null);
+  document.getElementById("best-label").textContent = best === null ? "測驗最高分 —" : `測驗最高分 ${best}/100`;
+}
+document.querySelectorAll(".done-btn").forEach(btn => btn.addEventListener("click", () => {
+  const i = parseInt(btn.dataset.lesson, 10);
+  lessonsDone[i] = !lessonsDone[i];
+  sSet(LESSONS_KEY, lessonsDone);
+  renderProgress();
+}));
+
+// ============ 通用分類遊戲引擎 ============
+function makeClassify(cfg) {
+  let idx = -1, score = 0;
+  const st = document.getElementById(cfg.stId), fb = document.getElementById(cfg.fbId);
+  function show() {
+    st.textContent = cfg.items[idx].text;
+    document.getElementById(cfg.btnsId).innerHTML = cfg.cats.map((c, ci) =>
+      `<button class="btn ${ci % 2 ? "ghost" : ""}" data-cl="${ci}" type="button">${c}</button>`).join("");
+    fb.className = "fb-box";
+    document.querySelectorAll(`#${cfg.btnsId} [data-cl]`).forEach(b => b.addEventListener("click", () => {
+      const item = cfg.items[idx];
+      const right = parseInt(b.dataset.cl, 10) === item.cat;
+      if (right) score++;
+      fb.textContent = (right ? "✓ 啱。" : "✗ 諗多一次。") + item.fb;
+      fb.className = "fb-box show " + (right ? "right" : "wrong");
+      document.getElementById(cfg.scId).textContent = `進度 ${idx + 1}/${cfg.items.length} · 啱 ${score}`;
+      if (idx < cfg.items.length - 1) {
+        document.getElementById(cfg.btnsId).innerHTML = `<button class="btn ghost" data-next type="button">下一個 →</button>`;
+        document.querySelector(`#${cfg.btnsId} [data-next]`).addEventListener("click", () => { idx++; show(); });
+      } else {
+        document.getElementById(cfg.btnsId).innerHTML = `<button class="btn" data-restart type="button">再嚟一輪(${score}/${cfg.items.length} · ${cfg.endMsg(score)})</button>`;
+        document.querySelector(`#${cfg.btnsId} [data-restart]`).addEventListener("click", start);
+      }
+    }));
+  }
+  function start() { idx = 0; score = 0; document.getElementById(cfg.scId).textContent = ""; show(); }
+  document.getElementById(cfg.startId).addEventListener("click", start);
+}
+
+// ============ L1:風場透視鏡 ============
+(function () {
+  const spots = [
+    "① 海邊地面(你企嘅位):微風,樹葉沙沙 —— 但呢個只係「河底」讀數,唔好攞佢代表全場。",
+    "② 海上 300 呎:梯度風全速 + 開揚全食 —— 地面「微風」上到呢度可以係幾級落差。隻機側住嚟保持位置,就係佢畀你嘅證供。",
+    "③ 兩楝樓中間(樓罅):風洞效應 —— 風俾迫窄焗住加速,勁過開揚位。呢段航線當急流位:慢、預手、加 margin,或者索性改線。",
+    "④ 大廈背風面:唔係避風塘,係 rotor(背風渦流)—— 打緊筋斗嘅亂流位,影響仲延伸到後面好遠。唔好喺度做精細動作。",
+    "⑤ 山脊附近:升過脊線嗰下係 wind shear 突變位;背風坡有 downdraft(下沉流)—— 背風坡低飛係大忌,山唔同你講數。"
+  ];
+  const seen = new Set();
+  document.querySelectorAll(".wind-spot").forEach(g => {
+    function fire() {
+      const i = parseInt(g.dataset.ws, 10);
+      seen.add(i);
+      const fb = document.getElementById("ws-fb");
+      fb.textContent = spots[i];
+      fb.className = "fb-box show " + (i === 0 ? "neutral" : "right");
+      document.getElementById("ws-sc").textContent = seen.size === 5
+        ? "5/5 齊 —— 同一日、五個位、五種風。而家你明點解「地面靜 ≠ 天上靜」。"
+        : `撳過 ${seen.size}/5 個位置`;
+    }
+    g.addEventListener("click", fire);
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fire(); } });
+  });
+})();
+
+// L2:任務卡判斷
+makeClassify({
+  stId: "se-st", btnsId: "se-btns", fbId: "se-fb", scId: "se-sc", startId: "se-start",
+  cats: ["✅ 照計劃", "🔧 調整(時段 / 規模)", "📅 改期"],
+  items: [
+    { text: "7 月尾,市區任務原定下晝兩點開工。朝早晴到爆,萬里無雲。", cat: 1, fb: "夏天朝早越曬,下晝越危險 —— 朝早嘅太陽係下晝雷暴嘅燃料。調去朝早檔,下晝檔要預隨時腰斬。" },
+    { text: "10 月中,山頂日出單。天文台話乾燥晴朗,但東北季候風「補充」,吹足幾日大風。", cat: 2, fb: "秋天陷阱位:天色靚 ≠ 風細 —— 山頂 + 季候風大風日,用數字判斷唔好用天色。等風細先(或負責人按隊規線判)。" },
+    { text: "3 月中,離島岸邊朝早單。今朝市區有薄霧,海邊實況未知。", cat: 1, fb: "春天海邊 = 平流霧主場,「而家睇到」唔等於十分鐘後睇到 —— 要調整:預「能見度隨時冇」嘅一手、備 backup 時段,到場能見度唔掂即停。" },
+    { text: "11 月頭,公園練習日。天晴、風細、冇信號、雷達乾淨。", cat: 0, fb: "照計劃 —— 秋天正常日子係香港最好飛嘅日子。但三關照行:現場讀風嗰關唔會因為 forecast 靚而豁免。" },
+    { text: "8 月,颱風喺香港東南 600 公里,零信號。聽日海邊商業單,今日天色好靚。", cat: 1, fb: "冇掛波 ≠ 冇嘢:外圍雨帶同長浪唔等信號先嚟 —— 最少要調整(加倍保守、實時睇雷達同路徑、預改期一手);直接照計劃係中咗個陷阱。" }
+  ],
+  endMsg: s => s >= 4 ? "季節劇本入咗腦 —— 記劇本,唔好死記月份。" : "重溫課 2 嗰張季節表。"
+});
+
+// L3:雷達圖判官
+makeClassify({
+  stId: "rd-st", btnsId: "rd-btns", fbId: "rd-fb", scId: "rd-sc", startId: "rd-start",
+  cats: ["▶️ 繼續 / 出發", "🛬 收機", "🚫 腰斬唔出發"],
+  items: [
+    { text: "出發前 check:雷達見西面有一浸黃紅色回波,移緊埋嚟你個場方向,估大約 40 分鐘到。任務要兩個鐘。", cat: 2, fb: "第二關就係為咗捉呢啲 —— 唔夠時間完成就腰斬,「去到先算」嘅車程係 get-there-itis 嘅本金。" },
+    { text: "飛緊,spotter 報:「西面啲雲砌緊,黑咗。」你開雷達:紅色回波殺緊埋嚟。", cat: 1, fb: "現場徵兆 + 雷達確認 —— 「Landing!」收機執嘢。同雷暴鬥快係必輸嘅賭局。" },
+    { text: "出發前:forecast 話大致天晴,雷達乾淨,冇信號,風喺線內。", cat: 0, fb: "出發 —— 但記住 forecast 同雷達係頭兩關,現場仲有第三關:讀風、睇雲、能見度。" },
+    { text: "飛緊,雷達見到有浸嘢,但佢移動方向係「走緊」—— 離你個場越嚟越遠。", cat: 0, fb: "識睇移動方向嘅價值就喺度 —— 走緊嘅雨帶唔使慌。繼續,但雷達要定時再望:天氣係郁緊嘅。" },
+    { text: "朝早黃雨生效,得嗰陣毛毛雨。客戶話「咁細雨怕咩」。", cat: 2, fb: "黃雨都係暴雨警告 —— CAD 寫明「暴雨警告生效時不應放飛」,冇分顏色,所以呢個係法定唔飛。就算冇信號,落緊雨本身都唔飛:部機唔防水係物理。" }
+  ],
+  endMsg: s => s >= 4 ? "雷達判官上任 —— 你由「俾雨突襲」變咗「預咗佢嚟」。" : "重溫課 3:三關每關捉唔同嘢。"
+});
+
+// L4:三大戰場判官
+makeClassify({
+  stId: "tc-st", btnsId: "tc-btns", fbId: "tc-fb", scId: "tc-sc", startId: "tc-start",
+  cats: ["✅ 啱", "❌ 會出事"],
+  items: [
+    { text: "海邊單,朝早風細 —— 你將最難嘅鏡頭排落下晝,朝早先做簡單嘢。", cat: 1, fb: "海陸風:日頭陸地曬熱,下晝海邊嘅風大過朝早係日日發生嘅循環 —— 難嘢應該霸朝早檔(慳電原則 Pack 04 都係咁講)。" },
+    { text: "市區任務,航線要過樓罅 —— 你改線繞開,繞唔開嗰段就慢速、預手、加 margin。", cat: 0, fb: "正確 —— 樓罅係急流位。開揚位嘅風速讀數代表唔到樓罅位。" },
+    { text: "風有啲大,你將隻機收埋喺大廈背風面嗰邊飛,「有樓擋住個風」。", cat: 1, fb: "背風面係 rotor 亂流位,唔係避風塘 —— 「搵嘢擋風」係地面人類嘅諗法,對隻機嚟講背風面係爛路。" },
+    { text: "山區單,想影沿坡鏡頭 —— 你揀迎風面高位,唔喺背風坡低飛。", cat: 0, fb: "正確 —— 背風坡 = downdraft + rotor,低飛係經典出事模式。山唔同你講數。" },
+    { text: "市區樓宇群單,你派咗一個未考 Pack 02 手動基本功嘅隊員做 PIC,「GPS mode 好易飛啫」。", cat: 1, fb: "GPS 峽谷隨時降級 ATTI(姿態模式)—— 嗰刻靠嘅係手動基本功。呢個就係 Pack 02 迫你練嘅原因。" },
+    { text: "離島單,你將裝備 checklist 加倍核對,時間 buffer 加大 —— 「船期就係 deadline」。", cat: 0, fb: "正確 —— 離島冇得「返車攞嘢」,補給同撤退都難,所以 margin 全部加大。" }
+  ],
+  endMsg: s => s >= 5 ? "三大戰場走得 —— 揀場地嗰刻,風險上限已經定咗一半。" : "重溫課 4 嗰張三場景對照表。"
+});
+
+// L5:VLOS 判官
+makeClassify({
+  stId: "vl-st", btnsId: "vl-btns", fbId: "vl-fb", scId: "vl-sc", startId: "vl-start",
+  cats: ["👁 VLOS 仲喺度", "🚫 VLOS 已經斷"],
+  items: [
+    { text: "隻機喺 150 米外,你睇得清佢機頭指緊邊、移緊向邊。", cat: 0, fb: "姿態同動向都睇得清 —— 呢個先係 VLOS 嘅真標準。" },
+    { text: "隻機仲「見到」—— 一粒黑點,但你要靠 mon 先知佢面向邊。", cat: 1, fb: "一粒點係控唔到嘅 —— VLOS 嘅意義係「儀器痴咗你都控到」,開始要「估」姿態嗰刻,佢已經飛得太遠。" },
+    { text: "隻機飛入太陽方向嗰個扇形,你瞇住眼「大概知佢喺嗰頭」。", cat: 1, fb: "你睇緊嘅係個光球,唔係隻機 —— 眩光斷 VLOS,雖然你唔覺。航線設計嗰陣就應該避開太陽扇形。" },
+    { text: "日落咗 15 分鐘,你覺得「仲好睇得清喎」,隻機盞燈都好明。", cat: 1, fb: "你對眼適應緊個暗,主觀「睇得清」客觀姿態細節已經冇 —— 而且日光操作係法定,日落係 deadline 唔係參考。你嘅眼呃你,個鐘唔會。" },
+    { text: "有薄霞,能見度合格,隻機喺近距離,姿態清晰。", cat: 0, fb: "霞係「今日個底就係咁」—— 縮短航線半徑去遷就佢,近距離操作 VLOS 冇問題。留意:VLOS 半徑縮咗,可用飛行範圍都要跟住縮。" },
+    { text: "一浸海霧湧緊埋嚟,隻機同霧之間仲有段距離,你諗住「飛埋呢轉先」。", cat: 1, fb: "霧唔係逐漸嚟,係一浸一浸 —— 佢嚟嘅速度唔會同你商量。「飛埋呢轉」= 賭佢嚟得慢過你,即刻收。" }
+  ],
+  endMsg: s => s >= 5 ? "對眼校準完成 —— 「仲勉強見到」= 已經睇唔到。" : "重溫課 5:VLOS 標準係姿態,唔係粒點。"
+});
+
+// ============ L6:三關決策樹 ============
+(function () {
+  const nodes = {
+    start: { q: "【第一關 · 前一日】聽日海邊商業單。Forecast:大致天晴,吹和緩東風;颱風喺東南 700 公里,零信號。你嘅第一關產出?", opts: [
+      { t: "有條件出發:講明條件 —— 聽朝再 check 雷達 + 熱帶氣旋路徑,長浪風險同客戶預咗 backup day", next: "n2" },
+      { t: "照計劃,乜都唔使講 —— forecast 靚就得", fail: "颱風季陷阱:冇掛波 ≠ 冇嘢 —— 外圍雨帶同長浪唔等信號。第一關嘅價值就係捉大局,「有條件出發」先係完整產出。" },
+      { t: "直接改期,颱風喎", fail: "700 公里外 + 零信號,直接改期係過度反應 —— 決策系統嘅意思係有根有據,唔係一驚就縮。行足三關,用資訊做決定。" }
+    ]},
+    n2: { q: "【第二關 · 出發前】朝早:雷達乾淨,路徑冇變,風喺線內。但你留意到平均風 12、gust 35 —— 差距大。產出?", opts: [
+      { t: "出發 —— 但標記「今日係邊緣日」:gust 差距大 = 空氣唔穩定,現場關要格外醒", next: "n3" },
+      { t: "出發,乜都正常", fail: "平均同 gust 差距大 = 「一時靜一時撞你」嘅日子(課 1)—— 唔係唔可以出發,但當佢「乜都正常」就係漏咗個訊號。" }
+    ]},
+    n3: { q: "【第三關 · 現場】到場:讀風 4 級(旗展開、紙碎吹起),隊規線內但接近;天清;岸邊有一浸一浸長浪湧上嚟。你點處理?", opts: [
+      { t: "降級 Go:LZ 移離浪拍到嘅範圍、剪走海面低飛鏡頭、電量線提早、spotter 加睇浪同風 —— PIC 講「因為」拍板,記一行紀錄", win: true },
+      { t: "照原計劃 Go —— 數字全部喺線內", fail: "長浪已經喺你眼前 —— 「未觸線」唔等於「冇嘢」,成個局唔靚係有效輸入。邊緣日嘅正確答案喺降級菜單入面,唔係 binary。" },
+      { t: "No-go,即刻拉隊走", fail: "唔算大錯(兩個都啱揀保守永遠企得住)—— 但有降級選項可以滿足 must-have 又守到安全,係更成熟嘅一手。記住:先諗菜單,再諗改期。" }
+    ]}
+  };
+  let node = null;
+  const q = document.getElementById("gn-q"), opts = document.getElementById("gn-opts"), fb = document.getElementById("gn-fb");
+  function show(key) {
+    node = key;
+    const n = nodes[key];
+    q.textContent = n.q;
+    fb.className = "fb-box";
+    opts.innerHTML = n.opts.map((o, i) => `<button class="btn ghost" data-gn="${i}" type="button">${o.t}</button>`).join("");
+    document.querySelectorAll("[data-gn]").forEach(b => b.addEventListener("click", () => {
+      const opt = nodes[node].opts[parseInt(b.dataset.gn, 10)];
+      if (opt.fail) { fb.textContent = "💥 " + opt.fail + "(由呢關再嚟)"; fb.className = "fb-box show wrong"; }
+      else if (opt.win) {
+        q.textContent = "🏆 三關行齊:前一日捉大局 → 出發前捉走樣 → 現場用降級菜單。紀錄嗰行字,半年後就係你哋自己嘅天氣經驗庫。";
+        opts.innerHTML = `<button class="btn" id="gn-restart" type="button">再行一次三關</button>`;
+        fb.textContent = "改期嘅成本係一日,唔改期嘅成本冇上限 —— 而你頭先示範咗中間仲有成條降級菜單。";
+        fb.className = "fb-box show right";
+        document.getElementById("gn-restart").addEventListener("click", () => show("start"));
+      } else show(opt.next);
+    }));
+  }
+  document.getElementById("gn-start").addEventListener("click", () => show("start"));
+})();
+
+// ============ 總測驗(開卷,100 分合格) ============
+const quizQuestions = [
+  { lesson: "課 1", question: "到場 setup,你企喺 LZ 感覺微風,樹葉沙沙響啫。隻機起飛上到工作高度(約 250 呎),明顯開始頂風飄,機身側住嚟保持位置。最合理嘅解讀係:",
+    options: ["隻機有嘢壞,落地檢查 compass","梯度風:地面俾摩擦拖慢咗,高位嘅風先係全速 —— 要用「上面嘅風」重新評估飛唔飛得","正常嘅,隻機頂得順咪繼續","上面大風,飛快啲搞掂佢就冇事"],
+    correct: 1, explain: "你膊頭嗰度嘅風係「河底」,高位先係「河面」—— 梯度風係物理唔係故障。「頂得順」唔等於喺隊規線內;「飛快啲」係用速度賭運氣。(課 1)" },
+  { lesson: "課 1", question: "出發前睇天氣報告:平均風 15 km/h,gusts(陣風)42 km/h。你嘅正確解讀係:",
+    options: ["平均先係真實風速,15 好細,放心飛","兩個數拉勻(約 28)做判斷","平均同 gust 差距咁大 = 空氣好唔穩定,「一時靜一時撞你」嘅日子 —— 炒機多數係 gust 搞,今日就算飛都要當邊緣日處理","Gust 係間唔中先有,避開嗰陣咪得"],
+    correct: 2, explain: "炒機主犯係 gust —— 突如其來嗰一下先推你離航線。「拉勻」冇物理意義,隻機唔會食「平均咗嘅 gust」;gust 冇預警,唔存在「避開嗰陣」。(課 1)" },
+  { lesson: "課 2", question: "七月下晝市區任務。朝早晴到爆,而家兩點幾,遠處有雲砌得好高好快、雲底發黑;隔幾分鐘,本來悶焗嘅個場突然吹嚟一陣涼風。你應該:",
+    options: ["涼風幾好,冇咁熱,繼續拍","嗰陣涼風係 gust front(陣風鋒)—— 雷暴嘅先頭部隊,雷同大雨已經好近:即刻嗌「Landing!」收機執嘢","睇埋雷達先,雷達紅色先算數","飛快啲影埋最後兩個鏡頭先收"],
+    correct: 1, explain: "悶熱突轉涼風 = gust front,佢到代表雷暴唔係「可能嚟」係「就到」。現場徵兆已齊,現場永遠大過報告;同雷暴鬥快係必輸嘅賭局。(課 2)" },
+  { lesson: "課 2", question: "有個颱風喺香港幾百公里外,天文台未發任何信號。聽日有個離島岸邊任務,而家天色好靚。正確嘅諗法係:",
+    options: ["冇掛波 = 冇嘢,照原計劃","掛咗波先算,聽日朝早睇返","冇信號唔等於冇影響:外圍雨帶可以隔幾百公里掃到嚟,長浪仲會早過個風暴到 —— 岸邊起降首當其衝,三關行足,加倍保守或者改期","離島風景靚啲,颱風前嘅雲影出嚟仲靚,加鏡頭"],
+    correct: 2, explain: "颱風季陷阱唔係打風嗰日(嗰日冇人飛),係前後「睇落冇事」嗰幾日。信號係法定線,唔係你唯一嘅情報。(課 2)" },
+  { lesson: "課 3", question: "前一日 forecast 話「大致天晴」,照計劃出發。出發前 check:雷達見西面有一浸黃紅色回波,移緊埋嚟你個場方向。你應該:",
+    options: ["Forecast 話晴喎,雷達應該係舊資料","第二關就係為咗捉呢啲:forecast 係大局,雷達係實況 —— 估大約幾耐到,唔夠時間完成任務就腰斬 / 延遲","照出發,去到現場先睇第三關","打俾天文台問清楚"],
+    correct: 1, explain: "預報係成個香港嘅,你個場係一個點,而天氣係郁緊嘅。第二關 fail 唔可以靠第三關翻案 —— 「去到先算」嘅車程正正係 get-there-itis 嘅本金。(課 3)" },
+  { lesson: "課 3", question: "朝早黃雨生效,得嗰陣毛毛雨,客戶話「咁細雨怕咩」。你查過 CAD 規定:暴雨警告(唔分顏色)生效時不應放飛。你應該:",
+    options: ["唔喺法定清單 = 可以飛,客戶啱","唔飛:落緊雨本身就唔飛 —— 部機唔防水、能見度差,呢個係操作紅線唔使等信號;黃雨法定地位未核實,唔可以自己作個答案","飛,但飛低啲避開啲雨","等客戶簽個免責聲明就飛"],
+    correct: 1, explain: "唔喺法定清單唔等於可以飛 —— 落雨唔飛係物理加操作。高度改變唔到落緊雨呢個事實;安全唔係客戶簽名買得起嘅嘢,法律責任唔會因為佢簽咗而轉移。(課 3)" },
+  { lesson: "課 4", question: "市區任務,航線有一段要穿過兩楝高樓中間嘅罅位。今日開揚位風速喺隊規線內。關於嗰段樓罅航線,正確嘅係:",
+    options: ["開揚位合格 = 全場合格,照飛","樓罅風洞效應令嗰段風加速勁過開揚位,背風面仲有 rotor(背風渦流)—— 嗰段當「急流位」另計:避開改線,避唔開就加倍 margin、慢速過","樓與樓之間有遮擋,風應該仲細","開快啲衝過去,縮短喺入面嘅時間"],
+    correct: 1, explain: "風俾樓罅迫窄會加速 —— 開揚位嘅讀數代表唔到樓罅;背風面係打筋斗嘅 rotor 位,「有遮擋風仲細」啱啱相反。市區嘅風係一格一格唔同嘅。(課 4)" },
+  { lesson: "課 4", question: "山區任務,想喺山脊背風面低飛影一組沿坡鏡頭。風速喺市區隊規線內。正確諗法係:",
+    options: ["線內就係線內,山定市區冇分別","背風坡有下沉氣流同 rotor,低飛係大忌;而且山區出事後果放大(救援難、訊號差)—— 風險 = 機率 × 後果,後果大咗條線就要嚴啲:改迎風面高位,或者剪走呢組鏡頭","背風面即係避風,仲安全過迎風面","派隻機去試吓先,唔掂咪返轉頭"],
+    correct: 1, explain: "背風坡低飛俾 downdraft 㩒落地下係經典出事模式;「背風 = 避風」係謬誤(樓同山都一樣)。場景加嚴唔係保守癖,係數學 —— 同一機率,山區後果嚴重好多。(課 4)" },
+  { lesson: "課 5", question: "夕陽單。日落 18:42,brief 定咗 hard landing time(最遲落地時間)18:30。而家 18:28,客戶話「個天而家先最靚,加多一轉啦,五分鐘咋」。天仲幾光。你應該:",
+    options: ["天仲光喎,加嗰轉,18:40 前實落到","18:30 照收:「Landing!」—— 日光操作係法定,日落後光衰減快過你以為,你對眼適應緊個暗會呃你;deadline 用鐘做準,唔係用「仲見到」做準。對客戶三段式,一把口","問吓 PIC 肯唔肯先,佢話得就得","加轉,但飛近啲望清楚啲"],
+    correct: 1, explain: "「天仲光」正正係陷阱 —— 暮色衰減唔係線性,後半段插水。Hard landing time 嘅意義就係喺呢刻代替你對眼做決定;brief 定咗嘅時間線,現場冇人有權放寬 —— 包括 PIC。(課 5)" },
+  { lesson: "課 6", question: "邊緣日:風喺隊規上限八成,雷達西面有回波但未埋嚟,能見度合格。客戶項目趕,催你哋開工。全隊行完三關,現場關「未觸線但成個局唔靚」。最好嘅處理係:",
+    options: ["未觸線 = go,照原計劃全套飛","直接 no-go 改期,最安全","用降級菜單砌一個「降級 go」:剪走 nice-to-have、縮航線、電量線提早、加 spotter 專睇個天;同客戶三段式 + 替代方案;PIC 拍板講「因為」,寫一行 go / no-go 紀錄;雷達嗰浸嘢殺到警戒位即收","問客戶接唔接受風險,佢接受就照飛"],
+    correct: 2, explain: "邊緣日唔係 binary —— 「飛 / 唔飛」中間有成條降級菜單。「未觸線 = 冇嘢」錯在條線係下限唔係判斷嘅全部;B 唔算錯但有得滿足 must-have 又守到安全係更成熟嘅一手;「安全俾客戶投票」冇得投。(課 6)" }
+];
+const POINTS_PER_QUESTION = 10;
+const PASS_MARK = 100;  // 開卷,全對先合格(團隊慣例)
+const letters = ["A", "B", "C", "D"];
+function renderQuiz() {
+  document.getElementById("quiz-body").innerHTML = quizQuestions.map((q, qi) => `
+    <div class="qcard" id="qcard-${qi}">
+      <div class="qnum">Question ${String(qi + 1).padStart(2, "0")} / 10 · ${q.lesson} · 10 分<span class="qbadge" id="qbadge-${qi}"></span></div>
+      <div class="qtext">${q.question}</div>
+      <div class="opts">
+        ${q.options.map((opt, oi) => `
+          <label class="opt" id="opt-${qi}-${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span class="letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+      <div class="explain" id="explain-${qi}"></div>
+    </div>`).join("");
+}
+function gradeQuiz() {
+  const unanswered = [];
+  quizQuestions.forEach((q, qi) => { if (!document.querySelector(`input[name="q${qi}"]:checked`)) unanswered.push(qi + 1); });
+  const note = document.getElementById("unanswered-note");
+  if (unanswered.length > 0) {
+    note.style.display = "block";
+    note.textContent = "仲有未答嘅題目:第 " + unanswered.join("、") + " 題。全部答完先可以交卷。";
+    return;
+  }
+  note.style.display = "none";
+  let correctCount = 0;
+  quizQuestions.forEach((q, qi) => {
+    const chosen = parseInt(document.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+    const card = document.getElementById(`qcard-${qi}`);
+    const isRight = chosen === q.correct;
+    if (isRight) correctCount++;
+    card.classList.add("graded", isRight ? "right" : "wrong");
+    document.getElementById(`qbadge-${qi}`).textContent = isRight ? "✓ 答啱" : "✗ 答錯";
+    document.getElementById(`opt-${qi}-${q.correct}`).classList.add("is-correct");
+    if (!isRight) document.getElementById(`opt-${qi}-${chosen}`).classList.add("is-wrong");
+    document.getElementById(`explain-${qi}`).innerHTML = `<b>正確答案:${letters[q.correct]}</b> — ${q.explain}`;
+    card.querySelectorAll("input").forEach(input => { input.disabled = true; });
+  });
+  const score = correctCount * POINTS_PER_QUESTION;
+  const passed = score >= PASS_MARK;
+  const best = sGet(BEST_KEY, null);
+  if (best === null || score > best) sSet(BEST_KEY, score);
+  renderProgress();
+  const result = document.getElementById("result");
+  result.classList.remove("pass", "fail");
+  result.classList.add(passed ? "pass" : "fail");
+  result.style.display = "block";
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-sub").textContent = `滿分 100 · 答啱 ${correctCount} / 10 題 · 合格線 ${PASS_MARK} 分(開卷)`;
+  document.getElementById("verdict").textContent = passed ? "合格 PASS" : "不合格 FAIL";
+  document.getElementById("result-note").textContent = passed
+    ? "合格!下一步:同負責人一齊填返隊規實數(風速 / gust / 能見度線),張決策表先算完整。"
+    : "未去到 100 分 —— 你唔熟嗰一課,正正就係你會揀錯嗰一日。開卷:返上去搵答案,再嚟。";
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "inline-block";
+  result.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+}
+function resetQuiz() {
+  renderQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("unanswered-note").style.display = "none";
+  document.getElementById("submit-btn").style.display = "inline-block";
+  document.getElementById("retry-btn").style.display = "none";
+  document.getElementById("quiz").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+}
+renderQuiz();
+document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+document.getElementById("retry-btn").addEventListener("click", resetQuiz);
+renderProgress();
+</script>
+</body>
+</html>

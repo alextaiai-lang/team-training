@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>無人機應急處理教材 · Lesson Pack 03</title>
+<style>
+  :root {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+      --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+      --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+      --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+      --draft: #d9c25e; --draft-wash: #2e2810;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+    --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+    --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+    --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+    --draft: #d9c25e; --draft-wash: #2e2810;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+  }
+
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.75; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+
+  .draft-banner { background: var(--draft-wash); border-bottom: 1px solid var(--draft);
+    color: var(--draft); font-size: .85rem; font-weight: 600; text-align: center; padding: 9px 16px; }
+
+  .progress-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 20px; }
+  .progress-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .68rem; letter-spacing: .08em; color: var(--ink-soft); white-space: nowrap; }
+  .segments { display: flex; gap: 4px; flex: 1; }
+  .seg { height: 9px; flex: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg.done { background: var(--pass); border-color: var(--pass); }
+  .best-label { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+
+  header { padding-top: 40px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink); display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 12px 0 10px; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { color: var(--ink-soft); margin: 0; font-size: 1.02rem; max-width: 60ch; }
+
+  .mission { background: var(--surface); border: 1.5px solid var(--accent); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 20px; margin-top: 24px; font-size: .95rem; }
+  .mission .m-title { font-weight: 800; color: var(--accent-ink); margin-bottom: 6px; }
+  .mission .m-law { background: var(--fail-wash); border: 1px solid var(--fail); border-radius: 8px; padding: 9px 13px; font-weight: 700; margin-top: 10px; }
+
+  .lesson { margin-top: 64px; }
+  .lesson-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-wash);
+    border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px; display: inline-block; }
+  h2 { font-size: 1.45rem; margin: 12px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+
+  .objective { background: var(--accent-wash); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 13px 16px; font-size: .93rem; margin: 0 0 20px; }
+  .objective .obj-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+
+  .safety { background: var(--warn-wash); border: 1px solid var(--warn);
+    border-radius: 10px; padding: 14px 16px; margin: 22px 0 0; font-size: .95rem; }
+  .safety .s-label { font-weight: 700; color: var(--warn-ink); display: block; margin-bottom: 4px; }
+  .safety p, .safety ul { margin: 0; }
+
+  .drill { background: var(--pass-wash); border: 1px solid var(--pass); border-radius: 10px;
+    padding: 13px 16px; margin: 20px 0 0; font-size: .92rem; }
+  .drill .d-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--pass); display: block; margin-bottom: 4px; font-weight: 700; }
+  .drill p, .drill ul { margin-bottom: 6px; }
+
+  .adjust { display: inline-block; background: var(--surface-2); border: 1px dashed var(--ink-soft);
+    color: var(--ink-soft); border-radius: 6px; padding: 0 7px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+  .todo { display: inline-block; background: var(--warn-wash); border: 1.5px dashed var(--warn);
+    color: var(--warn-ink); border-radius: 7px; padding: 1px 9px; font-size: .85rem; font-weight: 700; }
+
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); margin: 18px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-family: ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+
+  .widget { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 18px; margin: 22px 0; }
+  .widget-tag { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px; }
+  .widget .hint { font-size: .84rem; color: var(--ink-soft); margin-bottom: 12px; }
+
+  .btn { font: inherit; font-weight: 700; font-size: .95rem; cursor: pointer;
+    border-radius: 10px; padding: 10px 24px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--accent-ink); }
+  .btn.small { font-size: .85rem; padding: 8px 16px; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  .fb-box { margin-top: 12px; border-radius: 8px; padding: 10px 14px; font-size: .9rem; display: none; }
+  .fb-box.show { display: block; }
+  .fb-box.right { background: var(--pass-wash); border: 1px solid var(--pass); }
+  .fb-box.wrong { background: var(--fail-wash); border: 1px solid var(--fail); }
+  .mini-score { font-family: ui-monospace, monospace; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; }
+
+  .cl-statement { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-align: center; font-weight: 700; min-height: 3.4em; margin-bottom: 12px; }
+  .cl-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .cl-btns .btn { font-size: .85rem; padding: 9px 14px; }
+
+  .timer-track { height: 8px; border-radius: 4px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; margin-bottom: 12px; visibility: hidden; }
+  .timer-fill { height: 100%; background: var(--warn); width: 100%; }
+
+  /* L2 sliders */
+  .sl-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+  .sl-row label { font-size: .88rem; font-weight: 600; min-width: 9em; }
+  .sl-row input[type=range] { flex: 1; min-width: 130px; accent-color: var(--accent); }
+  .sl-val { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); min-width: 7ch; font-variant-numeric: tabular-nums; }
+  .lamp { text-align: center; font-weight: 800; font-size: 1.05rem; border-radius: 10px; padding: 12px; margin-top: 10px; }
+  .lamp.green { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .lamp.amber { background: var(--warn-wash); color: var(--warn-ink); border: 1px solid var(--warn); }
+  .lamp.red { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .lamp small { display: block; font-weight: 600; font-size: .78rem; margin-top: 2px; }
+
+  /* L3 timeline */
+  .tl-step { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 8px; overflow: hidden; }
+  .tl-head { font-weight: 800; padding: 9px 14px; background: var(--surface-2); font-size: .9rem; }
+  .tl-body { display: none; padding: 10px 14px; font-size: .88rem; }
+  .tl-step.open .tl-body { display: block; }
+  .tl-body .tl-drone { color: var(--accent-ink); margin-bottom: 6px; }
+  .tl-body .tl-you { color: var(--pass); }
+
+  /* L4 GPS/ATTI demo */
+  .demo-stage { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); margin-bottom: 12px; }
+  .demo-stage svg { width: 100%; height: auto; display: block; }
+  .demo-note { font-size: .88rem; font-weight: 600; min-height: 2.4em; margin-top: 8px; }
+  .mode-badge { font-family: ui-monospace, monospace; font-weight: 800; }
+
+  /* L6 decision tree */
+  .dt-q { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; font-weight: 700; margin-bottom: 12px; min-height: 3em; }
+  .dt-opts { display: flex; flex-direction: column; gap: 8px; }
+  .dt-opts .btn { text-align: left; font-size: .9rem; font-weight: 600; }
+  .dt-path { font-family: ui-monospace, monospace; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; }
+
+  /* L8 report builder */
+  .rp-field { margin-bottom: 10px; }
+  .rp-field label { display: block; font-size: .82rem; font-weight: 700; color: var(--accent-ink); margin-bottom: 3px; }
+  .rp-field textarea, .rp-field input { width: 100%; font: inherit; font-size: .9rem; color: inherit;
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; resize: vertical; }
+  .rp-field textarea:focus-visible, .rp-field input:focus-visible { outline: 2px solid var(--accent); }
+  .rp-out { display: none; margin-top: 14px; border: 1px solid var(--pass); border-radius: 10px; padding: 14px 16px; background: var(--pass-wash); font-size: .88rem; white-space: pre-wrap; font-family: ui-monospace, monospace; }
+  .rp-sample { margin-top: 14px; border: 1px dashed var(--line); border-radius: 10px; padding: 12px 15px; font-size: .82rem; color: var(--ink-soft); }
+
+  /* quiz */
+  .quiz-head { margin-top: 76px; padding-top: 34px; border-top: 2px solid var(--accent); }
+  .quiz-rules { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 14px 18px; font-size: .92rem; margin: 18px 0 28px; }
+  .quiz-rules ul { margin: 0; padding-left: 20px; }
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+  .qnum { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .qtext { font-weight: 700; margin: 6px 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 10px 13px; cursor: pointer; font-size: .95rem; background: var(--surface); }
+  .opt:hover { border-color: var(--accent); }
+  .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+  .opt .letter { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); flex: none; }
+  .qcard.graded .opt { cursor: default; }
+  .qcard.graded .opt.is-correct { border-color: var(--pass); background: var(--pass-wash); }
+  .qcard.graded .opt.is-wrong { border-color: var(--fail); background: var(--fail-wash); }
+  .qbadge { display: none; font-weight: 700; font-size: .82rem; border-radius: 999px; padding: 2px 11px; margin-left: 8px; vertical-align: middle; }
+  .qcard.graded .qbadge { display: inline-block; }
+  .qcard.graded.right .qbadge { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .qcard.graded.wrong .qbadge { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .explain { display: none; margin-top: 12px; font-size: .9rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .qcard.graded .explain { display: block; }
+  .explain b { color: var(--ink); }
+  .quiz-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .unanswered-note { display: none; color: var(--fail); font-weight: 600; font-size: .92rem; margin-top: 12px; }
+  .result { display: none; margin-top: 30px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 28px; text-align: center; border: 2px solid var(--line); }
+  .result.pass { border-color: var(--pass); }
+  .result.fail { border-color: var(--fail); }
+  .score { font-size: 3.2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .result.pass .score { color: var(--pass); }
+  .result.fail .score { color: var(--fail); }
+  .score-sub { color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+  .verdict { display: inline-block; font-weight: 800; font-size: 1.05rem; border-radius: 999px; padding: 6px 22px; margin-top: 14px; }
+  .result.pass .verdict { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .result.fail .verdict { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .result-note { font-size: .86rem; color: var(--ink-soft); margin: 14px auto 0; max-width: 46ch; }
+
+  .done-btn { margin-top: 22px; font: inherit; font-size: .9rem; font-weight: 700; border-radius: 999px; padding: 8px 22px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent-ink); background: var(--surface); }
+  .done-btn.done { background: var(--pass-wash); border-color: var(--pass); color: var(--pass); }
+  .done-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .82rem; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">🚨 草稿 v1 · 飛行安全內容 · 待團隊負責人審核 —— 審批前不得派發俾隊員</div>
+
+<div class="progress-bar">
+  <div class="progress-inner">
+    <span class="progress-label">課程進度 <span id="prog-count">0</span>/8</span>
+    <div class="segments" id="segments" aria-hidden="true"></div>
+    <span class="best-label" id="best-label">測驗最高分 —</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Alex 無人機隊 · 內部培訓 · Lesson Pack 03</div>
+    <h1>應急處理篇</h1>
+    <p class="lede">俾完成 Pack 01《無人機入門》+ Pack 02《首飛實操篇》嘅隊員 —— 深入教「出事嗰刻點做」。8 課由一條萬用口訣開始,逐種應急拆解,最後教你將全部嘢變成團隊制度。</p>
+    <div class="mission">
+      <div class="m-title">📌 開始之前,一句最重要嘅話</div>
+      <p style="margin-bottom:8px">應急程序係<b>預先喺地面練熟</b>嘅嘢,唔係空中出事嗰刻先嚟諗。呢個 pack 教你嘅每一步,都要喺地面演練到唔使諗就講得出、做得出,先算學識。</p>
+      <div class="m-law">🚨 鐵律:所有實機演練必須喺督導之下進行,唔准自己私下試 —— 包括切 ATTI mode(姿態模式)呢類動作。</div>
+    </div>
+  </header>
+
+  <!-- 概覽 -->
+  <section class="lesson">
+    <span class="lesson-tag">課程地圖 · Training Path</span>
+    <h2>概覽</h2>
+    <div class="tablebox">
+      <table>
+        <tr><th>課</th><th>題目</th><th>一句講點解要學</th><th>檢查方式</th></tr>
+        <tr><td>1</td><td>應急思維總綱 A-N-C 🎮</td><td>一條萬用骨幹,應付所有未教過嘅突發</td><td>口述演練</td></tr>
+        <tr><td>2</td><td>低電量應急 🎮</td><td>低電係最常見應急,兩級反應唔同</td><td>督導模擬返航</td></tr>
+        <tr><td>3</td><td>失訊應急 🎮</td><td>失訊唔係災難,亂反應先係</td><td>地面口述演練</td></tr>
+        <tr><td>4</td><td>GPS 失效 / 飄移 🎮</td><td>部機突然「唔識自己企」你要識接手</td><td>兩級演練</td></tr>
+        <tr><td>5</td><td>Compass / 感應器異常 🎮</td><td>識認徵兆,喺打圈變大鑊前落地</td><td>徵兆配對</td></tr>
+        <tr><td>6</td><td>Flyaway(飛失)處理 🎮</td><td>失控嗰 60 秒做啱五件事</td><td>決策演練</td></tr>
+        <tr><td>7</td><td>炒機 / 墜機現場處理 🎮</td><td>人→火→機→證據,次序錯會出人命</td><td>現場模擬</td></tr>
+        <tr><td>8</td><td>應急演練 + 上報文化 🎮</td><td>將頭 7 課變成肌肉記憶同團隊制度</td><td>寫一份 incident report</td></tr>
+        <tr><td>—</td><td>總測驗</td><td>10 題選擇題,開卷,100 分合格</td><td>本頁最底</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 術語一覽 -->
+  <section class="lesson">
+    <span class="lesson-tag">術語一覽 · 唔使背,唔記得返嚟查</span>
+    <h2>呢個 pack 新出現嘅專業術語</h2>
+    <p>Pack 01 教過嗰批(RTH、VLOS、failsafe、LiPo 呢啲)去入門篇張表查;下面係今次新增嘅。</p>
+    <div class="tablebox">
+      <table>
+        <tr><th>術語</th><th>意思</th></tr>
+        <tr><td>Aviate → Navigate → Communicate</td><td>航空界應急口訣:先控機、再定位、後通報 —— 第 1 課成課講佢</td></tr>
+        <tr><td>ATTI mode(Attitude mode)</td><td>姿態模式 —— 部機只自動保持水平,唔會自己定位,鬆手會隨風飄</td></tr>
+        <tr><td>GPS drift / glitch</td><td>GPS 飄移 / 跳位 —— 訊號差令部機以為自己喺第二度</td></tr>
+        <tr><td>Toilet bowl effect</td><td>馬桶效應 —— compass 出錯令部機喺 GPS mode 自己打圈,越畫越大</td></tr>
+        <tr><td>EMI</td><td>電磁干擾 —— 高壓電、發射站、大型金屬影響 compass 同訊號</td></tr>
+        <tr><td>Flyaway</td><td>飛失 —— 部機唔再響應控制、離開預定範圍飛走</td></tr>
+        <tr><td>Thermal runaway</td><td>熱失控 —— 電池內部連鎖過熱,一開始就停唔到,會冒煙起火</td></tr>
+        <tr><td>Kill switch / Emergency stop</td><td>緊急停槳 —— 遙控上即刻停晒所有摩打嘅開關(隊上有冇、喺邊,負責人示範)</td></tr>
+        <tr><td>Near-miss</td><td>險失事件 —— 差啲出事但最後冇損失嘅事件</td></tr>
+        <tr><td>Incident report</td><td>事故報告 —— 出事後按固定框架寫低嘅正式紀錄</td></tr>
+        <tr><td>Telemetry</td><td>遙測數據 —— 部機實時傳返嚟嘅位置、高度、電量等資訊</td></tr>
+        <tr><td>GCS(Ground Control Station)</td><td>地面控制站 —— 你手上控制部機嘅軟件 / 裝置</td></tr>
+        <tr><td>LKP(Last Known Position)</td><td>最後已知位置 —— 失聯前最後一個確認座標,搵機由呢度開始</td></tr>
+        <tr><td>Plan B(預案)</td><td>起飛前諗定嘅後備方案:「如果 X 發生,我就做 Y」</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== L1 ===== -->
+  <section class="lesson" id="lesson-1">
+    <span class="lesson-tag">Lesson 01</span>
+    <h2>應急思維總綱 — Aviate, Navigate, Communicate</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>任何突發情境,即場用 A-N-C 次序講出應對步驟;每次起飛前帶隊講 60 秒 plan B(預案);panic(慌張)嗰刻識得點樣穩住自己。</div>
+
+    <p><b>點解要一條總綱。</b>應急種類太多 —— 低電、失訊、GPS、compass、飛失 —— 冇可能逐樣背晒。所以航空界用一條萬用骨幹:<b>Aviate, Navigate, Communicate(先控機、再定位、後通報)</b>。好似急救嘅 ABC:醫護遇到咩傷都行同一條次序,唔使現場發明。</p>
+    <ul>
+      <li><b>A — Aviate,先控機。</b>部機失控一秒都唔可以冇人理。警告彈出、隊友嗌你、電話響 —— 全部排隊。GPS mode(自動定位)下鬆手 = hover(懸停),係你嘅定海神針 —— <b>但係</b>如果部機已經跌落 ATTI(姿態模式,第 4 課),鬆手佢會飄。所以 Aviate 嘅真正意思唔係「鬆手」,係「<b>唔好亂撳,有意識咁控住佢</b>」。</li>
+      <li><b>N — Navigate,再定位。</b>三條問題:部機喺邊?我喺邊?附近有咩危險(人、樓、馬路)?然後搵安全空間 —— hover、返航、定即刻落地。</li>
+      <li><b>C — Communicate,後通報。</b>穩定咗先開口:「電量低,我返緊航」。口令跟團隊標準(Pack 02):起飛係<b>嗌「Taking off!」→ 聽到「CLEAR」→ 先 arm</b>;降落喺<b>離地 10–20 米</b>嗌「Landing!」→ 聽到「CLEAR」先繼續落。——<b>但應急情況唔使等「CLEAR」</b>:嗌一聲提場邊人就算,<b>嗌唔切嘅話以控機優先</b>,條命同控制權永遠排喺把口前面。(標準應急口令以團隊 OM 為準)</li>
+    </ul>
+    <h3>Panic 管理</h3>
+    <p>出事嗰刻身體會出賣你:心跳加速、手震、tunnel vision(視野收窄到得返一個點)。三步:①深呼吸一下,俾個腦半秒重開機;②<b>講出嚟</b> —— 大聲講「低電,返航」,講嘢會逼個腦由驚慌切返做嘢模式;③唔肯定下一步做咩,就唔好郁桿住(GPS mode 下 hover 等緊你)。好似學車死火:亂踩嘢仲弊過停一停諗一諗。</p>
+    <h3>預案思維 — 起飛前 60 秒三問</h3>
+    <ol>
+      <li>而家要即刻落,落邊?</li>
+      <li>部機衝過嚟,人向邊邊走?</li>
+      <li>風由邊度嚟,部機冇力時會被推去邊?</li>
+    </ol>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · A-N-C 分類</div>
+      <div class="hint">部機出事嗰刻,呢啲動作各屬邊個階段?A 先控機 / N 再定位 / C 後通報 —— 仲有啲嘢係「呢刻唔應該做」。</div>
+      <div class="cl-statement" id="anc-st">撳「開始」測試你嘅 A-N-C</div>
+      <div class="cl-btns" id="anc-btns"><button class="btn" id="anc-start" type="button">開始</button></div>
+      <div class="fb-box" id="anc-fb"></div>
+      <div class="mini-score" id="anc-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境同秒數由負責人調整</span></span>
+      <p>地面演練:督導讀出 3 個情境,每個 30 秒內用 A-N-C 講出應對次序。<b>完成標準:</b>3 個情境次序全部正確、冇跳步、每步講到具體動作。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>應急時最常見嘅致命錯誤:pilot 注意力離開咗部機。A-N-C 次序<b>唔可以調轉</b>;口令嗌唔切照落 —— 嗌口令永遠讓位俾控機。</p></div>
+    <button class="done-btn" data-lesson="0" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L2 ===== -->
+  <section class="lesson" id="lesson-2">
+    <span class="lesson-tag">Lesson 02</span>
+    <h2>低電量應急</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>分得出 warning(第一級)同 critical(第二級)低電,講出各自正確反應;解釋點解頂風返航要預更多電;講出「電量焦慮」兩個極端點樣令人做錯決定。</div>
+
+    <ul>
+      <li><b>兩級複習 + 深化(接入門第 5 課)。</b><b>Warning</b> = 部機提你返航,你仲有得揀點樣返;<b>critical</b> = 部機可能自動降落,你已經冇得揀。好似架車:油燈著咗你揀油站,死火咗你冇得揀停邊。隊上返航門檻:<b>30%(電量跌到 30% 前必須開始降落)</b> —— 呢個數係<b>死線,唔係參考</b>。</li>
+      <li><b>Warning 響起嘅正確反應</b> —— 唔係「影埋呢個 shot 先」,係即刻做<b>返航決策三問</b>:①離 home point(起飛點)幾遠?②返程順風定頂風?③中途有冇備降點?三問答完就開始返航。</li>
+      <li><b>頂風返航嘅陷阱。</b>順風出去好化算,頂風返嚟食電多好多 —— 好似踩單車去程落斜返程上斜。螢幕嘅「仲飛到 X 分鐘」係按<b>當前</b>狀態估算,佢唔識預你等陣要頂風,所以計餘量一定要人腦補上風呢一項。隊上風速上限:<b>以每部機說明書抗風上限為準 + margin</b>(新手練習 5 m/s 以下)(接入門第 7 課 go / no-go 紀律)。</li>
+      <li><b>Critical 觸發之後</b> —— 唔好同 failsafe(自動保命機制)搏鬥。部機開始自動降落,你嘅工作變咗係<b>幫佢落得安全</b>:留意落點下面有冇人,同時嗌「Landing!」提場邊人(應急情況唔使等「CLEAR」回應)。自動降落期間可以介入幾多,唔同機型唔同 <span class="adjust">🔧 由負責人按隊上機型示範</span>。</li>
+      <li><b>電量焦慮陷阱(接 Pack 02 第 7 課)。</b>兩個極端都危險:<b>過度焦慮</b> —— 未到門檻已經慌,急急腳喺唔理想位置降落;<b>掉以輕心</b> —— 「仲有 15% 咋喎」,但 15% 喺頂風加凍天(低溫 LiPo 鋰聚合物電池表現差)可能得返一半實用電量。正確心態:門檻之前照計劃飛,一到門檻即刻執行,唔拗、唔拖、唔賭。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 返唔返到屋企?</div>
+      <div class="hint">拉三條桿,睇個燈點變 —— 感受吓「同一個電量,唔同距離同風向,結局差幾遠」。<b>示意用</b>:實際門檻同計法以負責人指示為準(<b>低電返航門檻 30%</b>)。</div>
+      <div class="sl-row"><label for="b-dist">離 home point</label><input type="range" id="b-dist" min="100" max="2000" step="100" value="500"><span class="sl-val" id="b-dist-v">500m</span></div>
+      <div class="sl-row"><label for="b-wind">返程風向</label><input type="range" id="b-wind" min="0" max="3" step="1" value="1"><span class="sl-val" id="b-wind-v">微風</span></div>
+      <div class="sl-row"><label for="b-batt">剩餘電量</label><input type="range" id="b-batt" min="15" max="100" step="5" value="50"><span class="sl-val" id="b-batt-v">50%</span></div>
+      <div class="lamp green" id="b-lamp">🟢</div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 高度、時機、路線由負責人調整</span></span>
+      <p>督導模擬:電量仍充足時督導宣布「當而家係 warning」,10 秒內講出返航決策三問嘅答案並執行返航,全程口令齊。<b>完成標準:</b>唔使提示完成三問 + 返航流暢 + 「Landing!」喺離地 10–20 米嗌出。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>Critical 級唔好嘗試搶控飛遠 —— 越搏越冇電揀落點。低溫日子電量跌得快過螢幕估算。「差少少完成任務」係炒機報告入面最常見嗰句。</p></div>
+    <button class="done-btn" data-lesson="1" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L3 ===== -->
+  <section class="lesson" id="lesson-3">
+    <span class="lesson-tag">Lesson 03</span>
+    <h2>失訊應急</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>RC signal lost(遙控訊號斷)嗰刻,講出並做出正確首三步;起飛前指得出場地嘅訊號黑點;講出隊上失訊 failsafe 會點行。</div>
+
+    <ul>
+      <li><b>失訊有兩種,唔好撈亂。</b>①<b>圖傳 / 數傳斷</b>(螢幕黑咗或者數據停咗)但遙控訊號仲喺度:你仲控到部機,靠肉眼 VLOS(目視飛行)飛返嚟 —— 呢個就係入門篇迫你練 VLOS 嘅原因。②<b>RC link(遙控訊號)斷</b>:你嘅指令去唔到部機,部機交俾 failsafe(自動保命機制)接手。</li>
+      <li><b>RC 失訊正確三步:</b>①<b>唔好狂撥桿</b> —— 部機收唔到,狂撥只係整定一堆亂命令,重新接通嗰刻部機突然收到反而危險;②<b>望實部機,預佢行 failsafe</b> —— 隊上設定係咩(hover 幾耐 → RTH 自動返航之類):<b>一般設定為 RTH(Return to Home,自動返航)</b>,你知佢下一步做咩就唔會慌;③<b>改善接收</b> —— 企高啲、行開障礙物、留意天線方向(天線好似支光管,光由側面出,筆尖嗰頭最弱,唔好用天線尖端直指部機)。</li>
+      <li><b>Failsafe 觸發後點配合。</b>RTH 開始 = 爬升 → 直線返 home point → 降落。你嘅工作:望實返航線有冇障礙、通知隊友「部機自動返緊嚟」、訊號返嚟<b>唔好即刻搶控</b> —— 接手前諗定接手做咩。</li>
+      <li><b>預判黑點。</b>大廈背後、金屬棚架 / 貨櫃旁、橋底、高壓電塔附近(EMI 電磁干擾)。起飛前問自己:「今日條航線邊一段會背住大廈?」答案寫入 plan B。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 失訊時間軸</div>
+      <div class="hint">逐格撳開,對照睇「部機做緊咩」同「你應該做緊咩」—— 兩條線一齊行,你就唔會慌。</div>
+      <div id="tl-list"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境細節、次數由負責人調整</span></span>
+      <p>地面口述演練:督導無預警講「RC lost」,即刻收桿、口述部機接落嚟 30 秒會做咩(按隊上 failsafe 設定)、指出改善接收嘅移動方向。<b>完成標準:</b>三步齊 + 講中隊上 failsafe 實際行為 + 冇「狂撥桿」動作。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>失訊唔係即刻災難 —— failsafe 就係為呢一刻而設;最危險嘅係 pilot 心慌手快。真正風險係 RTH 返航線上有障礙,所以 home point 一定要設喺開揚位。圖傳斷唔等於失控 —— 分清邊條 link 斷咗先反應。</p></div>
+    <button class="done-btn" data-lesson="2" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L4 ===== -->
+  <section class="lesson" id="lesson-4">
+    <span class="lesson-tag">Lesson 04</span>
+    <h2>GPS 失效 / 飄移應急</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>由螢幕同機身動態認出部機跌咗落 ATTI mode(姿態模式);講出 ATTI 下鬆手會發生咩事;講出樓宇間 GPS 差時嘅救機四步。</div>
+
+    <ul>
+      <li><b>幾時會發生。</b>城市峽谷(兩邊高樓夾住,天空得返一條縫)、橋底、大型金屬旁 —— 衛星訊號被遮擋或反射,定位質素跌到某個位,飛控會自動放棄定位,<b>部機由 GPS mode 降級落 ATTI mode</b>。唔同機型叫法同行為有分別 <span class="adjust">🔧 隊上機型實際行為由負責人講解</span>。</li>
+      <li><b>ATTI 係咩。</b>部機只幫你保持水平,<b>唔會定點</b>。鬆手唔會停 —— 會保持慣性、隨風飄。Analogy:GPS mode 好似架車有自動泊車,ATTI 係普通車 —— 冇咗自動功能唔代表架車壞,只係要你自己揸。呢課最重要一句:<b>ATTI 之下,鬆手唔等於 hover。</b></li>
+      <li><b>徵兆:</b>①螢幕 mode 字眼變咗;②衛星數目急跌;③部機開始慢慢自己漂移。</li>
+      <li><b>救機四步(樓宇間):</b>①<b>Aviate</b> —— 同自己講「而家係 ATTI」,細桿修正,唔好大桿(大桿喺窄位係自殺);②<b>諗風</b> —— 風會將部機推向邊?背風嗰面最危險,因為部機會被推埋牆;③<b>有得上就上</b> —— 頭頂開揚就慢慢增高離開峽谷,見到嘅天空多咗衛星通常返返嚟;④<b>GPS 返嚟唔好即刻信</b> —— 等衛星數穩定先切返自動模式。</li>
+      <li><b>另一種:GPS 飄移(drift / glitch)。</b>GPS 冇死但「跳位」—— 部機以為自己喺第二度,喺 GPS mode 下會自己「修正」向錯誤方向走。見到部機<b>無端端自己郁</b>:唔好等,切手動或者即刻降落 <span class="adjust">🔧 邊個動作啱隊上機型由負責人決定並示範</span>。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動示範 · 鬆手會點?GPS mode vs ATTI</div>
+      <div class="hint">同一陣風,兩個 mode,鬆手結局完全唔同 —— 撳掣對比吓。</div>
+      <div class="demo-stage">
+        <svg viewBox="0 0 560 170" role="img" aria-label="GPS 同 ATTI 模式鬆手對比示範">
+          <text x="60" y="30" font-size="13" fill="var(--ink-soft)">風 →→→</text>
+          <line x1="280" y1="20" x2="280" y2="150" stroke="var(--line)" stroke-width="1" stroke-dasharray="4 5"/>
+          <circle cx="280" cy="85" r="34" fill="none" stroke="var(--pass)" stroke-width="1.5" stroke-dasharray="5 4"/>
+          <g id="atti-drone">
+            <line x1="-14" y1="0" x2="14" y2="0" stroke="var(--ink-soft)" stroke-width="4" stroke-linecap="round"/>
+            <ellipse cx="-12" cy="-4" rx="8" ry="2.2" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+            <ellipse cx="12" cy="-4" rx="8" ry="2.2" fill="none" stroke="var(--accent)" stroke-width="1.6"/>
+            <rect x="-7" y="-3" width="14" height="7" rx="3" fill="var(--surface)" stroke="var(--ink)" stroke-width="1.5"/>
+          </g>
+          <text id="atti-mode-label" x="280" y="160" text-anchor="middle" font-size="12" font-weight="800" fill="var(--pass)">GPS MODE</text>
+        </svg>
+      </div>
+      <div class="cl-btns">
+        <button class="btn ghost" id="atti-gps" type="button">GPS mode · 鬆手</button>
+        <button class="btn" id="atti-atti" type="button">ATTI mode · 鬆手</button>
+      </div>
+      <div class="demo-note" id="atti-note">綠色虛線圈 = 部機應該留喺嘅位。揀一個 mode 鬆手睇吓。</div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 高度、時長、邊啲隊員合資格,由負責人決定</span></span>
+      <p><b>級一(全員):</b>simulator(模擬器)或口述,講出 ATTI 徵兆同救機四步 —— 徵兆同四步全中。<b>級二(負責人指定人選先做):</b>開揚場地督導下實機 ATTI hover —— 喺指定範圍內全程保持控制。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>ATTI 唔係故障,係降級運作 —— 危險嘅唔係個 mode,係未練過嘅 pilot。<b>未經負責人批准,隊員唔准自己喺空中試切 ATTI。</b>樓宇間任務起飛前,必須有當日 plan B 降落點先准飛。</p></div>
+    <button class="done-btn" data-lesson="3" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L5 ===== -->
+  <section class="lesson" id="lesson-5">
+    <span class="lesson-tag">Lesson 05</span>
+    <h2>Compass / 感應器異常</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>用自己嘅話描述 toilet bowl effect(馬桶效應);列出起飛前、起飛後各兩個 compass 異常徵兆;見到部機打圈,講出並執行正確即時應對。</div>
+
+    <ul>
+      <li><b>Compass 做咩(複習入門第 1 課)。</b>GPS 話俾部機知「你喺邊」,compass(電子指南針)話俾佢知「機頭指緊邊」—— 兩樣夾埋,部機先識得「向北飛」呢類指令。</li>
+      <li><b>Compass 錯會點。</b>部機以為自己面向北,其實面向東 —— 每次自動「修正」位置都推錯方向,越修越歪,結果喺 GPS mode 下自己打圈,個圈越畫越大,好似馬桶沖水 —— 呢個就係 <b>toilet bowl effect(馬桶效應)</b>。Analogy:你矇住眼行直線,有人不停俾錯方向指示,你以為自己修正緊,其實兜緊圈。</li>
+      <li><b>起飛前徵兆:</b>①GCS(地面控制站)彈 compass error / 要求 calibration(校正);②地圖上部機箭嘴方向同實機機頭唔一致 —— <b>每次起飛前肉眼對一次</b>(建議加入 pre-flight checklist,係咪正式加入由負責人決定);③起飛點係天台鋼筋地面、金屬棚、大鐵閘旁 —— 金屬同磁場係 compass 頭號敵人。</li>
+      <li><b>起飛後徵兆:</b>①hover check(低空懸停檢查)時部機慢慢畫圈;②<b>分辨口訣:單向係風,打圈係 compass。</b></li>
+      <li><b>即時應對。</b>見到打圈:<b>唔好撳 RTH!</b>RTH(自動返航)一樣靠 compass 同 GPS 導航,compass 亂緊佢會一齊亂。正確做法:趁個圈仲細,直接原位降落;有能力兼獲授權嘅隊員可以切手動穩定佢 <span class="adjust">🔧 邊啲隊員授權切,由負責人定</span>。</li>
+      <li><b>Calibration 紀律。</b>企喺金屬旁邊 calibrate = 越校越錯。實際步驟按隊上機型 <span class="adjust">🔧 由負責人親自示範,教材唔提供逐步指令</span>。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 徵兆配對</div>
+      <div class="hint">徵兆逐張彈出 —— 判斷佢屬於:Compass 問題 / 風 / GPS 問題 / 正常。目標 8 中 8(開卷,可以邊睇課文邊做)。</div>
+      <div class="cl-statement" id="sym-st">撳「開始」測試你嘅徵兆雷達</div>
+      <div class="cl-btns" id="sym-btns"><button class="btn" id="sym-start" type="button">開始</button></div>
+      <div class="fb-box" id="sym-fb"></div>
+      <div class="mini-score" id="sym-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 卡面可加隊上真實(匿名)例子</span></span>
+      <p>上面配對遊戲 <b>8 中 8</b>;再對督導口述:起飛前兩個徵兆、起飛後兩個徵兆、打圈嘅即時應對。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>Toilet bowl 初期好似風吹 —— 記住:單向係風,打圈係 compass。打緊圈唔好撳 RTH。金屬地面起飛出事係自己攞嚟 —— 起飛點揀位係第一道防線。</p></div>
+    <button class="done-btn" data-lesson="4" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L6 ===== -->
+  <section class="lesson" id="lesson-6">
+    <span class="lesson-tag">Lesson 06</span>
+    <h2>Flyaway(飛失)處理</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講出 flyaway 嘅定義;失控嗰刻 60 秒內做齊「五個即場動作」;講出搵機三步,同埋點解搵返部機都要上報。</div>
+
+    <ul>
+      <li><b>定義。</b>Flyaway(飛失)= 部機唔再響應你嘅控制、離開預定飛行範圍。事後調查大部分 flyaway 都係 compass / GPS / 設定出事(即係第 4、5 課嘅嘢冇處理好)。所以:<b>最好嘅 flyaway 應對,係前五課全部做足。</b></li>
+      <li><b>即場五個動作:</b>①<b>眼唔好離開部機</b> —— 一睇唔到就好難再搵返,呢一刻你對眼比對手重要;②<b>嗌出嚟</b>:「部機失控,向北飛緊!」叫 spotter(觀察員)幫手跟蹤,佢跟機你控機;③<b>試 RTH 掣 / 切 mode</b> —— 有時切出 GPS mode 反而切斷咗個錯誤源頭,但呢招要練過先好用 <span class="adjust">🔧 邊啲隊員授權用由負責人定</span>;④<b>記低四樣嘢</b>:方向、高度、大約速度、剩餘電量 —— 電量話俾你知佢最多仲飛得幾耐,即係你嘅搜索半徑;⑤<b>唔好盲追</b> —— 追機衝出馬路,死過炒機。</li>
+      <li><b>搵機三步:</b>①<b>LKP(最後已知位置)</b>:喺 GCS / app 攞最後座標,唔好熄 app、唔好亂撳 —— telemetry(遙測)紀錄係你張藏寶圖;②<b>估落點範圍</b>:LKP + 風向 + 剩餘飛行時間,劃個大約圈;③<b>搜索都要安全守法</b>:私人地方要問准先入,唔好爬棚爬樹冒險 —— 搵機唔可以製造第二單意外。</li>
+      <li><b>事後上報。</b>就算搵返部機、一啲花痕都冇,flyaway <b>一定</b>要出 incident report(事故報告,第 8 課格式)—— 因為佢暴露咗一個未搵到嘅原因,唔報 = 下次原班人馬再嚟一次。落咗人哋物業、傷到人、整爛嘢 → 即刻跟第 7 課程序。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · Flyaway 決策樹</div>
+      <div class="hint">部機飛失咗 —— 逐步揀你嘅做法。揀錯即刻見到後果,全程冇揀錯先過關。</div>
+      <div class="dt-q" id="dt-q">撳「開始」進入情境</div>
+      <div class="dt-opts" id="dt-opts"><button class="btn" id="dt-start" type="button">開始</button></div>
+      <div class="fb-box" id="dt-fb"></div>
+      <div class="dt-path" id="dt-path"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境參數由負責人設定</span></span>
+      <p>決策演練:督導口述 flyaway 情境(方向、高度、電量),60 秒內口述做齊五個即場動作。<b>完成標準:</b>五個動作齊 + 冇危險選項 + 講得出搜索半徑點樣估。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>追機唔追命</b> —— 任何搵機動作唔可以令人身陷險。失控機電池遲早耗盡,佢一定會落地;你嘅工作係知佢大約落邊,唔係同佢鬥快。「搵返就當冇事」係最危險心態 —— 原因未搵到,炸彈仲喺度。</p></div>
+    <button class="done-btn" data-lesson="5" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L7 ===== -->
+  <section class="lesson" id="lesson-7">
+    <span class="lesson-tag">Lesson 07</span>
+    <h2>炒機 / 墜機現場處理</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>按「人 → 火 → 機 → 證據」次序處理墜機現場;講出受損 LiPo(鋰聚合物電池)三條鐵律;傷人 / 損毀財物時講出即刻要做嘅兩件事,同點解唔可以私了。</div>
+
+    <ul>
+      <li><b>次序總綱:人 → 火 → 機 → 證據。</b>好似車禍:你唔會第一時間檢查保險桿花咗冇,你先睇有冇人受傷。部機係錢,人係命。</li>
+      <li><b>人。</b>①有人受傷:急救行先,嚴重即 call 999;②部機跌緊落嚟嗰刻,你同隊友第一時間<b>離開落點</b>,唔好伸手接機;③落地後第一個動作:遙控 disarm / kill switch(緊急停槳)停晒摩打 <span class="adjust">🔧 隊上邊個掣由負責人示範</span>。<b>摩打未停晒,冇人埋身。</b></li>
+      <li><b>火 —— 受損 LiPo(接入門第 3 課)。</b>撞擊過嘅 LiPo 可能即刻冒煙,亦可能幾分鐘後先發作 —— thermal runaway(熱失控)一開始就停唔到。三條鐵律:①<b>唔好徒手執起</b>變形、發熱、冒煙嘅電池;②有得<b>安全咁做</b>先好用非易燃工具 / 防護手套將佢移離人群同易燃物,放喺石屎 / 泥地開揚位 <span class="adjust">🔧 隊上裝備由負責人確認</span>;③<b>觀察一段時間先好收起</b> <span class="adjust">🔧 觀察幾耐、用咩容器,由負責人定</span>。補充:電池煙有毒,企上風位;真係起火,人員疏散優先,救唔到就唔好救。</li>
+      <li><b>機 + 證據。</b>未影相之前唔好執走殘骸(除非阻路或者有即時危險)。影四類相:①全景(部機同環境同一格);②近景損毀;③散落部件位置;④機身序號。Flight log(飛行紀錄)唔好刪、唔好覆寫 —— 佢係查原因嘅黑盒。log 格式同下載方法:<b>DJI 飛行 App 電子紀錄</b>(保養 log 另計一份)。</li>
+      <li><b>責任(接入門第 6 課)。</b>傷人或損毀他人財物,即刻做兩件事:①<b>報警</b>;②<b>通知負責人</b>,由負責人跟進 CAD(民航處)上報要求。<b>CAD 上報程序(據 HK CAD 要求):</b>有損毀 / 傷人 → 即報警 + email 民航處無人機辦公室 <b>sua@cad.gov.hk</b>;任何意外(無論有冇損毀 / 傷人)<b>24 小時內</b>書面詳報 CAD;如 CAD 要求,3 個曆日內補交詳情;保存意外 log 備查。同事主私下「傾掂數」唔等於處理咗 —— 第三者保險同法規責任都需要正式紀錄,私了反而令件事冇得補救。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 現場三秒決斷</div>
+      <div class="hint">墜機現場逐樣嘢彈出,三秒內決定:即刻用遙控停摩打 / call 999 / 用工具隔離唔徒手 / 影相之前唔好郁。</div>
+      <div class="cl-statement" id="cr-st">撳「開始」進入現場</div>
+      <div class="timer-track" id="cr-timer-box"><div class="timer-fill" id="cr-timer"></div></div>
+      <div class="cl-btns" id="cr-btns"><button class="btn" id="cr-start" type="button">開始</button></div>
+      <div class="fb-box" id="cr-fb"></div>
+      <div class="mini-score" id="cr-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 道具、場景由負責人設計</span></span>
+      <p>現場模擬:用退役機 / 道具擺一個「墜機現場」,由頭做到尾:口述停摩打 → 隔離電池 → 影齊四類相 → 口頭向負責人報告。<b>完成標準:</b>次序啱(人→火→機→證據)、四類相齊、報告講齊人 / 火 / 機三方面狀態。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>槳未停,唔埋身。受損 LiPo 係計時炸彈 —— 處理咗火險,先處理其他嘢。<b>傷人事故隱瞞唔報,係成個 pack 最嚴重紅線 —— 冇例外。</b></p></div>
+    <button class="done-btn" data-lesson="6" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L8 ===== -->
+  <section class="lesson" id="lesson-8">
+    <span class="lesson-tag">Lesson 08</span>
+    <h2>應急演練 + 上報文化</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>帶隊做一次起飛前 60 秒 what-if brief(預案簡報);用 5W + 跟進框架寫一份完整 incident report(事故報告);向新隊員解釋 near-miss(險失事件)點解要報。</div>
+
+    <ul>
+      <li><b>點解要演練。</b>應急反應唔係知識,係肌肉記憶 —— 頭 7 課嘅嘢,你唔喺地面練到熟,空中嗰 10 秒一定用唔出。Analogy:消防演習 —— 冇人等到真火先學走火通道。</li>
+      <li><b>三層演練:</b>①<b>每次起飛前 60 秒 what-if brief</b>(第 1 課三問)—— 成本最低,日日做;②<b>定期圍枱演練</b> —— 圍埋用口行一次情境,本 pack 每課嘅練習就係現成材料;③<b>督導實機演練</b> —— 模擬低電返航、督導下 ATTI hover 呢類 <span class="adjust">🔧 邊啲項目可以實機演、幾耐一次,由負責人排期並親自督導</span>。</li>
+      <li><b>Near-miss 上報。</b>差啲出事 = 系統送你一個免費教訓。冰山理論:一單真事故下面,通常瞓咗好多單冇人講嘅 near-miss —— 報咗,先有得喺變成事故之前攔截。<b>團隊鐵律:上報唔會被罰。</b>上報係幫全隊,瞞報先係害全隊。(呢條文化規矩,建議負責人喺隊會親口講一次,由上而下先立到。)</li>
+      <li><b>Report 唔係作文。</b>寫事實,唔寫猜測;真係要寫猜測,標明「懷疑」;唔記得就寫「唔記得」—— 老作補完嘅 report 比冇 report 更毒,因為佢會誤導成隊人嘅改善方向。</li>
+    </ul>
+
+    <h3>Incident report 框架(六格)</h3>
+    <div class="tablebox">
+      <table>
+        <tr><th>格</th><th>寫咩</th></tr>
+        <tr><td>邊個</td><td>當時角色(PIC / spotter)—— 報告用途係內部改善,存檔同匿名方式由負責人定</td></tr>
+        <tr><td>幾時</td><td>日期時間 + 當時天氣風向</td></tr>
+        <tr><td>邊度</td><td>地點 + 環境特徵(例:「天台,鋼筋地面」)</td></tr>
+        <tr><td>咩事</td><td>時間線:由正常到出事逐段寫,記低當時 mode / 電量 / 高度,同 flight log 對照(格式:<b>DJI App 電子紀錄</b>)</td></tr>
+        <tr><td>點應對</td><td>當時做咗咩,A-N-C 有冇跟到,邊步做得好邊步甩咗</td></tr>
+        <tr><td>跟進</td><td>懷疑原因、邊份教材 / SOP 要更新、邊個設定要覆檢 —— <b>改 parameter(飛行參數)一定係負責人做,隊員唔准自己改</b></td></tr>
+      </table>
+    </div>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · Incident Report 生成器</div>
+      <div class="hint">用一單(匿名 / 模擬)事件,六格逐格填 —— 填完撳掣生成一份排好版嘅 report,同下面個範本對照吓差距。</div>
+      <div class="rp-field"><label>① 邊個(當時角色)</label><input id="rp-1" placeholder="例:PIC,另有一名 spotter 在場"></div>
+      <div class="rp-field"><label>② 幾時(日期時間 + 天氣風向)</label><input id="rp-2" placeholder="例:某日下晝三點,東風,陣風明顯"></div>
+      <div class="rp-field"><label>③ 邊度(地點 + 環境特徵)</label><input id="rp-3" placeholder="例:工地天台,鋼筋地面,北面有天秤"></div>
+      <div class="rp-field"><label>④ 咩事(時間線,連 mode / 電量 / 高度)</label><textarea id="rp-4" rows="3" placeholder="由正常到出事逐段寫……"></textarea></div>
+      <div class="rp-field"><label>⑤ 點應對(A-N-C 有冇跟到)</label><textarea id="rp-5" rows="2" placeholder="當時做咗咩,邊步好邊步甩……"></textarea></div>
+      <div class="rp-field"><label>⑥ 跟進(懷疑原因 + 要更新嘅嘢)</label><textarea id="rp-6" rows="2" placeholder="懷疑原因標明「懷疑」……"></textarea></div>
+      <button class="btn" id="rp-gen" type="button">生成 report</button>
+      <div class="rp-out" id="rp-out"></div>
+      <div class="rp-sample"><b>範本對照:</b>①PIC,spotter 一名 ②某日 15:10,東風轉強 ③海旁空地,南面開揚 ④14:55 起飛正常 → 15:05 電量 40% 開始返航 → 15:07 頂風,電量跌速異常快 → 15:09 warning 響 ⑤即刻執行三問,改直線低速返航,離地 10–20 米嗌 Landing! ⑥懷疑該電池老化(第 3 次出現跌速快),建議負責人覆檢該電池內阻,教材第 2 課「頂風」段建議加真實例子</div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 事件素材由負責人提供(建議用隊上真事,匿名處理)</span></span>
+      <p>每人寫一份完整 incident report。<b>完成標準:</b>六格齊、事實同猜測分開標明、有引用 flight log(DJI App 電子紀錄)。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>演練本身都有風險 —— 實機演練必須督導 + 開揚場地 + 事先簡報,唔准私下演。上報文化一俾人攞嚟追究責任,就會即刻死亡 —— 呢一點負責人自己都要守。Report 內嘅個人資料按隊規處理,唔入共用教材、唔出外網。</p></div>
+    <button class="done-btn" data-lesson="7" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section class="quiz-head" id="quiz">
+    <span class="lesson-tag">總測驗 · Final Quiz</span>
+    <h2>測驗:10 題選擇題</h2>
+    <div class="quiz-rules">
+      <ul>
+        <li>每題 <b>10 分</b>,滿分 <b>100 分</b>,<b>100 分合格(OPENBOOK 開卷)</b> —— 應急嘢冇「識八成」呢回事,唔夠 100 重考。</li>
+        <li>交卷後顯示每題對錯、解釋同對應課數。</li>
+        <li>測驗結果用嚟改進教材同跟進學習,<b>唔會用嚟處分任何隊員</b>。</li>
+      </ul>
+    </div>
+    <div id="quiz-body"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="submit-btn" type="button">交卷計分</button>
+      <button class="btn ghost" id="retry-btn" type="button" style="display:none">再做一次</button>
+    </div>
+    <p class="unanswered-note" id="unanswered-note"></p>
+    <div class="result" id="result">
+      <div class="score" id="score-num"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <div><span class="verdict" id="verdict"></span></div>
+      <p class="result-note" id="result-note"></p>
+    </div>
+  </section>
+
+  <footer>草稿 v1 · 飛行安全內容,待團隊負責人審核 · 課程內容:training-designer(培訓設計師)· 實操細節以負責人釐定為準</footer>
+</div>
+
+<script>
+"use strict";
+// ============ 進度追蹤 ============
+const LESSONS_KEY = "drone301.lessons", BEST_KEY = "drone301.best";
+function sGet(k, fb) { try { const r = localStorage.getItem(k); return r === null ? fb : JSON.parse(r); } catch (e) { return fb; } }
+function sSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lessonsDone = sGet(LESSONS_KEY, [false,false,false,false,false,false,false,false]);
+if (!Array.isArray(lessonsDone) || lessonsDone.length !== 8) lessonsDone = [false,false,false,false,false,false,false,false];
+function renderProgress() {
+  document.getElementById("segments").innerHTML = lessonsDone.map(d => `<div class="seg${d ? " done" : ""}"></div>`).join("");
+  document.getElementById("prog-count").textContent = lessonsDone.filter(Boolean).length;
+  document.querySelectorAll(".done-btn").forEach(btn => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    btn.classList.toggle("done", lessonsDone[i]);
+    btn.textContent = lessonsDone[i] ? "✓ 已完成(撳一下取消)" : "✓ 完成呢課";
+  });
+  const best = sGet(BEST_KEY, null);
+  document.getElementById("best-label").textContent = best === null ? "測驗最高分 —" : `測驗最高分 ${best}/100`;
+}
+document.querySelectorAll(".done-btn").forEach(btn => btn.addEventListener("click", () => {
+  const i = parseInt(btn.dataset.lesson, 10);
+  lessonsDone[i] = !lessonsDone[i];
+  sSet(LESSONS_KEY, lessonsDone);
+  renderProgress();
+}));
+
+// ============ 通用分類遊戲引擎(L1 / L5 / L7 共用) ============
+// cfg: { stId, btnsId, fbId, scId, startId, items, cats, timed(秒,可選), endMsg(fn) }
+function makeClassify(cfg) {
+  let idx = -1, score = 0, timerAnim = null;
+  const st = document.getElementById(cfg.stId), fb = document.getElementById(cfg.fbId);
+  function stopTimer() {
+    if (timerAnim) cancelAnimationFrame(timerAnim);
+    if (cfg.timerBoxId) document.getElementById(cfg.timerBoxId).style.visibility = "hidden";
+  }
+  function show() {
+    st.textContent = cfg.items[idx].text;
+    document.getElementById(cfg.btnsId).innerHTML = cfg.cats.map((c, ci) =>
+      `<button class="btn ${ci % 2 ? "ghost" : ""}" data-cl="${ci}" type="button">${c}</button>`).join("");
+    fb.className = "fb-box";
+    document.querySelectorAll(`#${cfg.btnsId} [data-cl]`).forEach(b => b.addEventListener("click", () => answer(parseInt(b.dataset.cl, 10))));
+    // 計時模式(reduced-motion 就唔計)
+    if (cfg.timed && !reduceMotion) {
+      const box = document.getElementById(cfg.timerBoxId), fill = document.getElementById(cfg.timerId);
+      box.style.visibility = "visible";
+      const t0 = performance.now();
+      (function tick(now) {
+        const left = 1 - (now - t0) / (cfg.timed * 1000);
+        if (left <= 0) { answer(null); return; }
+        fill.style.width = (left * 100) + "%";
+        timerAnim = requestAnimationFrame(tick);
+      })(performance.now());
+    }
+  }
+  function answer(ci) {
+    stopTimer();
+    const item = cfg.items[idx];
+    let right, prefix;
+    if (ci === null) { right = false; prefix = "⏱ 太耐 —— 現場唔會等你。"; }
+    else { right = ci === item.cat; prefix = right ? "✓ 啱。" : "✗ 諗多一次。"; }
+    if (right) score++;
+    fb.textContent = prefix + " " + item.fb;
+    fb.className = "fb-box show " + (right ? "right" : "wrong");
+    document.getElementById(cfg.scId).textContent = `進度 ${idx + 1}/${cfg.items.length} · 啱 ${score}`;
+    if (idx < cfg.items.length - 1) {
+      document.getElementById(cfg.btnsId).innerHTML = `<button class="btn ghost" data-next type="button">下一個 →</button>`;
+      document.querySelector(`#${cfg.btnsId} [data-next]`).addEventListener("click", () => { idx++; show(); });
+    } else {
+      document.getElementById(cfg.btnsId).innerHTML = `<button class="btn" data-restart type="button">再嚟一輪(${score}/${cfg.items.length} · ${cfg.endMsg(score)})</button>`;
+      document.querySelector(`#${cfg.btnsId} [data-restart]`).addEventListener("click", start);
+    }
+  }
+  function start() { idx = 0; score = 0; document.getElementById(cfg.scId).textContent = ""; show(); }
+  document.getElementById(cfg.startId).addEventListener("click", start);
+}
+
+// L1:A-N-C 分類
+makeClassify({
+  stId: "anc-st", btnsId: "anc-btns", fbId: "anc-fb", scId: "anc-sc", startId: "anc-start",
+  cats: ["🕹 A 先控機", "🧭 N 再定位", "📣 C 後通報", "🚫 呢刻唔好做"],
+  items: [
+    { text: "兩手控住部機,眼望實佢,唔理其他嘢住。", cat: 0, fb: "Aviate —— 部機一秒都唔可以冇人理,呢個永遠係第一步。" },
+    { text: "睇清楚部機而家喺邊、離你幾遠、下面有咩。", cat: 1, fb: "Navigate —— 控穩咗先定位:部機喺邊、我喺邊、危險喺邊。" },
+    { text: "搵定附近有咩安全空間可以 hover(懸停)或者降落。", cat: 1, fb: "Navigate —— 搵安全空間係定位嘅一部分。" },
+    { text: "大聲同隊友講:「電量低,我返緊航。」", cat: 2, fb: "Communicate —— 穩定咗先開口,講嘢仲會逼個腦冷靜返。" },
+    { text: "隊友喺隔籬追問「咩事呀?」—— 你詳細答佢。", cat: 2, fb: "Communicate —— 而且要簡短。控機途中長篇解釋 = 注意力離開部機。" },
+    { text: "攞電話影低螢幕個警告畫面留紀錄。", cat: 3, fb: "唔好做住 —— 紀錄有 telemetry(遙測數據)幫你,呢刻對眼同對手都要留返俾部機。" },
+    { text: "檢查剩餘電量同返航距離夠唔夠。", cat: 1, fb: "Navigate —— 呢啲係「定位評估」嘅一部分,喺控穩之後、開口之前做。" }
+  ],
+  endMsg: s => s >= 6 ? "A-N-C 骨幹已經上手。" : "重溫第 1 課:先控機、再定位、後通報,次序唔可以亂。"
+});
+
+// ============ L2:返航三色燈(示意) ============
+const windNames = ["順風", "微風", "頂風", "強頂風"];
+const windFactor = [0.8, 1.0, 1.6, 2.2];
+function battUpdate() {
+  const dist = parseInt(document.getElementById("b-dist").value, 10);
+  const wind = parseInt(document.getElementById("b-wind").value, 10);
+  const batt = parseInt(document.getElementById("b-batt").value, 10);
+  document.getElementById("b-dist-v").textContent = dist + "m";
+  document.getElementById("b-wind-v").textContent = windNames[wind];
+  document.getElementById("b-batt-v").textContent = batt + "%";
+  // 示意計法:返航需電 = 距離基數 × 風向倍數;再預返一截保命餘量
+  const need = (dist / 100) * 1.6 * windFactor[wind];
+  const reserve = 20; // 示意保命餘量;隊上低電返航線 30%(見課文)
+  const margin = batt - need - reserve;
+  const lamp = document.getElementById("b-lamp");
+  if (margin > 12) { lamp.className = "lamp green"; lamp.innerHTML = `🟢 返航有餘量<small>估計返航用 ${Math.round(need)}%,連保命餘量後仲鬆動 —— 但唔好摸住條線飛</small>`; }
+  else if (margin > 0) { lamp.className = "lamp amber"; lamp.innerHTML = `🟡 邊緣 —— 而家就要返航<small>估計返航用 ${Math.round(need)}%,啱啱夠 —— 「影多一個 shot」就會變紅</small>`; }
+  else { lamp.className = "lamp red"; lamp.innerHTML = `🔴 唔夠電安全返航<small>估計返航用 ${Math.round(need)}%,超出咗 —— 即刻搵最近安全點降落,唔好死頂返 home</small>`; }
+}
+["b-dist", "b-wind", "b-batt"].forEach(id => document.getElementById(id).addEventListener("input", battUpdate));
+battUpdate();
+
+// ============ L3:失訊時間軸 ============
+const tlSteps = [
+  ["T+0 · 訊號斷咗", "部機:收唔到你指令,保持最後狀態 / 開始 hover(懸停)等訊號", "你:收桿唔亂撥;大聲通知隊友「失訊!」"],
+  ["T+幾秒 · 等待期", "部機:hover 等訊號返(等幾耐按隊上設定)", "你:眼望實部機(VLOS 目視);行去開揚位、調整天線改善接收"],
+  ["Failsafe 觸發", "部機:開始爬升到 RTH(自動返航)高度", "你:望實條返航線有冇障礙;心入面行返隊上 failsafe 設定,預佢下一步"],
+  ["返航中", "部機:直線飛返 home point(起飛點)", "你:繼續望實;訊號返嚟都唔好即刻搶控 —— 諗定接手做咩先接"],
+  ["降落", "部機:喺 home point 上空垂直降落", "你:確保落點清空;喺離地 10–20 米嗌「Landing!」提場邊人(應急唔使等 CLEAR)"]
+];
+document.getElementById("tl-list").innerHTML = tlSteps.map((s, i) => `
+  <div class="tl-step" id="tl-${i}">
+    <div class="tl-head">▸ ${s[0]}(撳開)</div>
+    <div class="tl-body"><div class="tl-drone">🛸 ${s[1]}</div><div class="tl-you">🧍 ${s[2]}</div></div>
+  </div>`).join("");
+document.querySelectorAll(".tl-step .tl-head").forEach((h, i) => h.addEventListener("click", () => {
+  document.getElementById(`tl-${i}`).classList.toggle("open");
+}));
+
+// ============ L4:GPS vs ATTI 鬆手示範 ============
+const attiDrone = document.getElementById("atti-drone");
+const attiNote = document.getElementById("atti-note");
+const attiLabel = document.getElementById("atti-mode-label");
+let attiAnim = null;
+function attiRun(mode) {
+  if (attiAnim) cancelAnimationFrame(attiAnim);
+  attiLabel.textContent = mode === "gps" ? "GPS MODE" : "ATTI MODE";
+  attiLabel.setAttribute("fill", mode === "gps" ? "var(--pass)" : "var(--fail)");
+  if (reduceMotion) {
+    attiDrone.setAttribute("transform", mode === "gps" ? "translate(280, 85)" : "translate(470, 95)");
+    attiNote.textContent = mode === "gps"
+      ? "GPS mode:鬆手,部機自己定返喺圈入面 —— hover 等緊你。"
+      : "ATTI mode:鬆手,部機被風一路推走 —— 唔會自己停,要你細桿接手。";
+    return;
+  }
+  const t0 = performance.now();
+  attiNote.textContent = "鬆手……";
+  function frame(now) {
+    const t = (now - t0) / 1000;
+    if (mode === "gps") {
+      // 定喺原位,輕微浮動
+      attiDrone.setAttribute("transform", `translate(${280 + Math.sin(t * 2.2) * 4}, ${85 + Math.cos(t * 1.7) * 3})`);
+      if (t > 3.2) { attiNote.textContent = "✅ GPS mode:部機自己定返喺圈入面 —— 所以第 1 課話「鬆手係定海神針」…前提係你真係喺 GPS mode。"; return; }
+    } else {
+      // 隨風向右飄,越飄越快
+      const x = 280 + t * t * 22;
+      attiDrone.setAttribute("transform", `translate(${x}, ${85 + Math.sin(t * 2.5) * 6 + t * 3})`);
+      if (x > 520) { attiNote.textContent = "💨 ATTI mode:鬆手唔等於 hover —— 部機被風一路推走。要你自己細桿接手,再諗風、搵開揚位。"; return; }
+    }
+    attiAnim = requestAnimationFrame(frame);
+  }
+  attiAnim = requestAnimationFrame(frame);
+}
+document.getElementById("atti-gps").addEventListener("click", () => attiRun("gps"));
+document.getElementById("atti-atti").addEventListener("click", () => attiRun("atti"));
+attiDrone.setAttribute("transform", "translate(280, 85)");
+
+// L5:徵兆配對
+makeClassify({
+  stId: "sym-st", btnsId: "sym-btns", fbId: "sym-fb", scId: "sym-sc", startId: "sym-start",
+  cats: ["🧲 Compass 問題", "💨 風", "🛰 GPS 問題", "✅ 正常"],
+  items: [
+    { text: "GPS mode 下,部機自己慢慢打圈,個圈越畫越大。", cat: 0, fb: "Toilet bowl(馬桶效應)—— compass 出錯嘅招牌動作。打圈唔好撳 RTH,趁圈細快落地。" },
+    { text: "部機企唔定,順住同一個方向慢慢飄,風大飄得快啲。", cat: 1, fb: "單向係風 —— 尤其喺 ATTI(姿態模式)之下,呢個係正常物理,細桿修正就得。" },
+    { text: "地圖上部機箭嘴指北,但你肉眼見實機機頭明明向東。", cat: 0, fb: "Compass 講緊大話 —— 起飛前肉眼對一次方向,就係為咗捉呢個。" },
+    { text: "衛星數目由 18 粒突然跌到 6 粒。", cat: 2, fb: "GPS 訊號質素跌緊 —— 預部機可能降級落 ATTI,提前諗定救機四步。" },
+    { text: "部機突然「彈咗」去地圖第二個位置,然後自己開始移動修正。", cat: 2, fb: "GPS 跳位(glitch)—— 部機以為自己喺第二度。唔好等,切手動或者即刻降落(按負責人指示)。" },
+    { text: "GCS(地面控制站)開機即刻彈 compass error,要求校正。", cat: 0, fb: "起飛前徵兆 —— 唔好喺金屬旁邊校,搵過位先。" },
+    { text: "Hover(懸停)好定,細推桿反應正常,衛星數穩定。", cat: 3, fb: "正常 —— 呢個就係 hover check 想見到嘅樣。" },
+    { text: "今日陣風大,部機保持到位置,但機身明顯傾側頂緊風。", cat: 1, fb: "正常物理 —— GPS mode 頂風要傾側先保持到位,唔係故障;但傾側大 = 食電快,計返航要保守。" }
+  ],
+  endMsg: s => s === 8 ? "8 中 8 —— 徵兆雷達合格!記住口訣:單向係風,打圈係 compass,跳位係 GPS。" : "未夠 8 中 8 —— 開卷㗎,對返課文再嚟。"
+});
+
+// ============ L6:Flyaway 決策樹 ============
+const dtNodes = {
+  start: { q: "部機突然唔聽控,向北飛走緊,高度 40 米。第一步?", opts: [
+    { t: "眼追住部機,大聲嗌隊友:「部機失控,向北!」", next: "n2" },
+    { t: "即刻低頭喺 app 度搵座標截圖", fail: "你低頭嗰三秒,部機消失咗喺樓宇之間 —— lost visual(睇唔到)之後就好難再搵。對眼比對手重要。" },
+    { t: "拔腳就追", fail: "你衝出咗單車徑,差啲撞到人 —— 追機唔追命,行都要睇路。" }
+  ]},
+  n2: { q: "Spotter(觀察員)接手跟蹤緊。下一步?", opts: [
+    { t: "試撳 RTH 掣 / 切 mode(你係獲授權隊員)", next: "n3" },
+    { t: "掟低遙控,跑去攞車匙開車追", fail: "遙控一放低,連最後嘅接通機會都冇埋 —— 控制器唔離手。" },
+    { t: "咩都唔做,等佢自己飛返嚟", fail: "「等運到」唔係程序 —— 有得試嘅掣要試,同時記低數據。" }
+  ]},
+  n3: { q: "撳咗,冇反應。仲要即刻記低咩?", opts: [
+    { t: "方向、高度、大約速度、剩餘電量", next: "n4" },
+    { t: "淨係記住部機個樣係咩色", fail: "顏色搵唔到機 —— 方向+高度+速度+電量先劃到搜索範圍。電量 = 佢最多仲飛幾耐 = 你嘅搜索半徑。" }
+  ]},
+  n4: { q: "部機消失咗。搜索由邊度開始?", opts: [
+    { t: "LKP(最後已知位置)+ 風向 + 剩餘飛行時間,劃個範圍圈", next: "n5" },
+    { t: "周圍行吓,聽吓邊度有聲", fail: "冇框架嘅搜索 = 靠彩數。GCS 入面嘅 telemetry(遙測)紀錄係藏寶圖 —— 唔好熄 app。" }
+  ]},
+  n5: { q: "喺球場邊搵返部機,零損毀。使唔使報?", opts: [
+    { t: "一定報 —— 出 incident report(事故報告)", win: true },
+    { t: "冇事喎,執返嚟咪算囉", fail: "「搵返就當冇事」係最危險心態 —— flyaway 嘅原因未搵到,炸彈仲喺度,下次原班人馬再嚟。" }
+  ]}
+};
+let dtNode = null, dtSteps = 0;
+const dtQ = document.getElementById("dt-q"), dtOpts = document.getElementById("dt-opts"), dtFb = document.getElementById("dt-fb");
+function dtShow(key) {
+  dtNode = key;
+  const n = dtNodes[key];
+  dtQ.textContent = n.q;
+  dtFb.className = "fb-box";
+  dtOpts.innerHTML = n.opts.map((o, i) => `<button class="btn ghost" data-dt="${i}" type="button">${o.t}</button>`).join("");
+  document.querySelectorAll("[data-dt]").forEach(b => b.addEventListener("click", () => {
+    const opt = n.opts[parseInt(b.dataset.dt, 10)];
+    if (opt.fail) {
+      dtFb.textContent = "💥 " + opt.fail + "(由呢一步再嚟)";
+      dtFb.className = "fb-box show wrong";
+    } else if (opt.win) {
+      dtSteps++;
+      dtQ.textContent = "🏆 過關!五步全對 —— 眼追機、嗌隊友、試掣、記數據、正式上報。";
+      dtOpts.innerHTML = `<button class="btn" id="dt-restart" type="button">再玩一次</button>`;
+      dtFb.textContent = "記住:flyaway 上報唔係孭鑊,係幫全隊拆彈。";
+      dtFb.className = "fb-box show right";
+      document.getElementById("dt-restart").addEventListener("click", () => { dtSteps = 0; dtShow("start"); updPath(); });
+      return;
+    } else {
+      dtSteps++;
+      dtShow(opt.next);
+    }
+    updPath();
+  }));
+}
+function updPath() { document.getElementById("dt-path").textContent = dtSteps > 0 ? `已行 ${dtSteps}/5 步` : ""; }
+document.getElementById("dt-start").addEventListener("click", () => { dtSteps = 0; dtShow("start"); updPath(); });
+
+// L7:現場三秒決斷(計時)
+makeClassify({
+  stId: "cr-st", btnsId: "cr-btns", fbId: "cr-fb", scId: "cr-sc", startId: "cr-start",
+  timed: 3, timerBoxId: "cr-timer-box", timerId: "cr-timer",
+  cats: ["🕹 遙控停摩打", "🚑 Call 999", "🧤 工具隔離,唔徒手", "📸 影相前唔好郁"],
+  items: [
+    { text: "部機跌咗落地,槳仲喺度轉緊。", cat: 0, fb: "第一個動作永遠係遙控 disarm / kill switch(緊急停槳)—— 摩打未停晒,冇人埋身。" },
+    { text: "途人俾跌落嚟嘅部機整損手臂,流緊血,傷勢唔輕。", cat: 1, fb: "人 → 火 → 機 → 證據 —— 人永遠行先,嚴重傷勢即 call 999。" },
+    { text: "粒 LiPo 電池撞到變晒形,仲有少少煙。", cat: 2, fb: "Thermal runaway(熱失控)隨時發作 —— 唔徒手、用工具移去開揚位、企上風位、觀察夠鐘先收。" },
+    { text: "散落一地嘅殘骸部件,冇即時危險。", cat: 3, fb: "證據 —— 影齊四類相(全景 / 近景 / 散落位置 / 序號)先好執。Flight log 唔好刪。" },
+    { text: "熱心途人想幫手,伸手去執部機。", cat: 3, fb: "多謝佢但即刻阻止 —— 摩打狀態未確認、電池可能有火險,而且現場要保存。出聲攔,唔好等。" }
+  ],
+  endMsg: s => s >= 4 ? "現場反應合格 —— 記住次序:人 → 火 → 機 → 證據。" : "重溫第 7 課:人命行先,電池係計時炸彈。"
+});
+
+// ============ L8:report 生成器 ============
+document.getElementById("rp-gen").addEventListener("click", () => {
+  const labels = ["① 邊個", "② 幾時", "③ 邊度", "④ 咩事", "⑤ 點應對", "⑥ 跟進"];
+  const vals = [1,2,3,4,5,6].map(i => document.getElementById("rp-" + i).value.trim());
+  const empty = vals.map((v, i) => v ? null : labels[i]).filter(Boolean);
+  const out = document.getElementById("rp-out");
+  if (empty.length) {
+    out.style.display = "block";
+    out.textContent = "仲有未填:" + empty.join("、") + " —— 六格齊先算一份完整 report。唔記得嘅內容可以寫「唔記得」,但唔可以留空。";
+    return;
+  }
+  out.style.display = "block";
+  out.textContent = "===== INCIDENT REPORT(演練)=====\n" + labels.map((l, i) => l + ":" + vals[i]).join("\n") + "\n=====(六格齊 ✓ 對照下面範本,睇吓「事實/猜測有冇分開」「有冇引用數據」)=====";
+});
+
+// ============ 總測驗(開卷,100 分合格) ============
+const quizQuestions = [
+  { lesson: "第 1 課", question: "你 hover(懸停)緊,GCS 突然彈紅色警告,隊友同時大聲問你「咩事呀?」你第一個動作係?",
+    options: ["即刻轉頭答隊友,溝通最緊要","保持控住部機、望實佢,穩定咗先開口","放低遙控,攞近部手機睇清楚個警告","即刻撳 RTH(自動返航),咩都唔使諗"],
+    correct: 1, explain: "Aviate 先控機 —— 所有嘢排喺「有人控住部機」後面;連 RTH 都唔係盲撳(compass 出事時 RTH 會亂)。(第 1 課)" },
+  { lesson: "第 2 課", question: "部機響起第一級低電 warning,你仲有最後一個拍攝點未影。正確做法係?",
+    options: ["即刻開始返航決策:計距離、風向、備降點","快手影埋佢先返航,warning 之嘛","原地 hover 等睇吓會唔會跌到 critical","即刻切手動模式慳電"],
+    correct: 0, explain: "Warning 一響就係決策時間,唔係「仲有時間」;等到 critical 就冇得揀。(第 2 課)" },
+  { lesson: "第 2 課", question: "今日吹穩定風,你順風飛出去用咗 15% 電。假設風唔變,返程返到起飛點大約會用?",
+    options: ["一樣,15% 左右","少過 15%,因為航線一樣","多過 15%,因為返程頂風食電多","唔使計,RTH 係自動嘅"],
+    correct: 2, explain: "頂風返航耗電明顯多過順風去程,計餘量一定要預埋風。(第 2 課)" },
+  { lesson: "第 3 課", question: "飛緊,遙控顯示 RC signal lost(訊號斷),部機喺遠處 hover 咗喺度。你應該?",
+    options: ["狂撥桿試吓有冇反應","即刻跑去部機下面等接住佢","熄遙控再開,重啟實得","收桿、望實部機等佢行 failsafe(自動保命機制),同時行去開揚位改善接收"],
+    correct: 3, explain: "失訊三步:唔狂撥桿、預 failsafe 行為、改善接收 —— failsafe 就係為呢刻而設。(第 3 課)" },
+  { lesson: "第 4 課", question: "樓宇之間飛緊,螢幕由 GPS mode 變咗 ATTI(姿態模式)。你即刻鬆晒兩枝桿,部機會?",
+    options: ["定喺原位 hover","自動返航","保持慣性、隨風飄,唔會自己停","即刻自動降落"],
+    correct: 2, explain: "ATTI 冇定位,鬆手唔等於 hover —— 要自己細桿接手控制。(第 4 課)" },
+  { lesson: "第 5 課", question: "天台鋼筋地面起飛,hover check(低空懸停檢查)時部機開始慢慢打圈,個圈越嚟越大。最啱嘅即時反應?",
+    options: ["撳 RTH 等佢自己返嚟","趁個圈仲細,即刻喺原位降落","飛高啲睇吓會唔會好返","繼續任務,應該係風啫"],
+    correct: 1, explain: "打圈係 toilet bowl(馬桶效應),compass 出錯;RTH 一樣靠 compass 會跟住亂,趁早落地。(第 5 課)" },
+  { lesson: "第 6 課", question: "部機突然唔聽控、向遠處飛走。以下邊樣係「唔應該做」?",
+    options: ["眼追住部機,大聲通知隊友方向","記低方向、高度、剩餘電量","試撳 RTH 掣","即刻低頭喺 app 度截圖座標,眼離開咗部機都冇所謂"],
+    correct: 3, explain: "五個即場動作第一條係眼唔離機;LKP(最後已知位置)喺 telemetry 紀錄度有得事後翻查,唔使即刻低頭。(第 6 課)" },
+  { lesson: "第 7 課", question: "炒機後,粒 LiPo(鋰聚合物電池)撞到變晒形,仲有少少煙。正確處理係?",
+    options: ["即刻徒手執起,掉入背囊帶走","唔徒手掂,疏散附近人,安全嘅話用非易燃工具移去開揚位,觀察夠鐘先處理","冇明火即係冇事,照常執嘢收工","用腳撥佢入草叢陰涼位"],
+    correct: 1, explain: "受損 LiPo 隨時 thermal runaway(熱失控):唔徒手、先隔離、要觀察。(第 7 課)" },
+  { lesson: "第 7 課", question: "部機跌落街,整花咗人哋架車,車主好嬲。你最啱嘅做法?",
+    options: ["留喺現場影相保存,即刻通知負責人,按程序報警同跟進 CAD(民航處)上報","同車主私下傾掂賠錢,唔好搞大","快手執走殘骸離開現場","話部機自己失控,同你無關"],
+    correct: 0, explain: "損毀財物要正式處理:現場保存 + 報警 + 負責人跟進法規上報;私了會令保險同法規責任冇得補救。(第 7 課)" },
+  { lesson: "第 8 課", question: "今日飛行時部機差兩米就撞到棚架,好彩閃開咗,零損失。你應該?",
+    options: ["冇事發生,唔使講","自己心入面記住下次小心","照樣上報 near-miss(險失事件),等全隊知道呢個位有風險","等真係撞到嗰次先報"],
+    correct: 2, explain: "Near-miss 係免費教訓,唔報下次可能就係真事故;團隊鐵律係上報唔會被罰。(第 8 課)" }
+];
+const POINTS_PER_QUESTION = 10;
+const PASS_MARK = 100;  // 開卷,全對先合格(團隊慣例)
+const letters = ["A", "B", "C", "D"];
+function renderQuiz() {
+  document.getElementById("quiz-body").innerHTML = quizQuestions.map((q, qi) => `
+    <div class="qcard" id="qcard-${qi}">
+      <div class="qnum">Question ${String(qi + 1).padStart(2, "0")} / 10 · ${q.lesson} · 10 分<span class="qbadge" id="qbadge-${qi}"></span></div>
+      <div class="qtext">${q.question}</div>
+      <div class="opts">
+        ${q.options.map((opt, oi) => `
+          <label class="opt" id="opt-${qi}-${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span class="letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+      <div class="explain" id="explain-${qi}"></div>
+    </div>`).join("");
+}
+function gradeQuiz() {
+  const unanswered = [];
+  quizQuestions.forEach((q, qi) => { if (!document.querySelector(`input[name="q${qi}"]:checked`)) unanswered.push(qi + 1); });
+  const note = document.getElementById("unanswered-note");
+  if (unanswered.length > 0) {
+    note.style.display = "block";
+    note.textContent = "仲有未答嘅題目:第 " + unanswered.join("、") + " 題。全部答完先可以交卷。";
+    return;
+  }
+  note.style.display = "none";
+  let correctCount = 0;
+  quizQuestions.forEach((q, qi) => {
+    const chosen = parseInt(document.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+    const card = document.getElementById(`qcard-${qi}`);
+    const isRight = chosen === q.correct;
+    if (isRight) correctCount++;
+    card.classList.add("graded", isRight ? "right" : "wrong");
+    document.getElementById(`qbadge-${qi}`).textContent = isRight ? "✓ 答啱" : "✗ 答錯";
+    document.getElementById(`opt-${qi}-${q.correct}`).classList.add("is-correct");
+    if (!isRight) document.getElementById(`opt-${qi}-${chosen}`).classList.add("is-wrong");
+    document.getElementById(`explain-${qi}`).innerHTML = `<b>正確答案:${letters[q.correct]}</b> — ${q.explain}`;
+    card.querySelectorAll("input").forEach(input => { input.disabled = true; });
+  });
+  const score = correctCount * POINTS_PER_QUESTION;
+  const passed = score >= PASS_MARK;
+  const best = sGet(BEST_KEY, null);
+  if (best === null || score > best) sSet(BEST_KEY, score);
+  renderProgress();
+  const result = document.getElementById("result");
+  result.classList.remove("pass", "fail");
+  result.classList.add(passed ? "pass" : "fail");
+  result.style.display = "block";
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-sub").textContent = `滿分 100 · 答啱 ${correctCount} / 10 題 · 合格線 ${PASS_MARK} 分(開卷)`;
+  document.getElementById("verdict").textContent = passed ? "合格 PASS" : "不合格 FAIL";
+  document.getElementById("result-note").textContent = passed
+    ? "合格!下一步:同負責人夾時間做地面演練 —— 應急嘢要落手練先算真識。"
+    : "未去到 100 分 —— 應急嘢冇「識八成」呢回事。開卷:返上去對應課數搵答案,再做一次,直到全對。";
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "inline-block";
+  result.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+}
+function resetQuiz() {
+  renderQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("unanswered-note").style.display = "none";
+  document.getElementById("submit-btn").style.display = "inline-block";
+  document.getElementById("retry-btn").style.display = "none";
+  document.getElementById("quiz").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+}
+renderQuiz();
+document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+document.getElementById("retry-btn").addEventListener("click", resetQuiz);
+renderProgress();
+</script>
+</body>
+</html>

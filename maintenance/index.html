@@ -1,0 +1,864 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>無人機裝備保養教材 · Lesson Pack 05</title>
+<style>
+  :root {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+      --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+      --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+      --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+      --draft: #d9c25e; --draft-wash: #2e2810;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --draft: #6b5810; --draft-wash: #faf3d1;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+    --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+    --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+    --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+    --draft: #d9c25e; --draft-wash: #2e2810;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.75; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  .draft-banner { background: var(--draft-wash); border-bottom: 1px solid var(--draft);
+    color: var(--draft); font-size: .85rem; font-weight: 600; text-align: center; padding: 9px 16px; }
+  .progress-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 20px; }
+  .progress-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .68rem; letter-spacing: .08em; color: var(--ink-soft); white-space: nowrap; }
+  .segments { display: flex; gap: 4px; flex: 1; }
+  .seg { height: 9px; flex: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg.done { background: var(--pass); border-color: var(--pass); }
+  .best-label { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+  header { padding-top: 40px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink); display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 12px 0 10px; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { color: var(--ink-soft); margin: 0; font-size: 1.02rem; max-width: 60ch; }
+  .mission { background: var(--surface); border: 1.5px solid var(--accent); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 20px; margin-top: 24px; font-size: .95rem; }
+  .mission .m-title { font-weight: 800; color: var(--accent-ink); margin-bottom: 6px; }
+  .mission .m-law { background: var(--fail-wash); border: 1px solid var(--fail); border-radius: 8px; padding: 9px 13px; font-weight: 700; margin-top: 10px; }
+  .lesson { margin-top: 64px; }
+  .lesson-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-wash);
+    border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px; display: inline-block; }
+  h2 { font-size: 1.45rem; margin: 12px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  .objective { background: var(--accent-wash); border: 1px solid var(--accent);
+    border-radius: 10px; padding: 13px 16px; font-size: .93rem; margin: 0 0 20px; }
+  .objective .obj-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 4px; }
+  .safety { background: var(--warn-wash); border: 1px solid var(--warn);
+    border-radius: 10px; padding: 14px 16px; margin: 22px 0 0; font-size: .95rem; }
+  .safety .s-label { font-weight: 700; color: var(--warn-ink); display: block; margin-bottom: 4px; }
+  .safety p, .safety ul { margin: 0; }
+  .drill { background: var(--pass-wash); border: 1px solid var(--pass); border-radius: 10px;
+    padding: 13px 16px; margin: 20px 0 0; font-size: .92rem; }
+  .drill .d-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--pass); display: block; margin-bottom: 4px; font-weight: 700; }
+  .drill p, .drill ul { margin-bottom: 6px; }
+  .adjust { display: inline-block; background: var(--surface-2); border: 1px dashed var(--ink-soft);
+    color: var(--ink-soft); border-radius: 6px; padding: 0 7px; font-size: .78rem; font-weight: 600; white-space: nowrap; }
+  .todo { display: inline-block; background: var(--warn-wash); border: 1.5px dashed var(--warn);
+    color: var(--warn-ink); border-radius: 7px; padding: 1px 9px; font-size: .85rem; font-weight: 700; }
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); margin: 18px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-family: ui-monospace, monospace; font-variant-numeric: tabular-nums; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+  .widget { background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 16px 18px; margin: 22px 0; }
+  .widget-tag { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px; }
+  .widget .hint { font-size: .84rem; color: var(--ink-soft); margin-bottom: 12px; }
+  .btn { font: inherit; font-weight: 700; font-size: .95rem; cursor: pointer;
+    border-radius: 10px; padding: 10px 24px; border: 1px solid var(--accent);
+    background: var(--accent); color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--accent-ink); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .fb-box { margin-top: 12px; border-radius: 8px; padding: 10px 14px; font-size: .9rem; display: none; }
+  .fb-box.show { display: block; }
+  .fb-box.right { background: var(--pass-wash); border: 1px solid var(--pass); }
+  .fb-box.wrong { background: var(--fail-wash); border: 1px solid var(--fail); }
+  .fb-box.neutral { background: var(--warn-wash); border: 1px solid var(--warn); }
+  .mini-score { font-family: ui-monospace, monospace; font-size: .76rem; color: var(--ink-soft); margin-top: 10px; }
+  .cl-statement { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; text-align: center; font-weight: 700; min-height: 3.4em; margin-bottom: 12px; }
+  .cl-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .cl-btns .btn { font-size: .85rem; padding: 9px 14px; }
+  .hz-stage { border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); margin-bottom: 10px; overflow: hidden; }
+  .hz-stage svg { width: 100%; height: auto; display: block; cursor: crosshair; }
+  .hz-found { font-family: ui-monospace, monospace; font-size: .8rem; color: var(--accent-ink); font-weight: 700; margin-bottom: 8px; }
+  .seq-pool { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .seq-btn { font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; color: inherit;
+    border: 1px solid var(--line); border-radius: 9px; padding: 8px 13px; background: var(--surface-2); text-align: left; }
+  .seq-btn:hover { border-color: var(--accent); }
+  .seq-btn:disabled { opacity: .35; cursor: default; }
+  .seq-btn.trap { border-style: dashed; }
+  .seq-done-list { margin: 0 0 4px; padding-left: 24px; font-size: .9rem; }
+  .seq-done-list li { color: var(--pass); font-weight: 600; margin-bottom: 4px; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 50%{transform:translateX(5px)} 75%{transform:translateX(-3px)} }
+  .shake { animation: shake .4s ease; }
+  .quiz-head { margin-top: 76px; padding-top: 34px; border-top: 2px solid var(--accent); }
+  .quiz-rules { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 14px 18px; font-size: .92rem; margin: 18px 0 28px; }
+  .quiz-rules ul { margin: 0; padding-left: 20px; }
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+  .qnum { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .qtext { font-weight: 700; margin: 6px 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 10px 13px; cursor: pointer; font-size: .95rem; background: var(--surface); }
+  .opt:hover { border-color: var(--accent); }
+  .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+  .opt .letter { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); flex: none; }
+  .qcard.graded .opt { cursor: default; }
+  .qcard.graded .opt.is-correct { border-color: var(--pass); background: var(--pass-wash); }
+  .qcard.graded .opt.is-wrong { border-color: var(--fail); background: var(--fail-wash); }
+  .qbadge { display: none; font-weight: 700; font-size: .82rem; border-radius: 999px; padding: 2px 11px; margin-left: 8px; vertical-align: middle; }
+  .qcard.graded .qbadge { display: inline-block; }
+  .qcard.graded.right .qbadge { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .qcard.graded.wrong .qbadge { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .explain { display: none; margin-top: 12px; font-size: .9rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .qcard.graded .explain { display: block; }
+  .explain b { color: var(--ink); }
+  .quiz-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .unanswered-note { display: none; color: var(--fail); font-weight: 600; font-size: .92rem; margin-top: 12px; }
+  .result { display: none; margin-top: 30px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 28px; text-align: center; border: 2px solid var(--line); }
+  .result.pass { border-color: var(--pass); }
+  .result.fail { border-color: var(--fail); }
+  .score { font-size: 3.2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .result.pass .score { color: var(--pass); }
+  .result.fail .score { color: var(--fail); }
+  .score-sub { color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+  .verdict { display: inline-block; font-weight: 800; font-size: 1.05rem; border-radius: 999px; padding: 6px 22px; margin-top: 14px; }
+  .result.pass .verdict { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .result.fail .verdict { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .result-note { font-size: .86rem; color: var(--ink-soft); margin: 14px auto 0; max-width: 46ch; }
+  .done-btn { margin-top: 22px; font: inherit; font-size: .9rem; font-weight: 700; border-radius: 999px; padding: 8px 22px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent-ink); background: var(--surface); }
+  .done-btn.done { background: var(--pass-wash); border-color: var(--pass); color: var(--pass); }
+  .done-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .82rem; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<div class="draft-banner">🚨 草稿 v1 · 飛行安全內容 · 待團隊負責人審核 —— 審批前不得派發俾隊員</div>
+
+<div class="progress-bar">
+  <div class="progress-inner">
+    <span class="progress-label">課程進度 <span id="prog-count">0</span>/7</span>
+    <div class="segments" id="segments" aria-hidden="true"></div>
+    <span class="best-label" id="best-label">測驗最高分 —</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Alex 無人機隊 · 內部培訓 · Lesson Pack 05</div>
+    <h1>裝備保養與電池管理篇</h1>
+    <p class="lede">Pack 01 教你認識隻機,Pack 02 教你飛得起 —— <b>呢個 pack 教你「養」</b>。好多 incident(事故)唔係喺天上開始,係喺地上開始:螺絲喺地上已經鬆,電池喺上星期已經老。七課砌起一個循環:飛 → 查 → 記 → 排程 → 飛。(對象:完成 Pack 01–02 就讀得,唔使等 Pack 03/04。)</p>
+    <div class="mission">
+      <div class="m-title">📌 成個 pack 嘅總綱,一句</div>
+      <p style="margin-bottom:8px"><b>部機唔會突然壞,只會突然俾你發現佢壞咗。</b>保養就係將「突然發現」變返「早就知道」。</p>
+      <div class="m-law">🚨 紅線:拆機、換件、firmware(韌體)更新 —— 教材只教「幾時要做、點解、搵邊個」,實際操作一律負責人示範 / 安排。<b>隊員唔准自己 flash firmware、唔准改 parameter(飛行參數)。</b></div>
+    </div>
+  </header>
+
+  <!-- 術語一覽 -->
+  <section class="lesson">
+    <span class="lesson-tag">術語一覽 · 唔使背,唔記得返嚟查</span>
+    <h2>呢個 pack 新出現嘅專業術語</h2>
+    <p>只收新詞 —— LiPo、thermal runaway、storage charge、ESC、FC、gimbal、compass、calibration、hover check 呢啲舊詞,請翻返 Pack 01–03 嘅術語表。</p>
+    <div class="tablebox">
+      <table>
+        <tr><th>術語</th><th>淺白解釋</th></tr>
+        <tr><td>Preventive maintenance(預防性保養)</td><td>唔係等壞先修,係定期檢查令佢冇機會壞 —— 好似洗牙 vs 牙痛先睇醫生</td></tr>
+        <tr><td>Cycle count(循環次數)</td><td>充放一個完整來回 = 一個 cycle;係電池嘅「咪錶」—— 部車行咗幾多萬公里</td></tr>
+        <tr><td>Internal resistance / IR(內阻)</td><td>電池內部「阻住電流」嘅程度 —— 內阻升高 = 老化訊號</td></tr>
+        <tr><td>Voltage sag(電壓驟降)</td><td>電池一出力電壓突然跌一截 —— 老化電池特別明顯,好似老人家一行樓梯就喘</td></tr>
+        <tr><td>Smart battery(智能電池)</td><td>自帶晶片識自我管理嘅電池 —— 有腦唔等於唔使你理,病歷照記</td></tr>
+        <tr><td>Consumable(消耗品)</td><td>設計嚟「用舊就換」嘅部件,例如槳 —— 同車呔一樣,唔係壞先換係老先換</td></tr>
+        <tr><td>Bearing(軸承)</td><td>摩打入面令佢順暢轉動嘅零件 —— 入沙或磨損會有沙聲、卡位手感</td></tr>
+        <tr><td>CW / CCW(正反槳)</td><td>槳分順時針同逆時針兩種,位置一定要啱 —— 裝錯一起飛即刻反艇</td></tr>
+        <tr><td>Firmware(韌體)</td><td>機入面嘅系統軟件,好似手機嘅 iOS —— 成部機嘅「反射神經」全部係佢話事</td></tr>
+        <tr><td>Parameter(參數)</td><td>firmware 入面嘅設定值,直接影響飛行行為 —— <b>隊員唔准改</b></td></tr>
+        <tr><td>Configuration management(機隊設定管理)</td><td>成隊機嘅版本同設定由負責人統一管理 —— 唔會有「兩部望落一樣嘅機,行為唔一樣」</td></tr>
+        <tr><td>Desiccant(防潮珠)</td><td>吸濕小包,餅乾盒嗰包「不可食用」—— 香港咁潮濕,佢係機箱常駐居民</td></tr>
+        <tr><td>Tag-out(標籤隔離)</td><td>發現有問題嘅裝備即時掛停用標籤、攞出「可用池」,防止誤用 —— 課 7 詳教</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== L1 ===== -->
+  <section class="lesson" id="lesson-1">
+    <span class="lesson-tag">Lesson 01</span>
+    <h2>保養思維 — 部機喺地上嘅樣,就係佢喺天上嘅命</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出「裝備狀態 = 飛行安全」點解係一條鏈;分得清「用完即棄」同「資產管理」兩種心態;講得出保養紀錄(病歷)幫團隊做到咩。</div>
+    <ul>
+      <li><b>Incident 唔係喺天上開始。</b>天上見到嘅係結果,原因一早喺地上:摩打半空停轉 —— 軸承上個月已經入沙;半空亂漂 —— 上次任務之後 compass 附近多咗嚿磁鐵配件;電量跳崖式跌 —— 嗰嚿電三個月前已經開始老。<b>你喺地上肯花五分鐘,天上就少一個「點解會咁」。</b></li>
+      <li><b>兩種心態:租車 vs 自己車。</b>「用完即棄」(租車式):飛完攝埋一角、電池亂塞、唔妥「下次先算」—— 短期慳五分鐘,長期代價係裝備早死(錢)、任務日臨場撞板(時間)、帶病上天(安全)。「資產管理」(自己車式):每件裝備係會老化嘅資產 —— 狀態要知、要記、要管。無聊,但<b>無聊嘅嘢做足,先輪到精彩嘅嘢發生</b>。回報排優先:安全(最大)→ 錢 → 時間。</li>
+      <li><b>病歷概念。</b>醫生冇病歷,病人日日換醫生 —— 每次由零開始估。裝備一樣:邊嚿電跌電快、邊部機炒過機、邊個摩打換過 —— 冇人記低 = 判斷靠估。紀錄唔係官僚嘢,係<b>令判斷有根據</b>:今日呢嚿電出唔出到任務,唔係靠「我覺得佢 OK」,係靠佢份病歷。課 2 病歷卡 + 課 7 保養 log 係同一套系統。</li>
+      <li><b>保養係邊個責任?人人有份。</b>你今日飛嘅機,係尋日隊友保養完交畀你;你今日求其,聽日隊友承受。發現問題<b>講出嚟係幫成隊人,唔係認衰</b> —— 報告問題永遠唔會俾人鬧,隱瞞問題先會。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 地上定天上?</div>
+      <div class="hint">天上嘅結果彈出 —— 配對佢喺地上嘅根源。</div>
+      <div class="cl-statement" id="rc-st">撳「開始」睇因果鏈</div>
+      <div class="cl-btns" id="rc-btns"><button class="btn" id="rc-start" type="button">開始</button></div>
+      <div class="fb-box" id="rc-fb"></div>
+      <div class="mini-score" id="rc-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 可改用團隊真實案例(隱去涉事人)</span></span>
+      <p>兩人一組,每人講一件生活入面因為冇保養而出事嘅嘢(單車、手機電池、相機發霉都得),對照「如果有紀錄 / 定期檢查會點」;每人寫低一個由今日起改嘅習慣。<b>完成標準:</b>例子真實 + 習慣具體到「幾時、做咩」(「以後小心啲」唔算)。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>「睇落冇事」唔等於冇事</b> —— 檢查要有 checklist 同固定路線(課 3),唔係靠眼緣。隱瞞裝備問題係成套教材最嚴重犯規之一。<b>保養狀態不明嘅裝備,一律當佢唔可以飛。</b></p></div>
+    <button class="done-btn" data-lesson="0" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L2 ===== -->
+  <section class="lesson" id="lesson-2">
+    <span class="lesson-tag">Lesson 02</span>
+    <h2>LiPo 電池深度管理 — 電池係易燃資產,唔係配件</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出 LiPo 生命週期三階段同徵兆;解釋 cycle count 同內阻做咩;識任務前後點處理電池;鼓包識行即時隔離程序;識填電池病歷卡。(接入門第 3 課,由「識同佢相處」升級做「識管佢一世」。)</div>
+    <ul>
+      <li><b>生命週期三階段:</b>①<b>新</b> —— 表現穩定;②<b>老化</b> —— hover 時間短咗、跌電快咗、出力時 voltage sag(電壓驟降)明顯、發熱多過以前;③<b>退役</b> —— 到標準就退,<b>「仲用到」唔係留低嘅理由</b>,老電池最鍾意喺半空先話你知佢唔得。好似職業運動員:唔係等斷腳先退役,係狀態落到唔可靠就要退。</li>
+      <li><b>兩個「咪錶」:</b><b>cycle count</b>(充放一個來回 = 一個 cycle;smart battery 自己記,普通電靠病歷卡)—— 幾多 cycle 退役<b>冇一條放諸四海嘅數</b>,團隊參考線由負責人按型號定 <span class="adjust">🔧</span>;<b>內阻(IR)</b> —— analogy 係水管生鏽:條管越舊內壁越嚡,同樣水壓出水越少仲會發熱。識得「內阻升緊 = 佢老緊」就夠。</li>
+      <li><b>日常充放紀律:</b>熱住唔叉(入門教過);叉電要有人喺附近、放唔易燃表面(團隊叉電規矩:①<b>人唔喺場 = 唔准叉</b>(包括「去咗買個包」呢啲);②<b>唔准過夜叉</b>;③電池要放<b>防火袋 / 防火容器</b>入面;④叉電台周圍唔准有紙、布、化學品);<b>滿電唔好長放</b>(老得快)—— 冇任務日子放 storage charge(半滿儲存);<b>過低都唔好長放</b>(過放風險)。Smart battery 嘅自動放電設定以廠方說明 + 負責人指引為準 <span class="adjust">🔧</span>。</li>
+      <li><b>出任務帶電池:</b>每嚿獨立放(LiPo bag / 有間隔電池格);<b>接頭遠離金屬</b>(鎖匙散銀同電池同格 = 短路風險);編號認人(病歷卡靠佢);幾時叉滿由負責人定 <span class="adjust">🔧</span>(原則:滿電時間越短越好,但一定夠任務用);搭飛機 —— 鋰電池民航規矩會變,一律以航空公司現行規定為準,行前負責人確認。</li>
+      <li><b>退役標準(徵兆話事,唔係死數):</b>①鼓包 —— 即時退役,冇「觀察中」;②外傷 / 入過水 —— 隔離,負責人評估;③內阻明顯升 / 跌電明顯快(病歷卡有紀錄先斷到症);④cycle count 到參考線 <span class="adjust">🔧</span>;⑤過熱事故後。中間狀態「觀察中」:唔准出任務,分級用法由負責人定 <span class="adjust">🔧</span>。</li>
+      <li><b>棄置:</b>唔准掉垃圾桶(火警 + 環境);教材<b>唔教自行放電方法</b> —— 退役電處理由負責人安排(回收渠道:<b>三步</b>:①即刻隔離到防火容器;②貼標籤「壞電禁用」+ 日期;③<b>交負責人統一處理</b>。<b>隊員唔准自行棄置、唔准自行放電</b>)。</li>
+      <li><b>電池病歷卡</b>(每嚿電一張 / spreadsheet 一行):編號 | 型號 | 購入日期 | cycle count | 狀態(正常 / 觀察中 / 隔離退役)| 事故紀錄 | 備註 | 退役日期。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 電池診所</div>
+      <div class="hint">你係醫生 —— 電池「病人」逐個入嚟,睇主訴 + 病歷,開處置:出任務 / 觀察中(淨練習)/ 即時隔離退役。</div>
+      <div class="cl-statement" id="bat-st">撳「開診」</div>
+      <div class="cl-btns" id="bat-btns"><button class="btn" id="bat-start" type="button">開診</button></div>
+      <div class="fb-box" id="bat-fb"></div>
+      <div class="mini-score" id="bat-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 實物定相片由負責人定</span></span>
+      <p>負責人準備三個「病人」(正常 / 老化徵兆 / 輕微鼓包),逐嚿判:出任務 / 淨練習 / 隔離退役,講理由,照住填病歷卡。<b>完成標準:</b>三嚿判斷正確;隔離程序講得齊(放邊、標籤寫咩、報邊個);病歷卡欄欄有嘢填。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>鼓包 = 即時隔離:</b>放隔離位(防火袋 / 金屬箱,遠離易燃物)、寫標籤(咩事 / 邊日 / 邊個)、報負責人。Thermal runaway(電池自己燒起嚟,普通方法救唔熄)最常見導火線就係過充、外傷、鼓包照用 —— <b>你嘅隔離動作就係防火牆</b>。嚟歷不明嘅電池唔准出任務。</p></div>
+    <button class="done-btn" data-lesson="1" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L3 ===== -->
+  <section class="lesson" id="lesson-3">
+    <span class="lesson-tag">Lesson 03</span>
+    <h2>機身檢查與清潔 — 部機唔會投訴,你要主動問候佢</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>用固定路線做完整機身檢查;講得出清潔原則同三大禁忌;海邊 / 沙塵飛完識做對應處理;識五種「即刻停飛送檢」情況。</div>
+    <h3>檢查固定路線(八站,由槳行到遙控)</h3>
+    <div class="tablebox">
+      <table>
+        <tr><th>站</th><th>睇咩</th></tr>
+        <tr><td>槳</td><td>裂紋、崩口、變形、槳根鬆(課 4 深講)</td></tr>
+        <tr><td>摩打</td><td><b>斷電下</b>用手轉順唔順、有冇沙聲、罅隙有冇沙 / 毛髮</td></tr>
+        <tr><td>機臂</td><td>裂紋(尤其摺位 / 受力位)、摺疊機構有冇鬆</td></tr>
+        <tr><td>機身外殼 + 螺絲</td><td>殼有冇裂;螺絲有冇鬆 / 唔見咗(螺絲係會自己「行走」嘅)</td></tr>
+        <tr><td>落地架</td><td>裂、鬆、變形</td></tr>
+        <tr><td>Gimbal(雲台)+ 鏡頭</td><td>郁佢有冇卡位、排線有冇拉扯痕;鏡頭有冇指模、塵、霉</td></tr>
+        <tr><td>接口 / 卡槽</td><td>SD 卡槽、充電口有冇沙、氧化</td></tr>
+        <tr><td>遙控</td><td>搖桿順唔順、天線有冇裂</td></tr>
+      </table>
+    </div>
+    <p>點解要固定路線?人眼好醒但好善忘 —— 次次行同一條路,先會發現「今日有樣嘢唔同咗」。香港特產提一提:<b>鏡頭發霉</b> —— 潮濕放耐咗鏡片生霉菌,一發現即報負責人(課 6 教防潮)。</p>
+    <h3>清潔原則 + 三大禁忌</h3>
+    <ul>
+      <li><b>乾先於濕:</b>先軟毛刷 / 吹波仔(air blower)吹走沙塵,先輪到抹。外殼用微濕布(扭到乾身);<b>鏡頭一定用鏡頭布 + 清潔液</b> —— 衫角紙巾會劃花鍍膜,劃咗係永久。(用品清單:<b>標準清潔包六件</b> —— 軟毛刷(刷沙塵)、吹波仔 air blower、超細纖維布 ×2(外殼用)、鏡頭布(淨係抹鏡頭)、鏡頭清潔液、棉花棒(接口同縫位)。<b>隊上有提供,向負責人領</b>)</li>
+      <li><b>禁忌一:唔准用水沖</b> —— 除非廠方明寫防水等級,水 = electronics 殺手。</li>
+      <li><b>禁忌二:唔准高壓氣直吹摩打 / 軸承</b> —— 你以為吹緊出嚟,其實將沙吹入更深。</li>
+      <li><b>禁忌三:唔准亂用溶劑</b>(天拿水、除銹噴劑)—— 蝕膠蝕漆滲電路。頑固污漬報負責人,唔好自己發明清潔方法。</li>
+    </ul>
+    <h3>海邊飛完點處理</h3>
+    <p>鹽霧係<b>隱形腐蝕劑</b> —— 部機冇落過水,空氣入面嘅鹽已經黐咗上機身同摩打。程序:①<b>當日處理唔過夜</b>:微濕布抹外殼再抹乾;②摩打罅隙用軟刷 + 吹波仔;③<b>log 記低「海邊任務」</b>(負責人要知部機食過鹹風);④有懷疑 → 停飛報負責人。沙塵環境同理,重點係摩打同 gimbal。</p>
+    <h3>五種「即刻停飛送檢」</h3>
+    <ol>
+      <li>炒機 / 硬著陸之後 —— 就算外表完好,內傷係睇唔到嘅</li>
+      <li>飛行中異常震動或異響</li>
+      <li>Gimbal 唔水平 / 畫面無故震</li>
+      <li>任何一個摩打明顯熱過其他</li>
+      <li>機臂 / 機身結構性裂紋</li>
+    </ol>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 今日部機有咩唔同?</div>
+      <div class="hint">下面部機收埋咗 <b>4 個</b>毛病(示意圖;負責人可換做真機相 負責人日後可以換做真機相 —— 換之前要確認相入面冇任務資料)—— 撳出嚟,再判斷每個係「清潔類」定「停飛送檢類」。</div>
+      <div class="hz-found" id="mf-found">搵到 0/4</div>
+      <div class="hz-stage">
+        <svg id="mf-svg" viewBox="0 0 560 300" role="img" aria-label="機身檢查示意圖,收埋咗四個毛病">
+          <line x1="280" y1="150" x2="130" y2="70" stroke="var(--ink-soft)" stroke-width="8" stroke-linecap="round"/>
+          <line x1="280" y1="150" x2="430" y2="70" stroke="var(--ink-soft)" stroke-width="8" stroke-linecap="round"/>
+          <line x1="280" y1="150" x2="130" y2="230" stroke="var(--ink-soft)" stroke-width="8" stroke-linecap="round"/>
+          <line x1="280" y1="150" x2="430" y2="230" stroke="var(--ink-soft)" stroke-width="8" stroke-linecap="round"/>
+          <path d="M 250 105 L 310 100 L 340 108" fill="none" stroke="var(--fail)" stroke-width="2"/>
+          <circle cx="130" cy="70" r="14" fill="var(--accent)"/>
+          <circle cx="430" cy="70" r="14" fill="var(--accent)"/>
+          <circle cx="130" cy="230" r="14" fill="var(--accent)"/>
+          <circle cx="430" cy="230" r="14" fill="var(--accent)"/>
+          <line x1="95" y1="45" x2="165" y2="95" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="165" y1="45" x2="95" y2="95" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <g><line x1="395" y1="45" x2="465" y2="95" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="465" y1="45" x2="395" y2="95" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <rect x="422" y="60" width="18" height="8" fill="var(--warn)" transform="rotate(35 431 64)"/></g>
+          <line x1="95" y1="205" x2="165" y2="255" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="165" y1="205" x2="95" y2="255" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="395" y1="205" x2="465" y2="255" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="465" y1="205" x2="395" y2="255" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/>
+          <rect x="240" y="120" width="80" height="60" rx="12" fill="var(--surface)" stroke="var(--ink)" stroke-width="2.5"/>
+          <circle cx="255" cy="132" r="3" fill="var(--ink-soft)"/>
+          <circle cx="305" cy="132" r="3" fill="var(--ink-soft)"/>
+          <circle cx="255" cy="168" r="4.5" fill="none" stroke="var(--fail)" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <circle cx="305" cy="168" r="3" fill="var(--ink-soft)"/>
+          <rect x="262" y="185" width="36" height="24" rx="5" fill="var(--surface-2)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="280" cy="197" r="8" fill="none" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="277" cy="194" r="4" fill="var(--warn)" opacity=".55"/>
+          <text x="30" y="290" font-size="11" fill="var(--ink-soft)">提示:槳、機臂、螺絲、鏡頭 —— 逐站行</text>
+          <rect class="mf-hot" data-mf="0" x="380" y="30" width="100" height="80" fill="transparent"/>
+          <rect class="mf-hot" data-mf="1" x="235" y="90" width="115" height="30" fill="transparent"/>
+          <rect class="mf-hot" data-mf="2" x="240" y="155" width="30" height="26" fill="transparent"/>
+          <rect class="mf-hot" data-mf="3" x="258" y="182" width="45" height="30" fill="transparent"/>
+        </svg>
+      </div>
+      <div class="fb-box" id="mf-fb"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 毛病數目由負責人定</span></span>
+      <p>負責人準備一部「有問題」嘅機(或相片組),暗藏 3–5 個毛病。學員行固定路線搵出毛病並分類:即場處理(清潔類)定停飛送檢(結構 / 摩打類)。<b>完成標準:</b>八站行齊冇跳站、毛病搵齊、分類正確、掂槳前有做「電池拔咗未」確認。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>凡係要用手掂槳 / 轉摩打嘅檢查,電池一定拔咗先</b> —— 通電嘅槳係刀,問「電池拔咗未」要問到成為條件反射。檢查發現嘅嘢要寫落 log。停飛五情況冇一種可以「今次算」。</p></div>
+    <button class="done-btn" data-lesson="2" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L4 ===== -->
+  <section class="lesson" id="lesson-4">
+    <span class="lesson-tag">Lesson 04</span>
+    <h2>摩打與槳 — 最平嘅零件,負責最貴嘅後果</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出槳嘅退役標準;識用「聲、溫、手感」三招判斷摩打;講得出正反槳(CW / CCW)概念同裝錯後果;知道換件嘅「幾時、點解、搵邊個」。</div>
+    <p><b>點解呢課咁重要:</b>槳係全機最平嘅部件,但槳一斷,成部機跟住落嚟 —— 連埋佢下面嘅人同財物。<b>成部機嘅命,吊喺呢幾件最平嘅零件度</b>,所以檢查標準全機最嚴。</p>
+    <h3>槳:消耗品邏輯</h3>
+    <p>見到以下<b>任何一樣,支槳即棄</b>:裂紋(幾幼都算)、崩口缺角、變形扭曲、槳根裂或鬆、<b>撞過嘢</b>(就算望落完好 —— 內部纖維可能已斷,望唔到)。兩條鐵律:</p>
+    <ol>
+      <li><b>膠紙補槳 = 全教材最禁止動作之一。</b>高速旋轉下,補過嘅槳係一件會甩出嚟嘅飛鏢。</li>
+      <li><b>退役槳要即場整爛先掉</b>(剪爛 / 拗斷)—— 唔整爛,佢遲早混返入 spare(備用)堆,俾唔知情嘅隊友裝返上機。</li>
+    </ol>
+    <h3>摩打三徵兆:聲、溫、手感</h3>
+    <div class="tablebox">
+      <table>
+        <tr><th>招</th><th>點做</th><th>唔正常係點</th></tr>
+        <tr><td>聲</td><td>飛行 / hover 時留心聽</td><td>沙沙聲、唧唧聲、音調同平時唔同 = 軸承(bearing)可能入沙或磨損</td></tr>
+        <tr><td>溫</td><td>落地後用<b>手背</b>輕試(唔好一手揸實,可能燙)</td><td>重點唔係熱唔熱,係<b>有冇一個明顯熱過其他</b> —— 四個摩打做緊同一樣嘢,一個特別熱 = 佢有事</td></tr>
+        <tr><td>手感</td><td><b>斷電下</b>用手指慢慢轉</td><td>應該順滑冇卡位;有沙沙阻力、卡位 = 軸承問題</td></tr>
+      </table>
+    </div>
+    <p>三樣有任何一樣 → <b>停飛、標籤、報負責人</b>(課 7 流程)。<b>唔准自己拆摩打</b> —— 拆完裝返嘅摩打冇人知得唔得,呢啲係負責人 / 送檢層次。</p>
+    <h3>正反槳 CW / CCW + 換件授權</h3>
+    <ul>
+      <li>四軸機兩支順時針(CW)、兩支逆時針(CCW),互相抵消自轉力 —— <b>位置一定要啱,裝錯一起飛即刻反艇</b>,唔係「飛得差啲」。</li>
+      <li>點認:槳上有標記(型號後綴 / 箭嘴 / 顏色圈),摩打座有對應標記 —— 你自己機型嘅認法由負責人示範 <span class="adjust">🔧</span>。<b>安裝實操:負責人親自示範 + 睇住你做先算學識</b>(教材刻意唔用文字教安裝步驟)。你要識嘅係裝完自查:標記對位、上緊、輕拉唔甩;換咗槳一定記入 log。</li>
+      <li><b>換件授權:</b>件件裝備嘅安全裕度唔同 —— 槳裝錯即刻見,摩打 / ESC / 結構件裝錯可能飛咗三次先出事。授權表:<b>✅ 隊員可以自己換</b>:槳(裝完要自查 —— 標記對位、上緊、輕拉唔甩)、電池、SD 卡、線材。<b>🔴 一律要負責人 / 送檢</b>:摩打、ESC、結構件(機臂、腳架)、雲台、相機,同埋<b>任何要拆機殼嘅嘢</b>。<b>⚠️ 換咗槳一定要記入 log。</b>。原則:<b>你唔肯定自己有冇授權 = 你冇授權。</b></li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 呢支槳仲用唔用得?</div>
+      <div class="hint">槳同摩打嘅狀況逐個彈出 —— 判斷處置。(聽聲斷症音檔版等負責人提供錄音 聽聲斷症錄音版由負責人日後提供,呢度先用文字版。)</div>
+      <div class="cl-statement" id="prop-st">撳「開始」檢查</div>
+      <div class="cl-btns" id="prop-btns"><button class="btn" id="prop-start" type="button">開始</button></div>
+      <div class="fb-box" id="prop-fb"></div>
+      <div class="mini-score" id="prop-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 槳樣本同機型由負責人定</span></span>
+      <p>①負責人提供一批槳(正常 / 裂紋 / 崩口 / 貼過膠紙 / 變形混埋),逐支判「用得 / 即棄 + 理由」;②喺自己機型面前指認正反槳配邊個摩打座;③口頭講出換件授權規則。<b>完成標準:</b>全部判斷正確(膠紙槳要答「整爛先掉」);配位全中;講得出「唔肯定 = 冇授權」。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p>檢查槳 / 摩打前:<b>電池拔咗未?</b>有紋嘅槳唔准飛;貼咗膠紙嘅槳唔准存在 —— 見到即場整爛佢。換完槳嘅機,第一次起飛做 hover check(低空懸停檢查)要特別留心震動同聲。</p></div>
+    <button class="done-btn" data-lesson="3" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L5 ===== -->
+  <section class="lesson" id="lesson-5">
+    <span class="lesson-tag">Lesson 05</span>
+    <h2>Firmware 與 Calibration 紀律 — 部機嘅腦,唔准亂郁</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>解釋 firmware(韌體)係咩、點解更新一定負責人統一安排;講得出「任務前唔升級」三個原因;分得清 calibration(校正)幾時做幾時唔好做;app 彈更新識行「唔撳 → 記低 → 報」。</div>
+    <ul>
+      <li><b>Firmware 係咩:</b>機入面嘅系統軟件,好似手機嘅 iOS —— 摩打點反應、failsafe 點行,成部機嘅「反射神經」全部佢話事。<b>Parameter(參數)</b>係入面嘅設定值 —— 好似手機設定選單,分別係撳錯嘅後果喺天上發生。</li>
+      <li><b>點解唔准自己 flash / 更新 —— 三個原因:</b>①<b>一致性</b>:你自己升咗一部,佢就同成個機隊「講緊唔同語言」,隊友仲以為部部一樣;②<b>新版有時有新 bug</b>:第一批更新嘅人係白老鼠,團隊唔做白老鼠;③<b>更新可能 reset 設定、要求重新 calibrate</b> —— 唔知就開飛,等於飛緊一部你唔識嘅機。呢個做法叫 configuration management(機隊設定管理):<b>唔係信唔過你,係成隊機只可以有一個「真相版本」。</b></li>
+      <li><b>任務前唔升級:</b>更新萬一失敗 —— 部機聽朝用唔到,成單任務冧;就算成功 —— 行為可能變咗而你未試過,任務唔係試新嘢嘅地方。<b>正確三步:唔撳 → screenshot / 記低版本號 → 報負責人。</b></li>
+      <li><b>隊員可以:</b>睇 version、記 version、報告 update 提示、跟負責人指示做已安排嘅更新。<b>唔可以:</b>撳 update / flash firmware、改任何 parameter、亂撳「reset / repair」類選項。</li>
+      <li><b>Calibration 幾時做:</b>機 / app 明確要求、換咗好遠嘅地理位置飛、負責人指示。<b>幾時唔好做:</b>①<b>金屬 / 磁場旁邊做 compass calibration</b>(鐵欄、車頂、鋼筋地、天台機房側)—— 一次衰嘅 calibration 衰過唔做:你將「錯嘅參考」寫入部機;②趕時間亂做 —— calibration 係企定定慢慢做嘅嘢;③冇事日日做 —— 佢唔係拜神,做多啲唔會安全啲。IMU calibration 安排:<b>只喺四個情況做</b>:①部機自己報要求;②換咗結構件 / 拆過機;③飛行中出現無故飄移或者姿態奇怪;④溫差大(例:冷氣房搬出去露天暴曬)。<b>做嘅人</b>:PIC 或以上。<b>做嘅地方</b>:平面、冇震、冇磁性干擾。<b>做完記入 log。</b><b>❌ 唔准現場趕時間亂做</b> —— 趕住做出嚟嘅係錯參考,直接寫入部機。 <span class="adjust">🔧</span>。任何 calibration 做完都要入 log。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 升唔升?</div>
+      <div class="hint">情境逐個彈出 —— 揀:裝 / 唔裝就算 / 唔裝 + 記低 + 報負責人。</div>
+      <div class="cl-statement" id="fw-st">撳「開始」</div>
+      <div class="cl-btns" id="fw-btns"><button class="btn" id="fw-start" type="button">開始</button></div>
+      <div class="fb-box" id="fw-fb"></div>
+      <div class="mini-score" id="fw-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境按團隊機型調整</span></span>
+      <p>三張情境卡書面作答:①任務前夜彈更新;②現場 compass 警告而你企喺鐵欄側;③隊友話「我幫你部機升咗級,新版好正」。<b>完成標準:</b>動作正確 + 每個講到一個原因;情境③要識上報 —— 擅自升級係 configuration 事故,唔係人情問題。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>唔准自己 flash firmware、唔准自己改 parameter —— 呢個係紅線,唔係建議。</b>現場 compass 警告 ≠ 即場 calibrate:先諗環境 → 移位再試 → 仲有警告就報負責人。啱啱升完 firmware 嘅機,首飛當新機處理:負責人安排測試飛,唔准直出任務。</p></div>
+    <button class="done-btn" data-lesson="4" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L6 ===== -->
+  <section class="lesson" id="lesson-6">
+    <span class="lesson-tag">Lesson 06</span>
+    <h2>裝備收納與運輸 — 部機瞓得好,先飛得好</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出「一物一位」執箱原則;車程運輸識點擺;講得出香港兩大敵人(潮濕、高溫)嘅對策;識用出勤 checklist 執袋。</div>
+    <ul>
+      <li><b>一物一位:執箱唔係潔癖,係安全系統。</b>每件嘢有固定位(foam 格 / 袋格):①執嘢快;②<b>漏嘢即刻見 —— 個窿空咗就係漏咗</b>,漏嘢偵測唔靠記性,靠個窿;③運輸互不相撞。<b>Gimbal(雲台)上鎖 / 戴罩先入箱</b> —— 佢係全機最脆弱嘅部分,你聽唔到箱入面 gimbal 嘅慘叫。槳拆定唔拆 <span class="adjust">🔧 按機型,負責人示範</span>。</li>
+      <li><b>電池另放:</b>佢係成箱嘢入面<b>唯一一件「自己會出事」嘅嘢</b> —— LiPo bag 或專用格、接頭遠離金屬、唔好同機身迫埋一格。佢出事,你唔想佢連累成箱。</li>
+      <li><b>車程運輸:</b>箱要固定(綁帶 / 攝實);<b>電池唔留焗車</b> —— 香港夏天車廂溫度好高,高溫係電池老化加速器,極端情況有安全風險,離車食晏電池帶埋走或放陰涼位 <span class="adjust">🔧 具體規矩由負責人定</span>;淋濕咗嘅嘢<b>抹乾晒先入箱</b> —— 密封箱 + 濕氣 = 焗霉神器。</li>
+      <li><b>香港兩大敵人:</b><b>潮濕</b> —— 防潮珠(desiccant)機箱常駐,飽和要換 <span class="adjust">🔧</span>;長期存放防潮安排:<b>兩條</b>:①機箱常駐防潮珠,<b>顏色變咗(飽和)即換或者焙乾</b>;②<b>每月開箱檢一次</b> —— 防潮珠顏色、鏡頭有冇霧 / 霉點、金屬位有冇銹。;鏡頭發霉就係防潮失守嘅結果。<b>高溫</b> —— 裝備唔放窗邊、唔喺車尾長曬。</li>
+      <li><b>出勤 checklist + 備件:</b>出門前逐格剔,唔靠記性(同 Pack 02 起飛 checklist 同一個哲學)。備件基本盤:spare 槳 <span class="adjust">🔧 數量</span>、spare SD 卡、各種線(<b>遙控叉電線係最常漏嗰條</b>)、防潮珠備用、電池數目 = 任務所需 + buffer <span class="adjust">🔧</span>。完整清單:<br><b>【飛行】</b>部機、遙控、電池(任務所需 + 1 套 buffer)　<b>【槳】</b>裝喺機上嗰套 + spare 一套　<b>【存儲】</b>SD 卡 ×2、手提 SSD　<b>【線】</b><b>遙控叉電線(最常漏嗰條)</b>、電池叉電線、讀卡器、備用線　<b>【防護】</b>防潮珠備用、防火袋　<b>【清潔】</b>清潔包六件　<b>【文件】</b>brief、shot list、保單資料。</li>
+    </ul>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 執箱判官</div>
+      <div class="hint">執箱做法逐個彈出 —— 判斷:啱,定係會出事?</div>
+      <div class="cl-statement" id="box-st">撳「開始」執箱</div>
+      <div class="cl-btns" id="box-btns"><button class="btn" id="box-start" type="button">開始</button></div>
+      <div class="fb-box" id="box-fb"></div>
+      <div class="mini-score" id="box-sc"></div>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 時限同抽走物品由負責人定</span></span>
+      <p>計時執箱:由「散裝狀態」執到「可出勤狀態」。負責人事先靜靜雞抽起一件嘢(例:遙控叉電線),睇學員幾時發現。<b>完成標準:</b>一物一位全齊、gimbal 有鎖 / 罩、電池獨立放好、發現被抽起嘅嘢<b>並講得出發現機制</b>(「呢個窿空咗」而唔係「我背得出清單」)。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>電池永遠唔留焗車 —— 呢條冇彈性。</b>未抹乾、未降溫嘅裝備唔入密封箱。執箱見到有個位空咗 = 當漏咗:搵到 / 補到先出門,「應該喺度嘅」唔係答案。</p></div>
+    <button class="done-btn" data-lesson="5" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== L7 ===== -->
+  <section class="lesson" id="lesson-7">
+    <span class="lesson-tag">Lesson 07</span>
+    <h2>保養排程與紀錄 — 唔准帶病上天</h2>
+    <div class="objective"><span class="obj-label">學完呢課你識做咩</span>講得出三級保養各做咩邊個做;識填保養 log;行到「發現 → 標籤隔離 → 報負責人」全流程;解釋「唔准帶病上天」點解冇例外。</div>
+    <h3>三級保養(級數係深度,唔係日曆)</h3>
+    <div class="tablebox">
+      <table>
+        <tr><th>級</th><th>幾時</th><th>做咩</th><th>邊個</th></tr>
+        <tr><td>1 · 每飛後</td><td>每次任務 / 練習完即做</td><td>課 3 路線快版、抹機、電池處置、填 log —— 幾分鐘嘅事</td><td>當日用機嘅人</td></tr>
+        <tr><td>2 · 定期</td><td>時數 / 架次或日曆計,<b>邊樣先到就邊樣</b> <span class="adjust">🔧 間隔起點由負責人定</span></td><td>課 3 全路線細做、螺絲逐粒過、槳逐支過、cycle count 對數、防潮珠檢查</td><td>隊員(負責人指定)</td></tr>
+        <tr><td>3 · 深度</td><td>負責人排程</td><td>拆檢、送檢、firmware 統一安排、退役決定</td><td>負責人主導</td></tr>
+      </table>
+    </div>
+    <p>隊員喺第 3 級嘅角色:提供靠得住嘅 log —— <b>你嘅紀錄就係負責人嘅眼</b>。</p>
+    <h3>保養 log(同課 2 病歷卡係同一套系統)</h3>
+    <p>每次保養一行:日期 | 機號 | 邊級保養 | 做咗咩 | 發現咩 | 邊個做 | 跟進。<b>「冇發現」都要寫「冇異常」</b> —— 冇寫同冇異常係兩回事:冇寫 = 冇人知你有冇做過。載體同格式:<b>Google Sheets,兩張表</b> —— ①<b>電池病歷卡</b>:電池號 | 入役日 | cycle | 狀態 | 備註;②<b>保養 log</b>:日期 | 機號 | 邊級保養 | 做咗咩 | 發現咩 | 邊個做 | 跟進。手機現場即填,自動備份、搵得返。<b>連結向負責人攞。</b></p>
+    <h3>發現問題三步:發現 → 標籤隔離 → 報負責人</h3>
+    <ol>
+      <li><b>發現</b> —— 任何人、任何時候:檢查中、飛行中、執箱時。</li>
+      <li><b>標籤隔離(tag-out)</b> —— 即時攞出「可用池」:掛停用標籤寫齊三要素(<b>咩問題 / 邊日 / 邊個發現</b>);電池入防火袋隔離區、機掛「停飛」牌。點解要有形嘅標籤:口頭講「嗰部機有啲嘢」會俾人忘記、誤會、傳歪 —— <b>張標籤先係防止病裝備混返入可用池嘅真屏障</b>。</li>
+      <li><b>報負責人</b> —— 講事實(咩徵兆 / 幾時 / 咩環境),<b>唔使自己斷症</b>。維修、送檢定退役,係負責人嘅決定。</li>
+    </ol>
+    <h3>唔准帶病上天</h3>
+    <p>三句最危險嘅話:「今日單好緊要」、「應該冇事」、「上次都係咁,冇事喎」。帶病上天嘅數學:慳到嘅係一次改期;輸嘅可能係成部機 + 落地嗰下下面嘅人 —— <b>冇任何一單任務值呢條數</b>。永遠有替代方案:後備機、改期、縮任務範圍。「冇替代方案」嘅答案係唔飛。</p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動練習 · 隔離區逃走事件</div>
+      <div class="hint">一部標籤咗嘅機差啲被隊友攞返去用 —— 逐步行,搵出邊步失守、點補救。</div>
+      <ol class="seq-done-list" id="tg-done"></ol>
+      <div class="seq-pool" id="tg-pool"></div>
+      <div class="fb-box" id="tg-fb"></div>
+      <button class="btn ghost" id="tg-reset" type="button" style="margin-top:6px">重新嚟過</button>
+    </div>
+
+    <div class="drill"><span class="d-label">練習目標 + 完成標準 <span class="adjust">🔧 情境細節由負責人定</span></span>
+      <p>全流程演習 —— 情境:「第 2 級保養發現機臂摺位有裂紋,而聽日有任務」。完成:填 log → 寫標籤(三要素)→ 隔離 → 口頭報告(講事實唔斷症)→ 講出聽日任務點算。<b>完成標準:</b>log 欄欄有嘢;標籤三要素齊;報告冇出現「應該冇事」;聽日方案係後備機 / 改期,唔係照飛。</p>
+    </div>
+    <div class="safety"><span class="s-label">⚠️ 安全重點</span>
+    <p><b>標籤咗嘅裝備,唔准自己「試吓好返未」</b> —— 解除隔離只可以由負責人做。Log 求其填 = 冇填:下一手隊友係靠你嗰行字做安全判斷。帶病上天冇例外 —— 唔理今日單有幾大、客有幾惡。</p></div>
+    <button class="done-btn" data-lesson="6" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section class="quiz-head" id="quiz">
+    <span class="lesson-tag">總測驗 · Final Quiz</span>
+    <h2>測驗:10 題選擇題</h2>
+    <div class="quiz-rules">
+      <ul>
+        <li>每題 <b>10 分</b>,滿分 <b>100 分</b>,<b>100 分合格(OPENBOOK 開卷)</b> —— 保養嘢冇「合格邊緣」,錯一題就代表有一瓣未掂。</li>
+        <li>交卷後顯示每題對錯、解釋同對應課數。</li>
+        <li>測驗結果用嚟改進教材同跟進學習,<b>唔會用嚟處分任何隊員</b>。</li>
+      </ul>
+    </div>
+    <div id="quiz-body"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="submit-btn" type="button">交卷計分</button>
+      <button class="btn ghost" id="retry-btn" type="button" style="display:none">再做一次</button>
+    </div>
+    <p class="unanswered-note" id="unanswered-note"></p>
+    <div class="result" id="result">
+      <div class="score" id="score-num"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <div><span class="verdict" id="verdict"></span></div>
+      <p class="result-note" id="result-note"></p>
+    </div>
+  </section>
+
+  <footer>草稿 v1 · 飛行安全內容,待團隊負責人審核 · 課程內容:training-designer(培訓設計師)· 保養週期 / 退役數字刻意唔寫死,由負責人按機型定起點</footer>
+</div>
+
+<script>
+"use strict";
+// ============ 進度追蹤 ============
+const LESSONS_KEY = "drone501.lessons", BEST_KEY = "drone501.best";
+function sGet(k, fb) { try { const r = localStorage.getItem(k); return r === null ? fb : JSON.parse(r); } catch (e) { return fb; } }
+function sSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lessonsDone = sGet(LESSONS_KEY, [false,false,false,false,false,false,false]);
+if (!Array.isArray(lessonsDone) || lessonsDone.length !== 7) lessonsDone = [false,false,false,false,false,false,false];
+function renderProgress() {
+  document.getElementById("segments").innerHTML = lessonsDone.map(d => `<div class="seg${d ? " done" : ""}"></div>`).join("");
+  document.getElementById("prog-count").textContent = lessonsDone.filter(Boolean).length;
+  document.querySelectorAll(".done-btn").forEach(btn => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    btn.classList.toggle("done", lessonsDone[i]);
+    btn.textContent = lessonsDone[i] ? "✓ 已完成(撳一下取消)" : "✓ 完成呢課";
+  });
+  const best = sGet(BEST_KEY, null);
+  document.getElementById("best-label").textContent = best === null ? "測驗最高分 —" : `測驗最高分 ${best}/100`;
+}
+document.querySelectorAll(".done-btn").forEach(btn => btn.addEventListener("click", () => {
+  const i = parseInt(btn.dataset.lesson, 10);
+  lessonsDone[i] = !lessonsDone[i];
+  sSet(LESSONS_KEY, lessonsDone);
+  renderProgress();
+}));
+
+// ============ 通用分類遊戲引擎 ============
+function makeClassify(cfg) {
+  let idx = -1, score = 0;
+  const st = document.getElementById(cfg.stId), fb = document.getElementById(cfg.fbId);
+  function show() {
+    st.textContent = cfg.items[idx].text;
+    document.getElementById(cfg.btnsId).innerHTML = cfg.cats.map((c, ci) =>
+      `<button class="btn ${ci % 2 ? "ghost" : ""}" data-cl="${ci}" type="button">${c}</button>`).join("");
+    fb.className = "fb-box";
+    document.querySelectorAll(`#${cfg.btnsId} [data-cl]`).forEach(b => b.addEventListener("click", () => {
+      const item = cfg.items[idx];
+      const right = parseInt(b.dataset.cl, 10) === item.cat;
+      if (right) score++;
+      fb.textContent = (right ? "✓ 啱。" : "✗ 諗多一次。") + item.fb;
+      fb.className = "fb-box show " + (right ? "right" : "wrong");
+      document.getElementById(cfg.scId).textContent = `進度 ${idx + 1}/${cfg.items.length} · 啱 ${score}`;
+      if (idx < cfg.items.length - 1) {
+        document.getElementById(cfg.btnsId).innerHTML = `<button class="btn ghost" data-next type="button">下一個 →</button>`;
+        document.querySelector(`#${cfg.btnsId} [data-next]`).addEventListener("click", () => { idx++; show(); });
+      } else {
+        document.getElementById(cfg.btnsId).innerHTML = `<button class="btn" data-restart type="button">再嚟一輪(${score}/${cfg.items.length} · ${cfg.endMsg(score)})</button>`;
+        document.querySelector(`#${cfg.btnsId} [data-restart]`).addEventListener("click", start);
+      }
+    }));
+  }
+  function start() { idx = 0; score = 0; document.getElementById(cfg.scId).textContent = ""; show(); }
+  document.getElementById(cfg.startId).addEventListener("click", start);
+}
+
+// L1:地上定天上(天上結果 → 地上根源)
+makeClassify({
+  stId: "rc-st", btnsId: "rc-btns", fbId: "rc-fb", scId: "rc-sc", startId: "rc-start",
+  cats: ["🔩 軸承入沙 / 磨損", "🧲 磁性配件干擾 compass", "🔋 電池老化", "📋 冇填 log 冇人知"],
+  items: [
+    { text: "天上結果:摩打半空停轉。地上根源係?", cat: 0, fb: "軸承上個月已經入沙 —— 聲、手感嗰陣其實有得發現(課 4 三徵兆)。" },
+    { text: "天上結果:部機無故亂漂、方向唔對。地上根源係?", cat: 1, fb: "上次任務後 compass 附近多咗嚿磁鐵配件 —— 檢查路線行齊八站就會見到(課 3)。" },
+    { text: "天上結果:電量跳崖式跌,差啲返唔到嚟。地上根源係?", cat: 2, fb: "嗰嚿電三個月前已經開始老 —— 病歷卡有記 voltage sag 嘅話,佢根本唔會出到任務(課 2)。" },
+    { text: "天上結果:兩個隊員先後用同一部機出事,第二個唔知第一個發現過咩。地上根源係?", cat: 3, fb: "第一個發現咗但冇記低 —— log 唔係官僚嘢,你嘅紀錄就係下一手嘅安全判斷(課 7)。" }
+  ],
+  endMsg: s => s >= 3 ? "因果鏈睇通咗 —— incident 唔係喺天上開始。" : "重溫課 1:天上見到嘅係結果,原因一早喺地上。"
+});
+
+// L2:電池診所
+makeClassify({
+  stId: "bat-st", btnsId: "bat-btns", fbId: "bat-fb", scId: "bat-sc", startId: "bat-start",
+  cats: ["✅ 出任務", "🟡 觀察中(淨練習)", "🚨 即時隔離退役"],
+  items: [
+    { text: "病人 1 號:病歷正常,cycle 未到參考線,hover 時間穩定,外觀企理。", cat: 0, fb: "健康電 —— 出任務。呢個判斷係靠病歷,唔係靠感覺。" },
+    { text: "病人 2 號:塊面微微脹起,按落去手感同其他唔同,但開機一切正常。", cat: 2, fb: "鼓包 = 即時退役,冇「觀察中」—— 「開到機」唔係健康證明。放防火袋、寫標籤、報負責人。" },
+    { text: "病人 3 號:病歷顯示近排 hover 少咗兩分鐘,出力時電壓跌得勁(voltage sag),外觀正常。", cat: 1, fb: "老化徵兆浮現 —— 觀察中:唔准出任務,最多練習用,同時報負責人評估退役。" },
+    { text: "病人 4 號:隊友喺二手網買返嚟,冇病歷、唔知 cycle 數,話「平嘢唔用嘥」。", cat: 1, fb: "嚟歷不明 = 唔准出任務(最嚴格甚至唔准用)—— 病歷空白嘅電池,你對佢一無所知。交負責人決定佢有冇資格入隊。" },
+    { text: "病人 5 號:上星期任務中過熱警告,之後摸落都正常。", cat: 1, fb: "過熱事故後要由負責人評估先可以再用 —— 「之後正常」唔等於內部冇事。" }
+  ],
+  endMsg: s => s >= 4 ? "診所開得 —— 記住:徵兆話事,唔係死數。" : "重溫課 2 退役標準五條。"
+});
+
+// L3:找不同
+const mfInfo = [
+  "✂️ 右前槳貼咗膠紙!全教材最禁止動作之一 —— 高速下佢係飛鏢。即場整爛佢,查邊個貼嘅,提返隊規。【停飛送檢類】",
+  "🩹 機臂有裂紋 —— 結構性裂紋係五種即刻停飛情況之一,「條紋咁淺」唔係理由。標籤、隔離、報負責人。【停飛送檢類】",
+  "🔩 機身有粒螺絲唔見咗(虛線圈嗰粒)—— 螺絲係會自己「行走」嘅,固定路線先捉到「今日有樣嘢唔同咗」。【停飛,補螺絲檢查過先飛】",
+  "👆 鏡頭有指模 / 霧 —— 用鏡頭布 + 清潔液處理(唔准用衫角!),抹完 log 記低。呢個係【清潔類】,唔使停飛。"
+];
+const mfFoundSet = new Set();
+document.querySelectorAll(".mf-hot").forEach(hot => hot.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const i = parseInt(hot.dataset.mf, 10);
+  const fb = document.getElementById("mf-fb");
+  if (!mfFoundSet.has(i)) {
+    mfFoundSet.add(i);
+    fb.textContent = mfInfo[i];
+    fb.className = "fb-box show right";
+    document.getElementById("mf-found").textContent = mfFoundSet.size === 4
+      ? "搵到 4/4 🎉 —— 三個停飛級 + 一個清潔級。現實入面每個都要入 log。"
+      : `搵到 ${mfFoundSet.size}/4`;
+  } else {
+    fb.textContent = "呢個搵咗喇 —— 照路線行:槳 → 摩打 → 機臂 → 螺絲 → 鏡頭。";
+    fb.className = "fb-box show neutral";
+  }
+}));
+document.getElementById("mf-svg").addEventListener("click", () => {
+  const fb = document.getElementById("mf-fb");
+  fb.textContent = "呢度暫時冇嘢 —— 跟住固定路線行,唔好亂咁望。";
+  fb.className = "fb-box show neutral";
+});
+
+// L4:槳/摩打判斷
+makeClassify({
+  stId: "prop-st", btnsId: "prop-btns", fbId: "prop-fb", scId: "prop-sc", startId: "prop-start",
+  cats: ["✅ 用得", "🗑 即棄(整爛先掉)", "🏷 停飛標籤報負責人"],
+  items: [
+    { text: "一支槳,葉尖有條好幼嘅裂紋,要側光先睇到。", cat: 1, fb: "裂紋幾幼都係退役 —— 高速旋轉下幼紋會擴展。整爛先掉,唔好俾佢混返入 spare 堆。" },
+    { text: "一支槳,尋日炒機時撞過欄杆,但望落完好無缺。", cat: 1, fb: "撞過嘢 = 即棄 —— 內部纖維可能已斷,望唔到。呢個就係「望落冇事唔等於冇事」。" },
+    { text: "一支新槳,包裝啱啱拆,標記清晰,槳根實淨。", cat: 0, fb: "用得 —— 裝嘅時候記住對正 CW / CCW 標記,裝完輕拉自查,入 log。" },
+    { text: "hover 時聽到有個摩打發出沙沙聲,落地手背試,佢明顯熱過其餘三個。", cat: 2, fb: "「聲 + 溫」兩徵兆齊 —— 停飛、標籤(問題/日期/人)、報負責人。唔准自己拆摩打。" },
+    { text: "spare 堆入面搵到一支貼咗膠紙嘅槳,唔知邊個補的。", cat: 1, fb: "膠紙槳唔准存在 —— 即場整爛,然後要查:點解佢會喺 spare 堆度?隔離制度邊度失守?" },
+    { text: "斷電下用手轉摩打,順滑冇卡位,冇雜聲。", cat: 0, fb: "手感正常 —— 呢個檢查嘅前提係「電池拔咗未?」你有冇先問呢句?" }
+  ],
+  endMsg: s => s >= 5 ? "判斷合格 —— 成部機嘅命,吊喺呢幾件最平嘅零件度。" : "重溫課 4:槳係消耗品,唔係壞先換係老先換。"
+});
+
+// L5:升唔升?
+makeClassify({
+  stId: "fw-st", btnsId: "fw-btns", fbId: "fw-fb", scId: "fw-sc", startId: "fw-start",
+  cats: ["⬇️ 裝", "🙈 唔裝就算", "📝 唔裝 + 記低 + 報負責人"],
+  items: [
+    { text: "聽朝八點有任務,今晚十一點 app 彈「重要 firmware 更新」。", cat: 2, fb: "任務前唔升級:失敗聽朝用唔到,成功行為可能變咗你未試過。記版本號,報負責人,聽日照用現行版本。" },
+    { text: "負責人今朝喺 group 講咗:「今晚全部機統一升 vX.X,跟我指示做。」你部機彈出嗰個更新。", cat: 0, fb: "呢個係負責人統一安排嘅更新 —— 跟指示做就係 configuration management 嘅正確運作。" },
+    { text: "收機翻屋企,app 彈一個你未見過嘅更新,冇任務喺手。", cat: 2, fb: "就算冇任務都唔係你決定升 —— 記低、報負責人,等佢測試完排程。你唔知呢個版本會唔會 reset 設定。" },
+    { text: "隊友話:「我尋晚幫你部機升咗級喇,新版好正!」", cat: 2, fb: "呢個係 configuration 事故,唔係人情 —— 你部機而家同機隊「講緊唔同語言」而負責人唔知。即刻上報,任務前要負責人重新確認部機狀態。" },
+    { text: "App 彈「重新 calibrate IMU」提示,你啱啱企喺天台鐵欄側邊。", cat: 2, fb: "唔好即場做 —— 金屬旁邊 calibrate 係將錯嘅參考寫入部機。移位、再試、仲有提示就報負責人。" }
+  ],
+  endMsg: s => s >= 4 ? "紀律及格 —— 成隊機只可以有一個「真相版本」。" : "重溫課 5:唔撳 → 記低 → 報。"
+});
+
+// L6:執箱判官
+makeClassify({
+  stId: "box-st", btnsId: "box-btns", fbId: "box-fb", scId: "box-sc", startId: "box-start",
+  cats: ["✅ 啱", "❌ 會出事"],
+  items: [
+    { text: "電池同機身迫埋同一格,慳位。", cat: 1, fb: "電池係唯一「自己會出事」嘅嘢 —— 要獨立放 LiPo bag / 專用格,佢出事唔好連累成箱。" },
+    { text: "Gimbal 上咗鎖 / 戴咗罩先入箱。", cat: 0, fb: "正確 —— gimbal 係全機最脆弱部分,運輸震動係佢頭號殺手。" },
+    { text: "食晏一個鐘,電池留喺車尾箱,反正鎖咗門。", cat: 1, fb: "電池永遠唔留焗車 —— 呢條冇彈性。香港夏天車廂溫度好高,高溫係老化加速器兼安全風險。" },
+    { text: "落雨淋濕咗嘅遙控,抹乾晒先放入密封箱。", cat: 0, fb: "正確 —— 密封箱 + 濕氣 = 焗霉神器,鏡頭發霉就係咁嚟。" },
+    { text: "執箱見到 foam 有個位空咗,諗住「嗰件嘢應該喺屋企」,照出門。", cat: 1, fb: "個窿空咗 = 當漏咗 —— 搵到 / 補到先出門。「應該喺度」唔係答案;一物一位嘅意義就係漏嘢偵測唔靠記性。" },
+    { text: "鎖匙、散銀同電池擺同一個袋格。", cat: 1, fb: "接頭掂到金屬 = 短路風險(課 2 講過)—— 電池格唔可以有金屬雜物。" }
+  ],
+  endMsg: s => s >= 5 ? "執箱判官上任 —— 執箱唔係潔癖,係安全系統。" : "重溫課 6:一物一位、電池另放、唔留焗車。"
+});
+
+// L7:隔離區逃走事件(按次序撳)
+(function () {
+  const steps = [
+    { order: 0, label: "第 2 級保養發現機臂裂紋", wrongMsg: () => "由發現開始 —— 條鏈嘅起點係有人肯講出嚟。" },
+    { order: 1, label: "寫標籤:咩問題 / 邊日 / 邊個發現", wrongMsg: n => "發現咗之後第一步係有形嘅標籤 —— 口頭講會俾人忘記、誤會、傳歪。" },
+    { order: 2, label: "部機掛「停飛」牌,放隔離格", wrongMsg: n => "標籤寫完就要真隔離 —— 攞出可用池,唔係擺返原位。" },
+    { order: 3, label: "填 log + 口頭報負責人(講事實,唔斷症)", wrongMsg: n => "隔離咗先報 —— 而且講徵兆事實就得,斷症係負責人嘅事。" },
+    { order: 4, label: "聽日任務:用後備機或者改期", wrongMsg: n => "上報完先安排替代方案 —— 記住「冇替代方案」嘅答案係唔飛。" },
+    { trap: true, label: "隊友話「張標籤跌咗啫,部機睇落好地地」,攞返去用", trapMsg: "🚨 呢一步就係「隔離區逃走事件」!標籤跌咗唔等於問題消失 —— 解除隔離只可以由負責人做。見到標籤唔見咗,第一時間問返 log:呢部機點解入過隔離區。" },
+    { trap: true, label: "趕住出門,log 寫「都係嗰啲嘢,照舊」", trapMsg: "🚨 Log 求其填 = 冇填 —— 下一手隊友係靠你嗰行字做安全判斷。「做咗咩、發現咩」要寫實。" }
+  ];
+  const display = [5, 1, 3, 0, 6, 4, 2];
+  let next = 0;
+  const fb = document.getElementById("tg-fb");
+  function render() {
+    next = 0;
+    document.getElementById("tg-done").innerHTML = "";
+    fb.className = "fb-box";
+    document.getElementById("tg-pool").innerHTML = display.map(i =>
+      `<button class="seq-btn${steps[i].trap ? " trap" : ""}" data-tg="${i}" type="button">${steps[i].label}</button>`).join("");
+    document.querySelectorAll("#tg-pool [data-tg]").forEach(b => b.addEventListener("click", () => {
+      const item = steps[parseInt(b.dataset.tg, 10)];
+      if (item.trap) {
+        b.classList.add("shake");
+        setTimeout(() => b.classList.remove("shake"), 450);
+        fb.textContent = item.trapMsg;
+        fb.className = "fb-box show wrong";
+        return;
+      }
+      if (item.order === next) {
+        b.disabled = true;
+        const li = document.createElement("li");
+        li.textContent = item.label;
+        document.getElementById("tg-done").appendChild(li);
+        next++;
+        if (next === 5) {
+          fb.textContent = "✅ 全流程行齊:發現 → 標籤 → 隔離 → 上報 → 替代方案。而兩個陷阱你冇踩 —— 標籤系統係人人維護,唔係貼咗就算。";
+          fb.className = "fb-box show right";
+        } else { fb.className = "fb-box"; }
+      } else {
+        b.classList.add("shake");
+        setTimeout(() => b.classList.remove("shake"), 450);
+        fb.textContent = item.wrongMsg(next);
+        fb.className = "fb-box show wrong";
+      }
+    }));
+  }
+  document.getElementById("tg-reset").addEventListener("click", render);
+  render();
+})();
+
+// ============ 總測驗(開卷,100 分合格) ============
+const quizQuestions = [
+  { lesson: "課 1", question: "部機用咗三個月,一直冇任何紀錄。今日飛完,你覺得 2 號電「好似跌電快過以前」,但講唔實。最能夠防止「講唔實」再出現嘅做法係:",
+    options: ["靠隊入面記性最好嗰位記住每嚿電嘅表現","每嚿電開病歷卡,每次用完更新,判斷由「靠感覺」變「有數據」","覺得唔對路就即刻掉咗佢,寧枉毋縱","每次飛之前都叉到 100%,咁就唔會有跌電快嘅問題"],
+    correct: 1, explain: "資產管理心態:狀態要知、要記、要管。人腦唔可靠亦冇得交接;冇根據就掉嘥錢之餘下嚿電一樣冇病歷;叉滿遮唔住老化,滿電長放仲老得快。(課 1)" },
+  { lesson: "課 2", question: "收工執嘢,發現一嚿電微微脹起,按落去手感同其他唔同。你應該:",
+    options: ["得嗰少少啫,放返入箱,下次用嗰陣留意吓","即時隔離:放防火袋 / 隔離位、寫標籤(咩事 / 邊日 / 邊個)、報負責人 —— 呢嚿電唔准再用","攞去太陽下曬吓,可能入面有濕氣,散咗就冇事","今日仲有少少嘢想飛,用埋呢轉先隔離"],
+    correct: 1, explain: "鼓包係即時退役級別,冇「觀察中」。鼓包照用係 thermal runaway(熱失控)最常見導火線之一;曬太陽係加熱一嚿有問題嘅電池,啱啱相反。(課 2)" },
+  { lesson: "課 2", question: "星期五飛完,下次任務起碼兩星期後,手上啲電淨返 15–30%。正確處置係:",
+    options: ["全部叉到 100%,隨時候命先安心","就咁 15–30% 咁擺,下次用先算","按團隊指引處理到 storage charge(大約半滿)存放;smart battery 就確認自動放電設定會搞掂","放入雪櫃低溫「保鮮」"],
+    correct: 2, explain: "滿電長放加速老化;過低長放有過放風險;雪櫃嘅濕氣同冷凝係 electronics 同電池大忌。長放 = 儲存水平。(課 2)" },
+  { lesson: "課 3", question: "海邊任務完成,部機全程冇掂過水,望落乾爽企理。你應該:",
+    options: ["冇掂到水就唔使特別理,照收箱","用水喉沖一沖,將啲鹽沖走","當日用扭乾嘅微濕布抹外殼再抹乾,罅隙用軟刷 / 吹波仔,log 記低「海邊任務」,有懷疑報負責人","噴啲除銹潤滑噴劑落摩打預防生銹"],
+    correct: 2, explain: "鹽霧係隱形腐蝕劑 —— 冇落水唔代表冇鹽。水沖係三大禁忌之首;溶劑亂噴一樣係禁忌;乜都唔做就係俾鹽慢慢食部機。(課 3)" },
+  { lesson: "課 4", question: "起飛前檢查,見到一支槳嘅葉尖有條好幼嘅裂紋。你會:",
+    options: ["咁幼啫,飛埋今日先算","貼小小膠紙加固住先","支槳即場整爛先掉,換 spare 槳,記入 log;冇 spare 就唔飛","將支槳調去受力冇咁大嘅摩打位"],
+    correct: 2, explain: "槳係消耗品,裂紋幾幼都係退役 —— 唔整爛就掉會混返入 spare 堆害人。膠紙槳係全教材最禁止動作之一:高速下佢係飛鏢。(課 4)" },
+  { lesson: "課 4", question: "練習日 hover 嗰陣你覺得機聲同平時唔同;落地後用手背輕試,右前摩打明顯熱過其餘三個。你應該:",
+    options: ["等佢凍返,再飛一轉確認吓係咪真係有問題","摩打有啲熱好正常啫,照飛","自己拆個摩打出嚟睇吓入面咩事","停飛、掛標籤(問題 / 日期 / 人)、報負責人,log 記低徵兆"],
+    correct: 3, explain: "四個摩打做緊同一樣嘢,一個特別熱 = 佢有事 —— 「聲 + 溫」兩徵兆齊。「飛多轉確認」係用成部機做測試品;自己拆摩打過咗授權線。(課 4)" },
+  { lesson: "課 5", question: "聽朝八點有任務。今晚十一點,app 彈出「有重要 firmware(韌體)更新」。你應該:",
+    options: ["即刻更新 ——「重要」喎,梗係要裝","唔撳更新,screenshot / 記低版本號,報負責人;聽日照用現行版本(除非負責人另有指示)","自己更新咗佢,唔使講,反正聽日部機係你飛","撳「稍後提醒」,之後件事唔使再理"],
+    correct: 1, explain: "任務前唔升級:失敗部機聽朝用唔到;成功行為可能變咗你未試過。C 仲衰過 A —— 擅自升級兼唔上報;D 冇上報,負責人根本唔知有個 update 存在。(課 5)" },
+  { lesson: "課 5", question: "現場開機,compass 警告。你留意到自己企喺鐵絲網欄同石屎柱(內有鋼筋)側邊。你應該:",
+    options: ["即場做 compass calibration(校正),校返好佢咪得","移離金屬環境再開機試;仲有警告就報負責人 —— 總之唔喺懷疑有干擾嘅位做 calibration","熄咗個警告提示照飛,反正部機都升到空","重啟部機多幾次,通常會自己冇事"],
+    correct: 1, explain: "金屬 / 磁場旁邊 calibrate,係將「錯嘅參考」寫入部機 —— 一次衰嘅 calibration 衰過唔做。熄警告照飛同亂重啟都係處理個提示,唔係處理個問題。(課 5)" },
+  { lesson: "課 6", question: "夏天任務,中午成隊人去食晏一個鐘,架車泊喺露天位。裝備點安置?",
+    options: ["全部鎖晒喺車尾箱,防盜至上","電池帶埋走或者放陰涼位,唔留焗車;其他裝備都盡量避免留喺曝曬車廂","開返少少車窗散熱就得","電池放司機位遮陽板後面,遮住太陽咪得"],
+    correct: 1, explain: "「電池永遠唔留焗車」係冇彈性嗰條:香港夏天車廂溫度好高,高溫係老化加速器兼安全風險。開窗降唔到幾多溫;遮陽板一樣係焗車入面。(課 6)" },
+  { lesson: "課 7", question: "第 2 級保養時,你發現主力機嘅機臂摺位有條裂紋。聽日有單好重要嘅任務。你應該:",
+    options: ["影低張相先,聽日飛埋呢單即刻處理","上網搵吓呢款機呢個位裂係咪「通病」,係通病就唔使咁擔心","即時標籤隔離、填 log、報負責人;聽日任務用後備機或者改期 —— 唔帶病上天","條紋咁淺,落啲強力膠水行返一排先"],
+    correct: 2, explain: "「今日單好緊要」正正係三句最危險嘅話之一。結構性裂紋係五種即刻停飛情況之一;「通病」唔會令條裂紋唔存在;自行修結構件遠超授權線。永遠有替代方案。(課 7)" }
+];
+const POINTS_PER_QUESTION = 10;
+const PASS_MARK = 100;  // 開卷,全對先合格(團隊慣例)
+const letters = ["A", "B", "C", "D"];
+function renderQuiz() {
+  document.getElementById("quiz-body").innerHTML = quizQuestions.map((q, qi) => `
+    <div class="qcard" id="qcard-${qi}">
+      <div class="qnum">Question ${String(qi + 1).padStart(2, "0")} / 10 · ${q.lesson} · 10 分<span class="qbadge" id="qbadge-${qi}"></span></div>
+      <div class="qtext">${q.question}</div>
+      <div class="opts">
+        ${q.options.map((opt, oi) => `
+          <label class="opt" id="opt-${qi}-${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span class="letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+      <div class="explain" id="explain-${qi}"></div>
+    </div>`).join("");
+}
+function gradeQuiz() {
+  const unanswered = [];
+  quizQuestions.forEach((q, qi) => { if (!document.querySelector(`input[name="q${qi}"]:checked`)) unanswered.push(qi + 1); });
+  const note = document.getElementById("unanswered-note");
+  if (unanswered.length > 0) {
+    note.style.display = "block";
+    note.textContent = "仲有未答嘅題目:第 " + unanswered.join("、") + " 題。全部答完先可以交卷。";
+    return;
+  }
+  note.style.display = "none";
+  let correctCount = 0;
+  quizQuestions.forEach((q, qi) => {
+    const chosen = parseInt(document.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+    const card = document.getElementById(`qcard-${qi}`);
+    const isRight = chosen === q.correct;
+    if (isRight) correctCount++;
+    card.classList.add("graded", isRight ? "right" : "wrong");
+    document.getElementById(`qbadge-${qi}`).textContent = isRight ? "✓ 答啱" : "✗ 答錯";
+    document.getElementById(`opt-${qi}-${q.correct}`).classList.add("is-correct");
+    if (!isRight) document.getElementById(`opt-${qi}-${chosen}`).classList.add("is-wrong");
+    document.getElementById(`explain-${qi}`).innerHTML = `<b>正確答案:${letters[q.correct]}</b> — ${q.explain}`;
+    card.querySelectorAll("input").forEach(input => { input.disabled = true; });
+  });
+  const score = correctCount * POINTS_PER_QUESTION;
+  const passed = score >= PASS_MARK;
+  const best = sGet(BEST_KEY, null);
+  if (best === null || score > best) sSet(BEST_KEY, score);
+  renderProgress();
+  const result = document.getElementById("result");
+  result.classList.remove("pass", "fail");
+  result.classList.add(passed ? "pass" : "fail");
+  result.style.display = "block";
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-sub").textContent = `滿分 100 · 答啱 ${correctCount} / 10 題 · 合格線 ${PASS_MARK} 分(開卷)`;
+  document.getElementById("verdict").textContent = passed ? "合格 PASS" : "不合格 FAIL";
+  document.getElementById("result-note").textContent = passed
+    ? "合格!下一步:同負責人開齊病歷卡同保養 log —— 由今個星期嘅第 1 級保養開始行個圈。"
+    : "未去到 100 分 —— 保養嘢冇「合格邊緣」。開卷:返上去對應課數搵答案,再做一次,直到全對。";
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "inline-block";
+  result.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+}
+function resetQuiz() {
+  renderQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("unanswered-note").style.display = "none";
+  document.getElementById("submit-btn").style.display = "inline-block";
+  document.getElementById("retry-btn").style.display = "none";
+  document.getElementById("quiz").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+}
+renderQuiz();
+document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+document.getElementById("retry-btn").addEventListener("click", resetQuiz);
+renderProgress();
+</script>
+</body>
+</html>

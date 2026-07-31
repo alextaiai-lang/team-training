@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>團隊教材庫</title>
+<style>
+  :root {
+    --ground: #f3f5f7; --surface: #ffffff; --ink: #1a232c; --ink-soft: #5b6b78;
+    --line: #d6dde3; --accent: #0f62a6; --accent-ink: #0b4a7e; --accent-wash: #e3eef8;
+    --gold: #8a6d00; --gold-wash: #f7efcf;
+    --shadow: 0 1px 2px rgba(26,35,44,.06), 0 8px 24px -14px rgba(26,35,44,.16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e141a; --surface: #161f29; --ink: #e6edf3; --ink-soft: #93a5b4;
+      --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0; --accent-wash: #14293d;
+      --gold: #d9b23a; --gold-wash: #2b2410;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.7; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 620px; margin: 0 auto; padding: 52px 20px 60px; }
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 { font-size: clamp(1.7rem, 5vw, 2.3rem); margin: 12px 0 8px; letter-spacing: -.01em; }
+  .lede { color: var(--ink-soft); margin: 0 0 34px; }
+  .course {
+    display: block; text-decoration: none; color: inherit;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    box-shadow: var(--shadow); padding: 20px 22px; margin-bottom: 16px;
+  }
+  .course:hover { border-color: var(--accent); }
+  .course .c-emoji { font-size: 1.9rem; line-height: 1; }
+  .course .c-title { font-weight: 800; font-size: 1.12rem; margin: 8px 0 4px; }
+  .course .c-desc { color: var(--ink-soft); font-size: .9rem; margin: 0 0 10px; }
+  .course .c-go { font-weight: 700; font-size: .88rem; color: var(--accent-ink); }
+  .tag {
+    display: inline-block; font-family: ui-monospace, monospace; font-size: .66rem;
+    letter-spacing: .12em; border-radius: 999px; padding: 2px 10px; margin-left: 8px; vertical-align: middle;
+  }
+  .tag.serious { background: var(--accent-wash); color: var(--accent-ink); border: 1px solid var(--accent); }
+  .tag.fun { background: var(--gold-wash); color: var(--gold); border: 1px solid var(--gold); }
+  footer { margin-top: 40px; color: var(--ink-soft); font-size: .8rem; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Team Training · 教材庫</div>
+  <h1>團隊教材庫</h1>
+  <p class="lede">用手機直接開,唔使裝 app。每份教材都有互動練習,進度會記喺你自己部機。</p>
+
+  <a class="course" href="drone/">
+    <span class="c-emoji">🚁</span>
+    <div class="c-title">無人機入門<span class="tag serious">Lesson Pack 01</span></div>
+    <p class="c-desc">8 課由零開始:認機、飛行原理、電池安全、checklist、failsafe、香港法規、天氣判斷、操作紀律。開卷測驗,100 分先合格。</p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="firstflight/">
+    <span class="c-emoji">🛫</span>
+    <div class="c-title">首飛實操<span class="tag serious">Lesson Pack 02</span></div>
+    <p class="c-desc">無人機入門之後嘅實機訓練:督導首飛、hover、方向感、8 字航線、標準降落、go-around。開卷測驗,100 分先合格。<b>(需先完成無人機入門)</b></p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="emergency/">
+    <span class="c-emoji">🚨</span>
+    <div class="c-title">應急處理<span class="tag serious">Lesson Pack 03</span></div>
+    <p class="c-desc">出事嗰刻做咩:A-N-C 口訣、低電兩級應對、失訊三步、GPS 失效同 compass 馬桶效應、flyaway 搵機、墜機現場處理、CAD 上報。8 課 + 開卷測驗。</p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="aerial/">
+    <span class="c-emoji">🎬</span>
+    <div class="c-title">航拍作業<span class="tag serious">Lesson Pack 04</span></div>
+    <p class="c-desc">由練習飛去真任務:接單評估五問、site survey 六範疇、鏡頭語言同 shot list、任務日三角色、相機概念、收工四步、3-2-1 交付同保密。8 課 + 開卷測驗。</p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="maintenance/">
+    <span class="c-emoji">🔧</span>
+    <div class="c-title">裝備保養<span class="tag serious">Lesson Pack 05</span></div>
+    <p class="c-desc">部機唔會突然壞,只會突然俾你發現佢壞咗:LiPo 深度管理、電池病歷卡、機身檢查清潔、槳同摩打判斷、firmware 紀律、收納運輸、三級保養排程。7 課 + 開卷測驗。</p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="crew/">
+    <span class="c-emoji">👥</span>
+    <div class="c-title">團隊協作<span class="tag serious">Lesson Pack 06</span></div>
+    <p class="c-desc">技術補唔到嘅窿,只有文化補到:CRM 同權威梯度、spotter 三範疇同報告三件套、closed-loop 覆述、Stop 權、brief / debrief、IMSAFE 自查、buddy 制。7 課 + 開卷測驗。</p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="weather/">
+    <span class="c-emoji">🌦️</span>
+    <div class="c-title">天氣環境<span class="tag serious">Lesson Pack 07</span></div>
+    <p class="c-desc">風嘅立體學(梯度風 / gust / wind shear / 風洞 / rotor)、香港季節月曆、雷達判讀三步、海邊市區山區三大場景、光線同能見度、Go / No-go 決策系統。6 課 + 開卷測驗。</p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  <a class="course" href="robot/">
+    <span class="c-emoji">🤖</span>
+    <div class="c-title">機械人入門<span class="tag serious">Robotics 101</span></div>
+    <p class="c-desc">通用機械人概念,零基礎:咩係機械人、身體四件嘢、點識自己郁(控制迴路)、有幾自主、有邊幾大類、安全通則。用無人機做例子落地。開卷測驗,100 分先合格。<b>(全套 6 課)</b></p>
+    <span class="c-go">開始學習 →</span>
+  </a>
+
+  
+  <footer>內部教材 · 逐部機記進度 · 有問題搵團隊負責人</footer>
+</div>
+</body>
+</html>

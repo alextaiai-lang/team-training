@@ -1,0 +1,991 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>機械人入門 · Robotics 101</title>
+<style>
+  :root {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+      --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+      --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+      --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+    }
+  }
+  :root[data-theme="light"] {
+    --ground: #f4f6f8; --surface: #ffffff; --surface-2: #eaeef2; --ink: #17222c;
+    --ink-soft: #5a6b7a; --line: #d5dde4; --accent: #0f62a6; --accent-ink: #0b4a7e;
+    --accent-wash: #e3eef8; --warn: #b45309; --warn-wash: #fdf0dd; --warn-ink: #8a3e06;
+    --pass: #1f7a4d; --pass-wash: #e0f1e8; --fail: #b3364a; --fail-wash: #f8e4e8;
+    --shadow: 0 1px 2px rgba(23,34,44,.06), 0 8px 24px -14px rgba(23,34,44,.16);
+  }
+  :root[data-theme="dark"] {
+    --ground: #0e141a; --surface: #161f29; --surface-2: #1d2937; --ink: #e6edf3;
+    --ink-soft: #93a5b4; --line: #2b3b4c; --accent: #5aa5e6; --accent-ink: #8cc3f0;
+    --accent-wash: #14293d; --warn: #e0973f; --warn-wash: #33240f; --warn-ink: #edb877;
+    --pass: #4dbd85; --pass-wash: #12301f; --fail: #e07f92; --fail-wash: #351b21;
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 10px 28px -14px rgba(0,0,0,.55);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "PingFang HK", "Noto Sans CJK HK", sans-serif;
+    line-height: 1.75; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 20px 80px; }
+  a.back-link { color: var(--accent-ink); text-decoration: none; font-size: .85rem; font-weight: 600; }
+  a.back-link:hover { text-decoration: underline; }
+
+  /* ===== 進度條(sticky) ===== */
+  .progress-bar { position: sticky; top: 0; z-index: 50; background: var(--surface); border-bottom: 1px solid var(--line); padding: 9px 20px; }
+  .progress-inner { max-width: 720px; margin: 0 auto; display: flex; align-items: center; gap: 12px; }
+  .progress-label { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .68rem; letter-spacing: .08em; color: var(--ink-soft); white-space: nowrap; }
+  .segments { display: flex; gap: 4px; flex: 1; }
+  .seg { height: 9px; flex: 1; border-radius: 5px; background: var(--surface-2); border: 1px solid var(--line); }
+  .seg.done { background: var(--pass); border-color: var(--pass); }
+  .best-label { font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); white-space: nowrap; }
+
+  header { padding-top: 34px; }
+  .eyebrow { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent-ink); display: flex; align-items: center; gap: 10px; }
+  .eyebrow::before { content: ""; width: 22px; height: 2px; background: var(--accent); }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.5rem); margin: 12px 0 10px; letter-spacing: -.01em; text-wrap: balance; }
+  .lede { color: var(--ink-soft); margin: 0; font-size: 1.02rem; max-width: 62ch; }
+  .partial-note { background: var(--accent-wash); border: 1px solid var(--accent); color: var(--accent-ink); border-radius: 10px; padding: 11px 15px; font-size: .86rem; margin-top: 20px; }
+
+  .lesson { margin-top: 60px; }
+  .lesson-tag { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .7rem; letter-spacing: .18em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent-wash); border: 1px solid var(--accent); border-radius: 999px; padding: 3px 12px; display: inline-block; }
+  h2 { font-size: 1.45rem; margin: 12px 0 14px; letter-spacing: -.01em; text-wrap: balance; }
+  h3 { font-size: 1.05rem; margin: 28px 0 8px; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 14px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .analogy { font-size: .93rem; background: var(--surface-2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 0 0 16px; }
+  .analogy b { color: var(--accent-ink); }
+  .figure { margin: 24px 0; }
+  .figure svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px; box-shadow: var(--shadow); }
+  .figcap { font-size: .8rem; color: var(--ink-soft); text-align: center; margin-top: 8px; }
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 8px 0 4px; }
+  .photo-grid figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .photo-grid img { width: 100%; height: 120px; object-fit: cover; display: block; background: var(--surface-2); }
+  .photo-grid figcaption { font-size: .78rem; padding: 7px 10px 8px; }
+  .photo-grid figcaption b { display: block; color: var(--ink); }
+  .photo-grid figcaption span { color: var(--ink-soft); }
+  .credit { font-size: .72rem; color: var(--ink-soft); margin: 6px 0 0; }
+  .credit a { color: var(--accent-ink); }
+
+  /* 課1 驗身機 */
+  .detector .gadget { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; background: var(--surface); }
+  .detector .g-name { font-weight: 700; margin-bottom: 8px; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip { font: inherit; font-size: .85rem; font-weight: 600; border-radius: 999px; padding: 6px 14px; cursor: pointer; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-soft); }
+  .chip:hover { border-color: var(--accent); }
+  .chip.on { background: var(--accent-wash); border-color: var(--accent); color: var(--accent-ink); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .g-foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .g-verdict { font-weight: 800; font-size: .92rem; }
+  .g-verdict.yes { color: var(--pass); }
+  .g-verdict.no { color: var(--fail); }
+  .g-check { font: inherit; font-weight: 700; font-size: .82rem; border-radius: 8px; padding: 5px 14px; cursor: pointer; border: 1px solid var(--accent); background: var(--surface); color: var(--accent-ink); }
+  .g-check:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .g-explain { display: none; margin-top: 8px; font-size: .85rem; background: var(--surface-2); border-radius: 8px; padding: 9px 12px; }
+  .gadget.revealed .g-explain { display: block; }
+
+  /* 課2 翻卡 */
+  .flipcards { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+  .fcard { font: inherit; color: inherit; text-align: left; cursor: pointer; border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--surface-2); min-height: 116px; }
+  .fcard:hover { border-color: var(--accent); }
+  .fcard:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .fcard .fc-emoji { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+  .fcard .fc-front { font-weight: 700; font-size: .92rem; }
+  .fcard .fc-back { display: none; font-size: .82rem; line-height: 1.5; }
+  .fcard .fc-cat { display: inline-block; font-size: .72rem; font-weight: 700; border-radius: 999px; padding: 1px 9px; margin-bottom: 5px; background: var(--accent-wash); color: var(--accent-ink); border: 1px solid var(--accent); }
+  .fcard.flipped { background: var(--accent-wash); border-color: var(--accent); }
+  .fcard.flipped .fc-front-wrap { display: none; }
+  .fcard.flipped .fc-back { display: block; }
+  .flip-count { font-family: ui-monospace, monospace; font-size: .78rem; color: var(--ink-soft); margin-top: 10px; }
+
+  /* 課3 迴路動畫 */
+  .loop-track { position: relative; height: 46px; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); overflow: hidden; margin: 8px 0; }
+  .loop-target { position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background: var(--pass); transform: translateX(-50%); }
+  .loop-target::after { content: "目標"; position: absolute; top: 3px; left: 6px; font-size: .62rem; color: var(--pass); white-space: nowrap; }
+  .loop-dot { position: absolute; top: 50%; left: 50%; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); transform: translate(-50%, -50%); transition: left .18s ease; }
+  .loop-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .loop-msg { margin-top: 10px; font-weight: 600; font-size: .9rem; min-height: 3em; }
+  .loop-msg.ok { color: var(--pass); }
+  .loop-msg.bad { color: var(--fail); }
+
+  /* 課4 自主滑桿 */
+  .autoslider input[type=range] { width: 100%; accent-color: var(--accent); margin: 6px 0 4px; }
+  .auto-scale { display: flex; justify-content: space-between; font-family: ui-monospace, monospace; font-size: .68rem; color: var(--ink-soft); }
+  .auto-panel { margin-top: 14px; border: 1px solid var(--accent); border-radius: 10px; padding: 13px 15px; background: var(--accent-wash); }
+  .auto-lv { font-size: 1.05rem; font-weight: 800; color: var(--accent-ink); }
+  .auto-mode { font-size: .85rem; color: var(--ink-soft); margin: 2px 0 10px; }
+  .auto-ctrl { display: flex; height: 24px; border-radius: 6px; overflow: hidden; border: 1px solid var(--line); font-size: .72rem; font-weight: 700; }
+  .auto-ctrl .you { background: var(--pass); color: #fff; display: flex; align-items: center; justify-content: center; transition: width .2s ease; white-space: nowrap; }
+  .auto-ctrl .bot { background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; transition: width .2s ease; white-space: nowrap; }
+  .auto-desc { font-size: .87rem; margin-top: 10px; }
+
+  /* 課6 安全 checklist */
+  .safecheck .chk { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border: 1px solid var(--line); border-radius: 9px; margin-bottom: 8px; cursor: pointer; font-size: .92rem; background: var(--surface); }
+  .safecheck .chk:hover { border-color: var(--accent); }
+  .safecheck .chk:has(input:checked) { background: var(--pass-wash); border-color: var(--pass); }
+  .safecheck .chk input { margin-top: 4px; accent-color: var(--pass); flex: none; }
+  .safe-verdict { text-align: center; font-weight: 800; font-size: 1.02rem; border-radius: 10px; padding: 11px; margin-top: 12px; }
+  .safe-verdict.no { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .safe-verdict.go { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+
+  .objective { background: var(--accent-wash); border: 1px solid var(--accent); border-radius: 10px; padding: 13px 16px; font-size: .93rem; margin: 0 0 20px; }
+  .objective .obj-label { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); display: block; margin-bottom: 6px; }
+  .objective ul { margin: 0; padding-left: 20px; }
+
+  .safety { background: var(--warn-wash); border: 1px solid var(--warn); border-radius: 10px; padding: 14px 16px; margin: 22px 0 0; font-size: .95rem; }
+  .safety .s-label { font-weight: 700; color: var(--warn-ink); display: block; margin-bottom: 4px; }
+  .safety p { margin: 0; }
+
+  .tablebox { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: var(--shadow); margin: 18px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); background: var(--surface-2); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; color: var(--accent-ink); white-space: nowrap; }
+
+  /* ===== 互動 widget ===== */
+  .widget { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 16px 18px; margin: 24px 0; }
+  .widget-tag { font-family: ui-monospace, monospace; font-size: .66rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent-ink); margin-bottom: 10px; }
+  .widget .hint { font-size: .84rem; color: var(--ink-soft); margin-bottom: 12px; }
+
+  .scen { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px; background: var(--surface); }
+  .scen .s-q { font-weight: 600; margin-bottom: 10px; font-size: .95rem; }
+  .scen-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .sbtn { font: inherit; font-weight: 700; font-size: .9rem; border-radius: 999px; padding: 7px 18px; cursor: pointer; border: 1px solid var(--line); background: var(--surface-2); color: inherit; }
+  .sbtn:hover { border-color: var(--accent); }
+  .sbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .sbtn.chosen { border-color: var(--accent); background: var(--accent-wash); }
+  .scen .fb { display: none; margin-top: 10px; border-radius: 8px; padding: 10px 12px; font-size: .88rem; }
+  .scen.answered .fb { display: block; }
+  .fb.right { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .fb.wrong { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .fb b { color: inherit; }
+
+  .done-btn { margin-top: 24px; font: inherit; font-size: .9rem; font-weight: 700; border-radius: 999px; padding: 8px 22px; cursor: pointer; border: 1px solid var(--accent); color: var(--accent-ink); background: var(--surface); }
+  .done-btn.done { background: var(--pass-wash); border-color: var(--pass); color: var(--pass); }
+  .done-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ===== 測驗 ===== */
+  .quiz-head { margin-top: 76px; padding-top: 34px; border-top: 2px solid var(--accent); }
+  .quiz-rules { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 14px 18px; font-size: .92rem; margin: 18px 0 28px; }
+  .quiz-rules ul { margin: 0; padding-left: 20px; }
+  .qcard { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 18px; }
+  .qnum { font-family: ui-monospace, monospace; font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-soft); }
+  .qtext { font-weight: 700; margin: 6px 0 14px; }
+  .opts { display: flex; flex-direction: column; gap: 8px; }
+  .opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 9px; padding: 10px 13px; cursor: pointer; font-size: .95rem; background: var(--surface); transition: border-color .12s ease, background .12s ease; }
+  .opt:hover { border-color: var(--accent); }
+  .opt:has(input:checked) { border-color: var(--accent); background: var(--accent-wash); }
+  .opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .opt input { margin-top: 4px; accent-color: var(--accent); flex: none; }
+  .opt .letter { font-family: ui-monospace, monospace; font-weight: 700; color: var(--accent-ink); flex: none; }
+  .qcard.graded .opt { cursor: default; }
+  .qcard.graded .opt:hover { border-color: var(--line); }
+  .qcard.graded .opt.is-correct { border-color: var(--pass); background: var(--pass-wash); }
+  .qcard.graded .opt.is-wrong { border-color: var(--fail); background: var(--fail-wash); }
+  .qbadge { display: none; font-weight: 700; font-size: .82rem; border-radius: 999px; padding: 2px 11px; margin-left: 8px; vertical-align: middle; }
+  .qcard.graded .qbadge { display: inline-block; }
+  .qcard.graded.right .qbadge { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .qcard.graded.wrong .qbadge { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .explain { display: none; margin-top: 12px; font-size: .9rem; color: var(--ink-soft); background: var(--surface-2); border-radius: 8px; padding: 10px 14px; }
+  .qcard.graded .explain { display: block; }
+  .explain b { color: var(--ink); }
+  .quiz-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
+  .btn { font: inherit; font-weight: 700; font-size: 1rem; cursor: pointer; border-radius: 10px; padding: 12px 28px; border: 1px solid var(--accent); background: var(--accent); color: #fff; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+  .btn.ghost { background: var(--surface); color: var(--accent-ink); }
+  .unanswered-note { display: none; color: var(--fail); font-weight: 600; font-size: .92rem; margin-top: 12px; }
+  .result { display: none; margin-top: 30px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); padding: 26px 28px; text-align: center; border: 2px solid var(--line); }
+  .result.pass { border-color: var(--pass); }
+  .result.fail { border-color: var(--fail); }
+  .score { font-size: 3.2rem; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; letter-spacing: -.02em; }
+  .result.pass .score { color: var(--pass); }
+  .result.fail .score { color: var(--fail); }
+  .score-sub { color: var(--ink-soft); font-size: .92rem; margin-top: 2px; }
+  .verdict { display: inline-block; font-weight: 800; font-size: 1.05rem; border-radius: 999px; padding: 6px 22px; margin-top: 14px; }
+  .result.pass .verdict { background: var(--pass-wash); color: var(--pass); border: 1px solid var(--pass); }
+  .result.fail .verdict { background: var(--fail-wash); color: var(--fail); border: 1px solid var(--fail); }
+  .result-note { font-size: .86rem; color: var(--ink-soft); margin: 14px auto 0; max-width: 46ch; }
+
+  footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: .82rem; text-align: center; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+</head>
+<body>
+<div class="progress-bar">
+  <div class="progress-inner">
+    <span class="progress-label">課程進度 <span id="prog-count">0</span>/6</span>
+    <span class="segments" id="segments"></span>
+    <span class="best-label" id="best-label">測驗最高分 —</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <header>
+    <a class="back-link" href="../">← 返教材庫</a>
+    <div class="eyebrow">機械人入門 · Robotics 101</div>
+    <h1>機械人入門</h1>
+    <p class="lede">寫俾零機械人底子嘅隊員。唔使 programming、唔使工程底,由「咩係機械人」一路讀到「機械人有幾自主」。每課有 🎮 互動練習即場試,最後有開卷測驗(滿分 100,<b>100 分先合格</b>,答到全對為止)。讀完一課撳「完成呢課」,頂部進度條會記住你去到邊(記喺你自己部機)。</p>
+    <div class="partial-note">📘 全套 <b>6 課</b>,由「咩係機械人」一路到「同機械人安全共處」。全部係<b>通用機械人概念</b> —— 用你哋熟悉嘅無人機做例子落地,唔綁任何一部特定機。</div>
+  </header>
+
+  <!-- ============ 課 1 ============ -->
+  <section class="lesson" id="l1">
+    <span class="lesson-tag">課 1 · 咩係機械人?</span>
+    <h2>唔一定似人,係識自己做決定嘅機器</h2>
+    <div class="objective">
+      <span class="obj-label">學完呢課你識做</span>
+      <ul>
+        <li>用一句分清「機械人」同「普通機器 / 遙控玩具 / 自動機器」</li>
+        <li>講得出機械人三件核心事:<b>感應 → 思考 → 動作</b></li>
+        <li>破除「機械人一定係人形」嘅迷思,認得出身邊邊啲係機械人</li>
+        <li>明白你哋日日操作嘅無人機,其實就係一部會飛嘅機械人</li>
+      </ul>
+    </div>
+
+    <h3>「機械人」唔係你以為嗰個樣</h3>
+    <p>問十個人「機械人係咩樣」,九個會諗到科幻片:一嚿金屬、兩隻手、識行識講、似人。呢個印象太窄 —— 窄到會令你認唔出身邊真正嘅機械人。</p>
+    <p>掃地機械人(扁扁一嚿)、工廠焊嘢嘅機械臂(淨係一條臂)、識自己泊位嘅車、你哋部無人機 —— 全部都係機械人。<b>「似唔似人」同「係唔係機械人」完全冇關係。</b></p>
+
+    <div class="photo-grid">
+      <figure><img src="img/robot-vacuum.jpg" alt="掃地機械人" loading="lazy"><figcaption><b>掃地機械人</b><span>扁扁一嚿,冇手冇腳</span></figcaption></figure>
+      <figure><img src="img/robot-arm.jpg" alt="工業機械臂" loading="lazy"><figcaption><b>工業機械臂</b><span>淨係一條臂</span></figcaption></figure>
+      <figure><img src="img/robot-humanoid.jpg" alt="人形機械人 Nao" loading="lazy"><figcaption><b>人形機械人</b><span>先至係「似人」嗰種</span></figcaption></figure>
+    </div>
+    <p class="credit">三個都係機械人,得一個似人。相片來源(Creative Commons,已標作者):<a href="https://commons.wikimedia.org/wiki/File:IRobot_Roomba_870_(15860914940).jpg">掃地機 © Kārlis Dambrāns, CC BY 2.0</a> · <a href="https://commons.wikimedia.org/wiki/File:KUKA_Industrial_Robot_Writer.jpg">機械臂 © Mirko Tobias Schäfer, CC BY 2.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Nao_humanoid_robot.jpg">人形 Nao © Jiuguang Wang, CC BY-SA 3.0</a></p>
+    <div class="analogy"><b>一句記住:</b>唔好用個「樣」去判斷,要用個「行為」去判斷。</div>
+
+    <h3>夠三樣嘢先叫機械人:感應 → 思考 → 動作</h3>
+    <p>有個簡單驗身法 —— 睇佢夠唔夠三樣:</p>
+    <ol>
+      <li><b>感應(Sense)</b> —— 有冇「眼耳」收集周圍資訊?</li>
+      <li><b>思考(Think)</b> —— 會唔會用收到嘅資訊,自己諗下一步?</li>
+      <li><b>動作(Act)</b> —— 有冇「手腳」真係郁到嘢?</li>
+    </ol>
+    <div class="analogy"><b>Analogy:</b>呢個就係你自己。過馬路:對眼睇住架車(感應)→ 個腦判斷衝定等(思考)→ 對腳停或行(動作)。機械人一模一樣,只係換咗零件。</div>
+
+    <div class="figure">
+    <svg viewBox="0 0 420 172" role="img" aria-label="感應、思考、動作嘅循環圖">
+      <defs><marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="var(--accent)"/></marker></defs>
+      <g font-family="ui-sans-serif, system-ui" text-anchor="middle">
+        <rect x="14" y="34" width="112" height="58" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="70" y="60" fill="var(--accent-ink)" font-size="16" font-weight="700">感應</text>
+        <text x="70" y="80" fill="var(--ink-soft)" font-size="12">Sense · 眼耳</text>
+        <rect x="154" y="34" width="112" height="58" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="210" y="60" fill="var(--accent-ink)" font-size="16" font-weight="700">思考</text>
+        <text x="210" y="80" fill="var(--ink-soft)" font-size="12">Think · 個腦</text>
+        <rect x="294" y="34" width="112" height="58" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="350" y="60" fill="var(--accent-ink)" font-size="16" font-weight="700">動作</text>
+        <text x="350" y="80" fill="var(--ink-soft)" font-size="12">Act · 手腳</text>
+      </g>
+      <g stroke="var(--accent)" stroke-width="2" fill="none" marker-end="url(#a1)">
+        <path d="M126 63 H150"/>
+        <path d="M266 63 H290"/>
+        <path d="M350 92 V132 H70 V98"/>
+      </g>
+      <text x="210" y="152" text-anchor="middle" fill="var(--ink-soft)" font-size="12.5" font-family="ui-sans-serif, system-ui">環境變咗 → 再感應(一路轉圈)</text>
+    </svg>
+    <div class="figcap">機械人做嘢嘅基本循環 —— 三樣齊先叫機械人</div>
+    </div>
+
+    <h3>機械人 vs 遙控車 vs 洗衣機</h3>
+    <div class="tablebox"><table>
+      <tr><th>邊樣嘢</th><th>算唔算</th><th>點解</th></tr>
+      <tr><td>遙控車</td><td>唔算(或半部)</td><td>冇「思考」—— 你唔㩒佢唔郁,㩒佢撞牆佢就撞牆,個腦係你</td></tr>
+      <tr><td>洗衣機</td><td>唔算</td><td>按死程序,唔理衫多衫少、污定清 —— 呢種叫「自動化」,爭咗「識睇情況變」</td></tr>
+      <tr><td>掃地機械人</td><td>算</td><td>撞牆識轉、跌樓梯口識縮 —— 用當下感應到嘅嘢改動作,三樣齊</td></tr>
+    </table></div>
+    <div class="safety"><span class="s-label">灰色地帶(老實講)</span><p>呢條界唔係楚河漢界。遙控車加咗「自己避障」就開始踩入機械人嗰邊。重點唔係死記,係識問嗰條問題:<b>「佢有冇用感應到嘅嘢,自己改動作?」</b></p></div>
+
+    <h3>你其實已經識揸一部機械人:無人機</h3>
+    <p>你哋部無人機就係一部教科書級飛行機械人:<b>感應</b>(GPS 知位置、IMU 知姿態、鏡頭睇畫面)→ <b>思考</b>(飛控每秒計幾百次點拉返平衡)→ <b>動作</b>(四個馬達出力)。</p>
+    <p>最能說明問題嗰下係 <b>RTL 自動返航</b>:電低或者失訊,你冇撳任何嘢,隻機自己決定飛返起飛點 —— 冇人落指令,佢用感應到嘅狀況自己做決定。呢一下,就係「機械人」同「遙控玩具」最清楚嘅分界線。</p>
+
+    <div class="safety"><span class="s-label">機械人唔一定叻過人</span><p>佢強項係唔攰、唔驚、夠精準;弱項係離開設定就即刻蠢、唔識變通、會壞會冇電。<b>唔好因為「佢係機械人 / 有 AI」就信佢多過信自己雙眼</b> —— 你嘅工作係識得幾時信佢、幾時接管。</p></div>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動 · 機械人驗身機</div>
+      <div class="hint">每件嘢你估吓佢有邊幾樣「👁 感應 / 🧠 思考 / 💪 動作」,tick 起佢。三樣齊先亮「係機械人」。撳「對答案」睇你估啱冇。</div>
+      <div class="detector" id="detector"></div>
+    </div>
+    <button class="done-btn" data-lesson="0" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ============ 課 2 ============ -->
+  <section class="lesson" id="l2">
+    <span class="lesson-tag">課 2 · 機械人身體有咩</span>
+    <h2>感應器、控制器、驅動器、電 —— 四件拆開睇</h2>
+    <div class="objective">
+      <span class="obj-label">學完呢課你識做</span>
+      <ul>
+        <li>講得出四大部件,各自對應「感應-思考-動作」邊環</li>
+        <li>每件舉到日常 + 無人機例子</li>
+        <li>明白點解「電源」要當一件獨立大事</li>
+        <li>用「四件嘢」框架拆解任何一部機械人</li>
+      </ul>
+    </div>
+
+    <h3>由「三件事」到「四件嘢」</h3>
+    <p>課 1 講三件<b>功能</b>(感應-思考-動作);今課睇佢哋嘅<b>硬件</b>:感應靠<b>感應器</b>、思考靠<b>控制器</b>、動作靠<b>驅動器</b>。但三件都要食電,所以加多一件貫穿全身嘅 —— <b>電源</b>。三件事,四件嘢。</p>
+
+    <div class="tablebox"><table>
+      <tr><th>部件</th><th>對應</th><th>係咩 / 無人機例子</th></tr>
+      <tr><td>感應器 Sensor</td><td>感應</td><td>機械人嘅眼耳鼻:GPS(位置)、IMU(姿態)、鏡頭(畫面)、雷達(距離)</td></tr>
+      <tr><td>控制器 Controller</td><td>思考</td><td>機械人嘅腦:一塊細電腦板,不停「睇→計→落指令」。無人機就係飛控</td></tr>
+      <tr><td>驅動器 Actuator</td><td>動作</td><td>機械人嘅手腳肌肉:馬達、螺旋槳、機械臂關節</td></tr>
+      <tr><td>電源 Power</td><td>養住全部</td><td>命脈:LiPo 電池。冇電全部即刻變廢鐵</td></tr>
+    </table></div>
+
+    <div class="analogy"><b>Garbage in, garbage out(垃圾入,垃圾出):</b>感應器收到嘅嘢唔準,後面個腦計極都係錯。所以感應器質素,決定機械人「有幾清醒」。</div>
+
+    <div class="safety"><span class="s-label">兩個要記實嘅點</span><p><b>① 驅動器</b>係四件嘢入面「用電最兇、最易整親人」嗰件 —— 螺旋槳、機械臂係真係有力、真係會郁。<br><b>② 電源</b>要當大事:好多「機械人出事」個腦冇壞,係電出事(電池鬆脫、電壓跌令個腦重啟)。睇一部機械人,先睇佢點食電、電低會點做。</p></div>
+
+    <h3>四件嘢串埋:一個圈</h3>
+    <p>電養住全部;感應器餵資訊入控制器 → 控制器落令畀驅動器 → 驅動器一郁,環境就變 → 感應器又收到新情況…… 個圈一路轉。任何機械人拆到底都係呢四嚿。(呢個圈,就係課 3 主題。)</p>
+
+    <div class="figure">
+    <svg viewBox="0 0 440 214" role="img" aria-label="四件嘢方塊圖:電源養住感應器、控制器、驅動器">
+      <defs>
+        <marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="var(--accent)"/></marker>
+        <marker id="a2p" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="var(--warn)"/></marker>
+      </defs>
+      <g font-family="ui-sans-serif, system-ui" text-anchor="middle">
+        <rect x="40" y="12" width="360" height="38" rx="10" fill="var(--warn-wash)" stroke="var(--warn)" stroke-width="1.5"/>
+        <text x="220" y="36" fill="var(--warn-ink)" font-size="14" font-weight="700">電源 Power(養住下面全部)</text>
+        <rect x="18" y="96" width="116" height="58" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="76" y="121" fill="var(--accent-ink)" font-size="15" font-weight="700">感應器</text>
+        <text x="76" y="140" fill="var(--ink-soft)" font-size="11.5">Sensor · 眼耳</text>
+        <rect x="162" y="96" width="116" height="58" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="220" y="121" fill="var(--accent-ink)" font-size="15" font-weight="700">控制器</text>
+        <text x="220" y="140" fill="var(--ink-soft)" font-size="11.5">Controller · 腦</text>
+        <rect x="306" y="96" width="116" height="58" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="364" y="121" fill="var(--accent-ink)" font-size="15" font-weight="700">驅動器</text>
+        <text x="364" y="140" fill="var(--ink-soft)" font-size="11.5">Actuator · 手腳</text>
+      </g>
+      <g stroke="var(--accent)" stroke-width="2" fill="none" marker-end="url(#a2)">
+        <path d="M134 125 H158"/>
+        <path d="M278 125 H302"/>
+        <path d="M364 154 V188 H76 V158"/>
+      </g>
+      <g stroke="var(--warn)" stroke-width="1.6" fill="none" stroke-dasharray="4 3" marker-end="url(#a2p)">
+        <path d="M76 50 V92"/>
+        <path d="M220 50 V92"/>
+        <path d="M364 50 V92"/>
+      </g>
+      <text x="220" y="206" text-anchor="middle" fill="var(--ink-soft)" font-size="12" font-family="ui-sans-serif, system-ui">驅動器一郁 → 環境變 → 感應器再收(個圈一路轉)</text>
+    </svg>
+    <div class="figcap">四件嘢串成一個圈:電源喺上面養住,感應 → 思考 → 動作 一路 loop</div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動 · 翻卡認部件</div>
+      <div class="hint">撳一撳卡片翻開,睇吓每件零件屬邊格、做咩。翻晒六張就叻。</div>
+      <div class="flipcards" id="flipcards"></div>
+      <div class="flip-count" id="flip-count">翻咗 0/6 張</div>
+    </div>
+    <button class="done-btn" data-lesson="1" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ============ 課 3 ============ -->
+  <section class="lesson" id="l3">
+    <span class="lesson-tag">課 3 · 機械人點識自己郁</span>
+    <h2>感應 → 比較 → 修正,再感應(控制迴路)</h2>
+    <div class="objective">
+      <span class="obj-label">學完呢課你識做</span>
+      <ul>
+        <li>講得出「控制迴路 feedback loop」係咩、點解係機械人「識自己郁」嘅核心</li>
+        <li>分得清開環 / 閉環,各舉到例子</li>
+        <li>用「目標 → 感應 → 比較 → 修正」拆解任何自動動作</li>
+        <li>明白機械人係不停微調,唔係一次做啱,同埋呢點對操作 / 信任嘅意義</li>
+      </ul>
+    </div>
+
+    <h3>開環 vs 閉環:有冇「回頭睇」係關鍵</h3>
+    <p>所有會郁嘅機器分兩種,分界線得一條:<b>做完之後,會唔會回頭睇下結果?</b></p>
+    <div class="tablebox"><table>
+      <tr><th>類型</th><th>特徵</th><th>例子</th></tr>
+      <tr><td>開環 Open loop</td><td>落咗指令就唔理結果,做完唔檢查</td><td>微波爐叮 30 秒(唔管熱咗未)、盲住眼掟嘢入桶</td></tr>
+      <tr><td>閉環 Closed loop</td><td>做完感應結果、同目標比、唔啱就修正</td><td>冷氣(盯住溫度)、定速巡航、無人機定點懸停</td></tr>
+    </table></div>
+    <div class="analogy"><b>一句記住:</b>閉環 = 識回頭睇自己做成點,再改。機械人之所以「醒」,靠嘅就係閉環。</div>
+
+    <h3>閉環四步 + 沖涼調水溫</h3>
+    <p><b>目標</b>(想幾暖)→ <b>感應</b>(手感覺水溫)→ <b>比較</b>(爭幾多 = 誤差)→ <b>修正</b>(扭熱少少)→ 再感應…… 你唔係一下扭到啱,係微調幾次。<b>機械人做嘅一模一樣,只係佢一秒微調幾百次,快到你以為佢一下到位。</b></p>
+    <p>無人機定點懸停就係活教材:就算冇風,你都見隻機輕輕震 —— 嗰啲正正係佢不停感應 + 修正緊嘅證據,佢一刻都冇停低唔理。</p>
+
+    <div class="figure">
+    <svg viewBox="0 0 460 200" role="img" aria-label="控制迴路:目標、比較、修正、動作、感應嘅閉環">
+      <defs><marker id="a3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="var(--accent)"/></marker></defs>
+      <g font-family="ui-sans-serif, system-ui" text-anchor="middle" font-size="13.5" font-weight="700">
+        <rect x="10" y="30" width="86" height="46" rx="10" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"/>
+        <text x="53" y="52" fill="var(--ink)">目標</text><text x="53" y="68" fill="var(--ink-soft)" font-size="11" font-weight="400">setpoint</text>
+        <rect x="124" y="30" width="92" height="46" rx="10" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="170" y="52" fill="var(--accent-ink)">比較</text><text x="170" y="68" fill="var(--ink-soft)" font-size="11" font-weight="400">算誤差</text>
+        <rect x="244" y="30" width="92" height="46" rx="10" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="290" y="57" fill="var(--accent-ink)">修正</text>
+        <rect x="364" y="30" width="86" height="46" rx="10" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <text x="407" y="57" fill="var(--accent-ink)">動作</text>
+        <rect x="244" y="130" width="92" height="46" rx="10" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"/>
+        <text x="290" y="152" fill="var(--ink)">感應</text><text x="290" y="168" fill="var(--ink-soft)" font-size="11" font-weight="400">而家實際點</text>
+      </g>
+      <g stroke="var(--accent)" stroke-width="2" fill="none" marker-end="url(#a3)">
+        <path d="M96 53 H120"/>
+        <path d="M216 53 H240"/>
+        <path d="M336 53 H360"/>
+        <path d="M407 76 V103 H290 V126"/>
+        <path d="M244 153 H170 V80"/>
+      </g>
+      <text x="120" y="118" text-anchor="middle" fill="var(--ink-soft)" font-size="11.5" font-family="ui-sans-serif, system-ui">回饋 feedback</text>
+    </svg>
+    <div class="figcap">閉環:感應返嚟同目標比,唔啱就修正 —— 一路轉,唔係一次做啱</div>
+    </div>
+
+    <div class="safety"><span class="s-label">閉環嘅命根係感應器</span><p>感應器一盲,閉環即刻斷 —— 機械人會失控,因為佢「回頭睇」嗰隻眼盲咗,唔知自己歪緊。你哋 <b>GPS 失鎖跌 ATTI</b> 嗰種驚險,底層原因就係咁:唔係個腦蠢咗,係佢對眼盲咗。<br>另外閉環叻極都有極限:風太大、誤差太離譜,佢修正唔切一樣會炒 —— <b>唔好當「佢會自己救返」係無限</b>。</p></div>
+
+    <h3>一個常見伏:過衝(overshoot)</h3>
+    <p>修正唔係越大力越好。太大力會衝過頭、左右擺(好似沖涼扭太多熱水,跟住太熱又扭凍)。呢個現象解釋咗點解有時機械人 / 無人機會無故「抖」或者「畫龍」。你唔使識點計,識得有呢個現象就夠。</p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動 · 睇佢自己修正</div>
+      <div class="hint">陣風會不停吹歪個藍點。撳「閉環」睇佢點自己拉返中間(綠線 = 目標);撳「關咗感應器」睇佢盲咗會點。</div>
+      <div class="loop-track"><div class="loop-target"></div><div class="loop-dot" id="loop-dot"></div></div>
+      <div class="loop-btns">
+        <button class="sbtn" id="loop-closed" type="button">▶ 閉環(感應器開)</button>
+        <button class="sbtn" id="loop-open" type="button">✖ 關咗感應器(開環)</button>
+        <button class="sbtn" id="loop-reset" type="button">↺ 重設</button>
+      </div>
+      <div class="loop-msg" id="loop-msg">撳一個掣試吓。</div>
+    </div>
+    <button class="done-btn" data-lesson="2" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ============ 課 4 ============ -->
+  <section class="lesson" id="l4">
+    <span class="lesson-tag">課 4 · 機械人有幾自主</span>
+    <h2>由你郁佢先郁,到佢自己搞掂</h2>
+    <div class="objective">
+      <span class="obj-label">學完呢課你識做</span>
+      <ul>
+        <li>明白「自主」係一條光譜,唔係「有 AI / 冇 AI」二選一</li>
+        <li>用五級自主階梯定位任何一部機械人</li>
+        <li>用無人機飛行模式對照每一級</li>
+        <li>講得出「越自主 ≠ 越好 / 越安全」,同人嘅角色點由「操作」變「監督」</li>
+      </ul>
+    </div>
+
+    <h3>「自主」係一條斜路,唔係開關</h3>
+    <p>唔係「有 AI 就自主、冇就唔自主」。係一條由「你唔郁佢就死」到「佢乜都自己搞掂」嘅斜路。搞清楚一部機械人企喺邊一級,比問佢「係咪 AI」有用一萬倍 —— 因為每一級,你同佢嘅責任分工都唔同。</p>
+
+    <div class="tablebox"><table>
+      <tr><th>級</th><th>佢做到咩</th><th>無人機對照</th></tr>
+      <tr><td>0 純手動</td><td>你唔落令佢唔郁,放手就冧</td><td>手動 / Acro(冇自穩)</td></tr>
+      <tr><td>1 輔助穩定</td><td>幫你保持平衡,但唔守位、唔記路</td><td>自穩 / Attitude(有自穩、冇 GPS 守位)</td></tr>
+      <tr><td>2 定點守位</td><td>放手守住個位、定住個高</td><td>定點 / Position 懸停(有 GPS)</td></tr>
+      <tr><td>3 半自主任務</td><td>你設目標,佢自己執行,你隨時接管</td><td>自動返航 RTL、航點任務</td></tr>
+      <tr><td>4 高度 / 全自主</td><td>畀個高層目標,佢自己規劃 + 應變</td><td>全自動巡航 + 避障(部分先進機接近)</td></tr>
+    </table></div>
+
+    <div class="figure">
+    <svg viewBox="0 0 470 216" role="img" aria-label="五級自主階梯,由純手動到全自主">
+      <defs><marker id="a4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 Z" fill="var(--accent)"/></marker></defs>
+      <g font-family="ui-sans-serif, system-ui" text-anchor="middle">
+        <rect x="16"  y="150" width="80" height="48"  rx="8" fill="var(--surface-2)" stroke="var(--line)" stroke-width="1.5"/>
+        <rect x="104" y="122" width="80" height="76"  rx="8" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <rect x="192" y="98"  width="80" height="100" rx="8" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <rect x="280" y="70"  width="80" height="128" rx="8" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <rect x="368" y="42"  width="80" height="156" rx="8" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.5"/>
+        <g font-size="19" font-weight="800" fill="var(--accent-ink)">
+          <text x="56" y="180">0</text><text x="144" y="152">1</text><text x="232" y="128">2</text><text x="320" y="100">3</text><text x="408" y="72">4</text>
+        </g>
+        <g font-size="10.5" fill="var(--ink-soft)">
+          <text x="56" y="194">純手動</text><text x="144" y="194">輔助穩定</text><text x="232" y="194">定點守位</text><text x="320" y="194">半自主</text><text x="408" y="194">全自主</text>
+        </g>
+      </g>
+      <path d="M20 28 H442" stroke="var(--accent)" stroke-width="2" fill="none" marker-end="url(#a4)"/>
+      <text x="150" y="20" fill="var(--accent-ink)" font-size="12" font-weight="700" font-family="ui-sans-serif, system-ui" text-anchor="middle">自主越高 →(人由「揸」變「監工」)</text>
+    </svg>
+    <div class="figcap">五級自主階梯:揀 mode 就係喺呢條階梯上落 —— 越高唔代表越安全</div>
+    </div>
+
+    <div class="safety"><span class="s-label">⚠️ 飛行模式名稱以你哋部機為準</span><p>上面啲 mode 名(Acro / Attitude / Position / RTL / 任務)喺唔同廠、唔同飛控(例如 PX4 同 ArduPilot)<b>叫法會有出入</b>。呢度用嚟解釋概念,<b>實際隊上用邊個名、每個 mode 具體點行,一律以你哋自己部機同 SOP 為準</b>,唔好照抄。</p></div>
+
+    <div class="analogy"><b>關鍵 insight:</b>你 switch mode 嗰一下,其實就係喺條自主階梯上落 —— 揀手動企 Level 0,揀 GPS 定點上 Level 2,撳 RTL 跳 Level 3。<b>自主唔係機械人嘅固定屬性,係你揀嘅設定。</b></div>
+
+    <h3>越自主,唔等於越好 / 越安全</h3>
+    <p>自主越高,跟住三個代價:① 越似<b>黑箱</b>(睇唔明佢點解咁做)② 出錯你越遲發現 ③ 離開設定場景越易做蠢嘢。所以揀邊級,要按<b>任務風險</b>揀:悶 + 可預測 → 高自主啱;複雜 + 高風險 + 要執生 → 低自主(人手)反而穩陣。</p>
+
+    <div class="safety"><span class="s-label">人嘅角色由「揸」變「監工」</span><p>高自主最危險嘅唔係機,係人 —— 機一直做得好,人就鬆懈走神(<b>automation complacency 自動化過度信任</b>),到出事嗰下反應唔切。呢個正正解釋你哋條 SOP:就算撳咗 RTL / 行緊自動任務,都要保持 VLOS、手指擺喺 mode switch 附近 —— 要 keep 住自己<b>喺迴路裡(human-in-the-loop)</b>,隨時接得返手。</p></div>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動 · 自主階梯滑桿</div>
+      <div class="hint">拉個滑桿 0 → 4,即時睇每一級部機做到咩、你同機邊個話事多啲。</div>
+      <div class="autoslider">
+        <input type="range" id="auto-range" min="0" max="4" step="1" value="0" aria-label="自主等級 0 至 4">
+        <div class="auto-scale"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span></div>
+        <div class="auto-panel">
+          <div class="auto-lv" id="auto-lv"></div>
+          <div class="auto-mode" id="auto-mode"></div>
+          <div class="auto-ctrl"><div class="you" id="auto-you"></div><div class="bot" id="auto-bot"></div></div>
+          <div class="auto-desc" id="auto-desc"></div>
+        </div>
+      </div>
+    </div>
+    <button class="done-btn" data-lesson="3" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ============ 課 5 ============ -->
+  <section class="lesson" id="l5">
+    <span class="lesson-tag">課 5 · 機械人有邊幾大類</span>
+    <h2>有腳、有輪、會飛、落水、機械臂 —— 各有各強</h2>
+    <div class="objective">
+      <span class="obj-label">學完呢課你識做</span>
+      <ul>
+        <li>講得出主要幾大類機械人形態,同各自強項 / 弱項</li>
+        <li>明白「形態跟任務(form follows function)」—— 個樣係跟要做咩決定</li>
+        <li>唔會再問「邊種最好」,而係問「邊種最啱呢件任務」</li>
+        <li>睇穿「型 ≠ 實用」</li>
+      </ul>
+    </div>
+
+    <h3>冇「最好」,只有「最啱呢件任務」</h3>
+    <p>新手最易問「邊種機械人最勁」—— 呢條問題冇答案,好似問「邊種車最好」。跑車快但載唔到貨,𨋢車慢但搬得起山。機械人個形態係跟佢要做嘅任務設計,呢個原則叫 <b>form follows function(形態跟任務)</b>。</p>
+
+    <h3>五大形態,一表睇晒</h3>
+    <div class="tablebox"><table>
+      <tr><th>形態</th><th>強項</th><th>弱項</th><th>典型用途</th></tr>
+      <tr><td>輪 / 履帶</td><td>平地快、慳電、穩</td><td>上唔到樓梯崎嶇地</td><td>倉庫送貨、掃地、巡邏</td></tr>
+      <tr><td>腳(足式)</td><td>跨障礙、上樓梯山路</td><td>複雜、慢、貴、易跌</td><td>崎嶇地巡查、搜救</td></tr>
+      <tr><td>飛(無人機)</td><td>睇得闊、去得快</td><td>續航短、怕風、載重細</td><td>航拍、測量、巡檢</td></tr>
+      <tr><td>水下</td><td>去到人潛唔到嘅深度</td><td>通訊難、多數要拖線</td><td>水底 / 船底檢查</td></tr>
+      <tr><td>機械臂</td><td>固定位精準重複</td><td>唔識行、要搬工件過嚟</td><td>工廠裝配、焊接、手術</td></tr>
+      <tr><td>人形</td><td>通用、似人環境啱</td><td>最難、最貴、最唔成熟</td><td>研究、示範、特定服務</td></tr>
+    </table></div>
+    <p>你哋部無人機就係「飛」呢個形態 —— 睇得闊去得快,但續航短、怕風、載重細,呢啲就係飛行形態本身嘅 trade-off。水下機械人最大難題唔係游,係<b>通訊</b>(水擋無線電,多數要拖線)—— 正好呼應課 3:通訊斷,閉環就斷。</p>
+
+    <div class="safety"><span class="s-label">紅隊一句:唔好被「型」帶住走</span><p>人形機械人 demo 最搶鏡,但現實做實事好多時係一個輪 + 一條臂,又平又可靠,贏過一部型爆嘅人形。<b>揀形態睇任務,唔係睇科幻感。</b></p></div>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動 · 呢件任務,派邊種機械人?</div>
+      <div class="hint">用「form follows function」揀最啱嗰種形態,即刻睇解釋。</div>
+      <div id="taskmatch"></div>
+    </div>
+    <button class="done-btn" data-lesson="4" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ============ 課 6 ============ -->
+  <section class="lesson" id="l6">
+    <span class="lesson-tag">課 6 · 同機械人做嘢要注意咩</span>
+    <h2>急停、動作範圍、供電 —— 安全通則</h2>
+    <div class="objective">
+      <span class="obj-label">學完呢課你識做</span>
+      <ul>
+        <li>講得出同機械人做嘢嘅幾條核心安全通則</li>
+        <li>識得搵到 / 用到一部機械人嘅急停</li>
+        <li>明白動作範圍同復電一刻點解最危險</li>
+        <li>將無人機安全文化接落所有機械人</li>
+      </ul>
+    </div>
+
+    <h3>大原則:機械人唔識自己顧你安全</h3>
+    <p>機械人幾叻都好,佢有個死穴:佢喺設定範圍內做嘢,但<b>唔識判斷「咁樣會唔會整親人」</b>。佢唔係惡意,係根本冇呢個概念。所以有一條貫穿全部嘅大原則:<b>安全嗰半,永遠係人孭。</b></p>
+
+    <h3>三條實戰通則</h3>
+    <div class="tablebox"><table>
+      <tr><th>通則</th><th>重點</th></tr>
+      <tr><td>急停 E-Stop</td><td>行近一部機械人第一件事:搞清楚佢急停喺邊、點撳。同你哋 kill switch 一個道理 —— 出事一刻冇時間諗。</td></tr>
+      <tr><td>動作範圍</td><td>佢郁得到嘅範圍 = 危險區。機械臂最伏:靜止 ≠ 安全,佢隨時掃過成個範圍。企範圍外。</td></tr>
+      <tr><td>供電 + 復電</td><td>接電前確認電壓接線(課 2);通電一刻可能突然郁,隻手要企開;維修前斷電上鎖(lock-out)。</td></tr>
+    </table></div>
+
+    <div class="safety"><span class="s-label">「好似停咗」唔等於「安全」</span><p>機械人靜止,可能只係喺度等下一個指令,隨時會郁。<b>當佢隨時會郁嚟對待。</b>再加課 4 一句:佢行緊自動你都要監督,唔好鬆懈(automation complacency)。</p></div>
+
+    <p><b>總綱:</b>同機械人做嘢,唔係唔信佢 —— 係「信佢做到件事,但唔信佢會顧住你」。佢負責做嘢嗰半,你負責安全嗰半;呢半嘢,佢幫你唔到。</p>
+
+    <div class="widget">
+      <div class="widget-tag">🎮 互動 · 開工前安全通則 checklist</div>
+      <div class="hint">開工前逐項 tick,全部 tick 起先亮綠燈「可以開始」。</div>
+      <div class="safecheck" id="safecheck"></div>
+      <div class="safe-verdict no" id="safe-verdict">仲有未 tick,未可以開工</div>
+    </div>
+    <button class="done-btn" data-lesson="5" type="button">✓ 完成呢課</button>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="quiz-head" id="quiz">
+    <span class="lesson-tag">課 1–6 測驗 · Quiz</span>
+    <h2>測驗:12 題選擇題</h2>
+    <div class="quiz-rules">
+      <ul>
+        <li>滿分 <b>100 分</b>,<b>要全部答啱先合格(開卷)</b> —— 唔記得可以返上去睇課文。</li>
+        <li>全部答完先撳「交卷計分」。交卷後會顯示每題對錯同解釋。</li>
+        <li>測驗結果用嚟改進教材同跟進學習,<b>唔會用嚟處分任何隊員</b>。</li>
+      </ul>
+    </div>
+    <div id="quiz-body"></div>
+    <div class="quiz-actions">
+      <button class="btn" id="submit-btn" type="button">交卷計分</button>
+      <button class="btn ghost" id="retry-btn" type="button" style="display:none">再做一次</button>
+    </div>
+    <p class="unanswered-note" id="unanswered-note"></p>
+    <div class="result" id="result">
+      <div class="score" id="score-num"></div>
+      <div class="score-sub" id="score-sub"></div>
+      <div><span class="verdict" id="verdict"></span></div>
+      <p class="result-note" id="result-note"></p>
+    </div>
+  </section>
+
+  <footer>機械人入門 · 內部測試版 · 全 6 課 · 2026-07-09<br>通用機械人概念,無人機只作教學例子;飛行模式名稱一律以你哋部機同 SOP 為準。</footer>
+</div>
+
+<script>
+"use strict";
+// ===== 進度 / 分數(localStorage,唔支援就唔記)=====
+const LESSONS_KEY = "robot101.lessons";
+const BEST_KEY = "robot101.best";
+const N_LESSONS = 6;
+function storageGet(key, fallback) { try { const raw = localStorage.getItem(key); return raw === null ? fallback : JSON.parse(raw); } catch (e) { return fallback; } }
+function storageSet(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
+let lessonsDone = storageGet(LESSONS_KEY, [false, false, false, false, false, false]);
+if (!Array.isArray(lessonsDone) || lessonsDone.length !== N_LESSONS) lessonsDone = [false, false, false, false, false, false];
+
+function renderProgress() {
+  document.getElementById("segments").innerHTML = lessonsDone.map(d => `<div class="seg${d ? " done" : ""}"></div>`).join("");
+  document.getElementById("prog-count").textContent = lessonsDone.filter(Boolean).length;
+  document.querySelectorAll(".done-btn").forEach(btn => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    btn.classList.toggle("done", lessonsDone[i]);
+    btn.textContent = lessonsDone[i] ? "✓ 已完成(撳一下取消)" : "✓ 完成呢課";
+  });
+  const best = storageGet(BEST_KEY, null);
+  document.getElementById("best-label").textContent = best === null ? "測驗最高分 —" : `測驗最高分 ${best}/100`;
+}
+document.querySelectorAll(".done-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const i = parseInt(btn.dataset.lesson, 10);
+    lessonsDone[i] = !lessonsDone[i];
+    storageSet(LESSONS_KEY, lessonsDone);
+    renderProgress();
+  });
+});
+
+// ===== 課1:機械人驗身機(tick 三準則)=====
+const gadgets = [
+  { name: "掃地機械人", s: true,  t: true,  a: true,  ex: "撞牆識轉、跌樓梯口識縮 —— 用感應到嘅嘢自己改動作,三樣齊,係機械人。" },
+  { name: "洗衣機",     s: false, t: false, a: true,  ex: "淨係做動作,按死程序,唔會感應情況變 —— 自動化,唔算機械人。" },
+  { name: "普通遙控車", s: false, t: false, a: true,  ex: "得動作;感應同思考都係你 —— 個腦係揸嗰個人,唔算。" },
+  { name: "你哋部無人機", s: true, t: true,  a: true,  ex: "GPS/IMU 感應、飛控思考、馬達動作,三樣齊 —— 教科書級機械人。" },
+  { name: "工業機械臂", s: true,  t: true,  a: true,  ex: "感應位置 + 控制器計軌跡 + 關節動作,三樣齊。" }
+];
+const CRIT = [["s", "👁 感應"], ["t", "🧠 思考"], ["a", "💪 動作"]];
+(function renderDetector() {
+  const host = document.getElementById("detector");
+  const picks = gadgets.map(() => ({ s: false, t: false, a: false }));
+  host.innerHTML = gadgets.map((g, i) => `
+    <div class="gadget" id="gadget-${i}">
+      <div class="g-name">${g.name}</div>
+      <div class="chips">${CRIT.map(([k, lbl]) => `<button class="chip" data-i="${i}" data-k="${k}" type="button">${lbl}</button>`).join("")}</div>
+      <div class="g-foot"><button class="g-check" data-i="${i}" type="button">對答案</button><span class="g-verdict" id="gv-${i}"></span></div>
+      <div class="g-explain" id="ge-${i}"></div>
+    </div>`).join("");
+  host.querySelectorAll(".chip").forEach(ch => {
+    ch.addEventListener("click", () => {
+      const i = +ch.dataset.i, k = ch.dataset.k;
+      if (document.getElementById("gadget-" + i).classList.contains("revealed")) return;
+      picks[i][k] = !picks[i][k];
+      ch.classList.toggle("on", picks[i][k]);
+    });
+  });
+  host.querySelectorAll(".g-check").forEach(b => {
+    b.addEventListener("click", () => {
+      const i = +b.dataset.i, g = gadgets[i], p = picks[i];
+      const right = p.s === g.s && p.t === g.t && p.a === g.a;
+      const isRobot = g.s && g.t && g.a;
+      const card = document.getElementById("gadget-" + i);
+      card.classList.add("revealed");
+      card.querySelectorAll(".chip").forEach(ch => ch.classList.toggle("on", g[ch.dataset.k]));
+      const v = document.getElementById("gv-" + i);
+      v.className = "g-verdict " + (isRobot ? "yes" : "no");
+      v.textContent = isRobot ? "✅ 係機械人" : "❌ 唔算機械人";
+      document.getElementById("ge-" + i).innerHTML =
+        (right ? "<b>✓ 你估啱晒三樣。</b> " : "<b>睇返正確嗰幾格(已幫你校返)。</b> ") + g.ex;
+    });
+  });
+})();
+
+// ===== 課2:翻卡認部件 =====
+const partCards = [
+  { emoji: "🛰️", name: "GPS", cat: "感應器", back: "知道自己喺地球邊一點。" },
+  { emoji: "🧭", name: "IMU / 陀螺儀", cat: "感應器", back: "知道自己打側幾多度、有冇喺度郁。" },
+  { emoji: "🎥", name: "鏡頭", cat: "感應器", back: "睇畫面,同人隻眼最似。" },
+  { emoji: "🧠", name: "飛控", cat: "控制器", back: "個腦:每秒計幾百次點拉返平衡、落指令。" },
+  { emoji: "🌀", name: "馬達 + 螺旋槳", cat: "驅動器", back: "手腳肌肉:真正令隻機郁嗰件。" },
+  { emoji: "🔋", name: "LiPo 電池", cat: "電源", back: "命脈:養住成部機,冇電全部死。" }
+];
+(function renderFlip() {
+  const flipped = new Set();
+  document.getElementById("flipcards").innerHTML = partCards.map((p, i) => `
+    <button class="fcard" data-i="${i}" type="button">
+      <span class="fc-front-wrap"><span class="fc-emoji">${p.emoji}</span><span class="fc-front">${p.name}</span></span>
+      <span class="fc-back"><span class="fc-cat">${p.cat}</span><br>${p.back}</span>
+    </button>`).join("");
+  document.querySelectorAll(".fcard").forEach(c => {
+    c.addEventListener("click", () => {
+      c.classList.toggle("flipped");
+      if (c.classList.contains("flipped")) flipped.add(c.dataset.i);
+      const n = flipped.size;
+      document.getElementById("flip-count").textContent =
+        n >= partCards.length ? "翻晒 6/6 張 🎉 每件都對到「感應 / 思考 / 動作 / 命脈」" : `翻咗 ${n}/${partCards.length} 張`;
+    });
+  });
+})();
+
+// ===== 課3:控制迴路動畫(閉環 vs 感應器盲咗)=====
+(function () {
+  const dot = document.getElementById("loop-dot");
+  const msg = document.getElementById("loop-msg");
+  let pos = 50, timer = null, ticks = 0;
+  function setDot() { dot.style.left = Math.max(3, Math.min(97, pos)) + "%"; }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function reset() { stop(); pos = 50; ticks = 0; setDot(); msg.className = "loop-msg"; msg.textContent = "撳一個掣試吓。"; }
+  function run(closed) {
+    reset();
+    msg.className = "loop-msg " + (closed ? "ok" : "bad");
+    timer = setInterval(() => {
+      ticks++;
+      const gust = (((ticks * 13) % 17) - 8) * 1.1;   // 用 tick 算出「陣風」,唔靠 random
+      pos += gust;
+      if (closed) pos += (50 - pos) * 0.6;             // 閉環:感應到誤差,拉返中間
+      else pos += 2.4;                                 // 開環:冇修正 + 慢慢飄走
+      pos = Math.max(0, Math.min(100, pos));
+      setDot();
+      msg.textContent = closed
+        ? "閉環:陣風吹歪 → 感應到 → 即刻拉返中間。就算一路有風,佢一路修正,守得住。"
+        : "開環(感應器盲咗):佢唔知自己歪,冇得修正 —— 俾風越推越遠。";
+      if (!closed && (pos <= 1 || pos >= 99)) { stop(); msg.textContent = "開環 → 飄到出界 = 失控。冇咗感應,個閉環就斷。"; }
+      if (ticks > 70) stop();
+    }, 260);
+  }
+  document.getElementById("loop-closed").addEventListener("click", () => run(true));
+  document.getElementById("loop-open").addEventListener("click", () => run(false));
+  document.getElementById("loop-reset").addEventListener("click", reset);
+  reset();
+})();
+
+// ===== 課4:自主階梯滑桿 =====
+(function () {
+  const levels = [
+    { lv: "Level 0 · 純手動",       mode: "手動 / Acro",              you: 100, desc: "你唔落令佢唔郁,一鬆手就冧。全靠你。" },
+    { lv: "Level 1 · 輔助穩定",     mode: "自穩 / Attitude",          you: 80,  desc: "佢幫你保持平衡,但唔守位、唔記路 —— 放手會平但會飄。" },
+    { lv: "Level 2 · 定點守位",     mode: "定點 / Position",          you: 55,  desc: "放手佢守住個位、定住個高。守位交咗畀佢。" },
+    { lv: "Level 3 · 半自主任務",   mode: "自動返航 RTL / 航點任務",   you: 30,  desc: "你設目標,佢自己執行;你隨時接管,佢搞唔掂會叫返你。" },
+    { lv: "Level 4 · 高度 / 全自主", mode: "全自動巡航 + 避障",         you: 12,  desc: "畀個高層目標,佢自己規劃 + 應變。你由『揸』變『監工』,要盯住、隨時接得返手。" }
+  ];
+  const range = document.getElementById("auto-range");
+  function upd() {
+    const L = levels[+range.value];
+    document.getElementById("auto-lv").textContent = L.lv;
+    document.getElementById("auto-mode").textContent = "無人機對照:" + L.mode;
+    const you = document.getElementById("auto-you"), bot = document.getElementById("auto-bot");
+    you.style.width = L.you + "%"; bot.style.width = (100 - L.you) + "%";
+    you.textContent = L.you >= 20 ? "你 " + L.you + "%" : "";
+    bot.textContent = (100 - L.you) >= 20 ? "機 " + (100 - L.you) + "%" : "";
+    document.getElementById("auto-desc").textContent = L.desc;
+  }
+  range.addEventListener("input", upd);
+  upd();
+})();
+
+// ===== 課5:任務派工 =====
+const TYPES = [
+  { v: "wheel", label: "🛞 輪式" }, { v: "legged", label: "🐕 足式" }, { v: "drone", label: "🚁 無人機" },
+  { v: "under", label: "🌊 水下" }, { v: "arm", label: "🦾 機械臂" }
+];
+const tasks = [
+  { q: "平坦大倉庫,成日搬貨由 A 去 B", correct: "wheel", ex: "平地又快又慳電又穩,唔使跨障礙 —— 輪式。" },
+  { q: "要飛上高空影全景相", correct: "drone", ex: "飛得高睇得闊,冇第二種形態代到 —— 無人機。" },
+  { q: "檢查一條沉喺海底嘅水管", correct: "under", ex: "落到水、去到深度,拖線通訊 —— 水下機械人。" },
+  { q: "工廠流水線,一日焊一萬次同一個位", correct: "arm", ex: "固定位精準重複之王 —— 機械臂。" },
+  { q: "喺瓦礫堆跨過石頭搵生還者", correct: "legged", ex: "崎嶇地要跨障礙,輪去唔到 —— 足式(有腳)。" }
+];
+(function () {
+  const host = document.getElementById("taskmatch");
+  host.innerHTML = tasks.map((t, i) => `
+    <div class="scen" id="task-${i}">
+      <div class="s-q">${t.q}</div>
+      <div class="scen-btns">${TYPES.map(ty => `<button class="sbtn" data-i="${i}" data-v="${ty.v}" type="button">${ty.label}</button>`).join("")}</div>
+      <div class="fb" id="task-fb-${i}"></div>
+    </div>`).join("");
+  host.querySelectorAll(".sbtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const i = +btn.dataset.i, card = document.getElementById("task-" + i);
+      if (card.classList.contains("answered")) return;
+      card.classList.add("answered"); btn.classList.add("chosen");
+      const right = btn.dataset.v === tasks[i].correct;
+      const fb = document.getElementById("task-fb-" + i);
+      fb.className = "fb " + (right ? "right" : "wrong");
+      fb.innerHTML = (right ? "<b>✓ 啱。</b>" : "<b>✗ 諗多次:</b>") + tasks[i].ex;
+      card.querySelectorAll(".sbtn").forEach(b => b.disabled = true);
+    });
+  });
+})();
+
+// ===== 課6:安全 checklist =====
+const safeItems = [
+  "我知道呢部機械人嘅急停喺邊、點撳",
+  "我知道佢嘅動作範圍,而且企咗喺範圍以外",
+  "供電 / 電池已確認冇問題(電壓、接線、冇鼓脹)",
+  "通電 / 開機一刻,我隻手唔喺佢郁得到嘅範圍",
+  "如果要維修 / 入危險區,已經斷電上鎖(lock-out)",
+  "我唔會因為佢「而家唔郁」就當佢安全",
+  "就算佢行緊自動,我都盯住 + 隨時可以停佢"
+];
+(function () {
+  const host = document.getElementById("safecheck");
+  host.innerHTML = safeItems.map((t, i) => `<label class="chk"><input type="checkbox" data-i="${i}"><span>${t}</span></label>`).join("");
+  const verdict = document.getElementById("safe-verdict");
+  function upd() {
+    const boxes = host.querySelectorAll("input");
+    const left = [...boxes].filter(b => !b.checked).length;
+    verdict.className = "safe-verdict " + (left === 0 ? "go" : "no");
+    verdict.textContent = left === 0 ? "✅ 七項齊 —— 可以開始" : `仲有 ${left} 項未 tick,未可以開工`;
+  }
+  host.querySelectorAll("input").forEach(b => b.addEventListener("change", upd));
+  upd();
+})();
+
+// ===== 測驗 =====
+const quizQuestions = [
+  { lesson: "課 1", question: "判斷一部機器係唔係機械人,最核心睇邊三樣?",
+    options: ["夠唔夠似人、夠唔夠金屬、夠唔夠大", "感應、思考、動作", "有冇 AI、有冇 app、有冇 wifi", "有冇電、有冇輪、有冇鏡頭"],
+    correct: 1, explain: "感應(Sense)→ 思考(Think)→ 動作(Act)三樣齊先叫機械人,同似唔似人冇關係。" },
+  { lesson: "課 1", question: "洗衣機做嘢咁自動,點解唔算機械人?",
+    options: ["因為佢冇輪唔識行", "因為佢冇 AI", "因為佢按死咗嘅固定程序做嘢,唔會用感應到嘅實況去調整", "因為佢太細部"],
+    correct: 2, explain: "洗衣機係自動化 —— 爭咗「識睇情況變」呢一環,唔會因應衫多衫少 / 污定清而改。" },
+  { lesson: "課 2", question: "機械人四大部件,邊件對應「思考」?",
+    options: ["感應器", "控制器", "驅動器", "電源"],
+    correct: 1, explain: "控制器(無人機嘅飛控)就係個腦,負責睇感應器→計→落指令。" },
+  { lesson: "課 2", question: "四件嘢入面,邊件最易整親人?點解?",
+    options: ["感應器,因為好貴", "控制器,因為會發燙", "驅動器,因為佢係真係有力、真係會郁嗰嚿(螺旋槳、機械臂)", "電源,因為會冇電"],
+    correct: 2, explain: "驅動器係將電變成郁動嗰件,螺旋槳 / 機械臂真係有力,係安全上最要提防嘅部位。" },
+  { lesson: "課 3", question: "開環同閉環,分界線嗰條問題係咩?",
+    options: ["有冇電池", "有冇 GPS", "做完之後會唔會回頭睇結果、再修正", "夠唔夠快"],
+    correct: 2, explain: "會回頭睇結果再修正 = 閉環;做完唔理 = 開環。機械人之所以醒,靠嘅就係閉環。" },
+  { lesson: "課 3", question: "感應器盲咗(例如 GPS 失鎖 / IMU 壞),機械人點解會失控?",
+    options: ["因為冇咗電", "因為閉環靠感應器回頭睇,感應器盲咗個圈就斷,佢唔知自己歪緊、冇得修正", "因為個腦即刻壞埋", "因為馬達會停"],
+    correct: 1, explain: "閉環嘅命根係感應器;佢盲咗,機械人以為自己好地地但其實歪緊 —— 呢個就係 ATTI / 失鎖驚險嘅底層原因。" },
+  { lesson: "課 4", question: "關於機械人嘅「自主」,以下邊個講法最啱?",
+    options: ["係開關:有 AI 就自主,冇就唔自主", "係一條光譜,由純遙控到全自主有好多級,揀 mode 就係喺階梯上落", "越自主一定越安全", "只有貴機先有自主"],
+    correct: 1, explain: "自主係光譜唔係二選一;你 switch mode 就係喺調校「你同機邊個話事多啲」。" },
+  { lesson: "課 4", question: "點解撳咗 RTL / 行緊自動任務,都仲要保持 VLOS、手指擺喺 mode switch 附近?",
+    options: ["因為法例規定要一路撳住掣", "因為部機一定會出事", "因為要 keep 住自己喺迴路裡,隨時接得返手 —— 自主越高,人越易鬆懈(automation complacency)", "因為咁樣慳電"],
+    correct: 2, explain: "高自主系統最大風險係人嘅鬆懈;保持 human-in-the-loop、隨時接管,先係監督者嘅正確角色。" },
+  { lesson: "課 5", question: "「形態跟任務(form follows function)」意思係咩?",
+    options: ["機械人個樣淨係為咗靚", "機械人個形態係跟佢要做嘅任務設計 —— 冇最好,只有最啱某件任務嗰種", "越似人嘅形態越勁", "有腳一定好過有輪"],
+    correct: 1, explain: "form follows function:揀形態睇任務。平地要快用輪、爛地跨障礙用腳,冇一種永遠勝。" },
+  { lesson: "課 5", question: "要檢查一條沉喺海底嘅水管,派邊種機械人最啱?",
+    options: ["無人機", "輪式機械人", "水下機械人(ROV / AUV)", "人形機械人"],
+    correct: 2, explain: "落到水、去到深度;水擋無線電,所以多數要拖住條線畀人遙控。" },
+  { lesson: "課 6", question: "你行近一部唔識嘅機械人,第一件應該搞清楚嘅安全嘢係咩?",
+    options: ["佢幾多錢", "佢個急停(E-Stop)喺邊、點觸發", "佢跑得幾快", "佢係邊個牌子"],
+    correct: 1, explain: "出事一刻冇時間諗,要事前已經知急停喺邊、點撳 —— 同無人機 kill switch 一個道理。" },
+  { lesson: "課 6", question: "機械臂而家靜止唔郁,你行埋去執嘢,點解危險?",
+    options: ["因為佢好熱", "因為佢好重", "因為靜止唔等於安全 —— 佢隨時會突然掃過成個動作範圍", "因為佢會冇電"],
+    correct: 2, explain: "靜止可能只係喺度等指令;動作範圍 = 危險區,要企範圍外,真要入去先確認停晒 + 斷電。" }
+];
+
+const POINTS_PER_QUESTION = 100 / quizQuestions.length;
+const PASS_MARK = 100;
+const letters = ["A", "B", "C", "D"];
+
+function renderQuiz() {
+  document.getElementById("quiz-body").innerHTML = quizQuestions.map((q, qi) => `
+    <div class="qcard" id="qcard-${qi}">
+      <div class="qnum">Question ${String(qi + 1).padStart(2, "0")} / ${quizQuestions.length} · ${q.lesson}<span class="qbadge" id="qbadge-${qi}"></span></div>
+      <div class="qtext">${q.question}</div>
+      <div class="opts">
+        ${q.options.map((opt, oi) => `
+          <label class="opt" id="opt-${qi}-${oi}">
+            <input type="radio" name="q${qi}" value="${oi}">
+            <span class="letter">${letters[oi]}.</span>
+            <span>${opt}</span>
+          </label>`).join("")}
+      </div>
+      <div class="explain" id="explain-${qi}"></div>
+    </div>`).join("");
+}
+function gradeQuiz() {
+  const unanswered = [];
+  quizQuestions.forEach((q, qi) => { if (!document.querySelector(`input[name="q${qi}"]:checked`)) unanswered.push(qi + 1); });
+  const note = document.getElementById("unanswered-note");
+  if (unanswered.length > 0) { note.style.display = "block"; note.textContent = "仲有未答嘅題目:第 " + unanswered.join("、") + " 題。全部答完先可以交卷。"; return; }
+  note.style.display = "none";
+  let correctCount = 0;
+  quizQuestions.forEach((q, qi) => {
+    const chosen = parseInt(document.querySelector(`input[name="q${qi}"]:checked`).value, 10);
+    const card = document.getElementById(`qcard-${qi}`);
+    const isRight = chosen === q.correct;
+    if (isRight) correctCount++;
+    card.classList.add("graded", isRight ? "right" : "wrong");
+    document.getElementById(`qbadge-${qi}`).textContent = isRight ? "✓ 答啱" : "✗ 答錯";
+    document.getElementById(`opt-${qi}-${q.correct}`).classList.add("is-correct");
+    if (!isRight) document.getElementById(`opt-${qi}-${chosen}`).classList.add("is-wrong");
+    document.getElementById(`explain-${qi}`).innerHTML = `<b>正確答案:${letters[q.correct]}</b> — ${q.explain}`;
+    card.querySelectorAll("input").forEach(input => { input.disabled = true; });
+  });
+  const score = Math.round(correctCount * POINTS_PER_QUESTION);
+  const passed = correctCount === quizQuestions.length;
+  const best = storageGet(BEST_KEY, null);
+  if (best === null || score > best) storageSet(BEST_KEY, score);
+  renderProgress();
+  const result = document.getElementById("result");
+  result.classList.remove("pass", "fail");
+  result.classList.add(passed ? "pass" : "fail");
+  result.style.display = "block";
+  document.getElementById("score-num").textContent = score;
+  document.getElementById("score-sub").textContent = `滿分 100 · 答啱 ${correctCount} / ${quizQuestions.length} 題 · 合格線 ${PASS_MARK} 分`;
+  document.getElementById("verdict").textContent = passed ? "合格 PASS" : "不合格 FAIL";
+  document.getElementById("result-note").textContent = passed
+    ? "合格!你已經對「機械人係咩」有咗正確嘅 mental model。課 5、6 出咗再繼續。"
+    : "未去到 100 分。開卷測驗 —— 睇返答錯嗰幾題嘅解釋,返上去課文搵答案,撳「再做一次」,直到全對為止。";
+  document.getElementById("submit-btn").style.display = "none";
+  document.getElementById("retry-btn").style.display = "inline-block";
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  result.scrollIntoView({ behavior: smooth ? "smooth" : "auto", block: "center" });
+}
+function resetQuiz() {
+  renderQuiz();
+  document.getElementById("result").style.display = "none";
+  document.getElementById("unanswered-note").style.display = "none";
+  document.getElementById("submit-btn").style.display = "inline-block";
+  document.getElementById("retry-btn").style.display = "none";
+  const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.getElementById("quiz").scrollIntoView({ behavior: smooth ? "smooth" : "auto" });
+}
+renderQuiz();
+document.getElementById("submit-btn").addEventListener("click", gradeQuiz);
+document.getElementById("retry-btn").addEventListener("click", resetQuiz);
+renderProgress();
+</script>
+</body>
+</html>
